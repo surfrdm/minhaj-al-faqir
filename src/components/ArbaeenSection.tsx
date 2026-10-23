@@ -25,7 +25,11 @@ interface Hadith {
   image: string;
 }
 
-export function ArbaeenSection() {
+interface ArbaeenSectionProps {
+  isEmbedded?: boolean;
+}
+
+export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTheme, setSelectedTheme] = useState("all");
   const [selectedHadith, setSelectedHadith] = useState<Hadith | null>(null);
@@ -73,27 +77,30 @@ export function ArbaeenSection() {
   };
 
   return (
-    <section id="arbaeen" className="py-24 bg-[#FAF7F2] dark:bg-[#081410] relative transition-colors duration-300" dir="rtl">
-      {/* Background Subtle Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#C5A059]/5 to-transparent pointer-events-none" />
+    <div id="arbaeen" className={`${isEmbedded ? "py-4" : "py-24 bg-[#FAF7F2] dark:bg-[#081410]"} relative transition-colors duration-300`} dir="rtl">
+      {!isEmbedded && (
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#C5A059]/5 to-transparent pointer-events-none" />
+      )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 border border-[#1B4332]/20 dark:border-[#C5A059]/30 text-[#1B4332] dark:text-[#E5C378] text-xs sm:text-sm font-semibold mb-4">
-            <Scroll className="w-4 h-4 text-[#C5A059]" />
-            <span>السلك العلمي والأكاديمي • زاوية مدينة المحمدية</span>
+      <div className={`${isEmbedded ? "w-full" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"} relative`}>
+        {/* Section Header (Standalone only) */}
+        {!isEmbedded && (
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 border border-[#1B4332]/20 dark:border-[#C5A059]/30 text-[#1B4332] dark:text-[#E5C378] text-xs sm:text-sm font-semibold mb-4">
+              <Scroll className="w-4 h-4 text-[#C5A059]" />
+              <span>السلك العلمي والأكاديمي • زاوية مدينة المحمدية</span>
+            </div>
+
+            <h2 className="font-amiri text-3xl sm:text-4xl lg:text-5xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wide mb-4 leading-tight">
+              الأَرْبَعُونَ النَّوَوِيَّةُ • مَسَاقُ التَّرْبِيَةِ وَالسُّلُوكِ
+            </h2>
+
+            <p className="font-ibm text-sm sm:text-base text-[#1D2A24]/80 dark:text-[#C5D5CC] leading-relaxed">
+              42 لوحة فنية عالية الدقة تجمع جوامع كِلم المصطفى ﷺ، مؤطرة بشعار وهوية الطريقة القادرية البودشيشية (مدينة المحمدية)؛
+              تُمثّل القواعد الكلية لدين الإسلام ومقامات الإحسان لسالك طريق الله.
+            </p>
           </div>
-
-          <h2 className="font-amiri text-3xl sm:text-4xl lg:text-5xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wide mb-4 leading-tight">
-            الأَرْبَعُونَ النَّوَوِيَّةُ • مَسَاقُ التَّرْبِيَةِ وَالسُّلُوكِ
-          </h2>
-
-          <p className="font-ibm text-sm sm:text-base text-[#1D2A24]/80 dark:text-[#C5D5CC] leading-relaxed">
-            42 لوحة فنية عالية الدقة تجمع جوامع كِلم المصطفى ﷺ، مؤطرة بشعار وهوية الطريقة القادرية البودشيشية (مدينة المحمدية)؛
-            تُمثّل القواعد الكلية لدين الإسلام ومقامات الإحسان لسالك طريق الله.
-          </p>
-        </div>
+        )}
 
         {/* Search & Filter Controls */}
         <div className="mb-10 space-y-4">
@@ -280,6 +287,6 @@ export function ArbaeenSection() {
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 }

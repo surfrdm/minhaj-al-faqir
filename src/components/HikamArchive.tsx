@@ -18,7 +18,11 @@ import {
 } from "lucide-react";
 import { HIKAM_LIST, HikmaItem, getAllTopics } from "@/lib/hikam";
 
-export function HikamArchive() {
+interface HikamArchiveProps {
+  isEmbedded?: boolean;
+}
+
+export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("all");
   const [selectedHikma, setSelectedHikma] = useState<HikmaItem | null>(null);
@@ -85,11 +89,11 @@ export function HikamArchive() {
   };
 
   return (
-    <section id="archive" className="scroll-mt-24 py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 border-b border-[#E7DFD5] dark:border-[#203A2F] pb-8">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#C5A059] mb-2">
+    <div id="archive" className={`scroll-mt-24 ${isEmbedded ? "py-4 w-full" : "py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"}`}>
+      {/* Title (Standalone only) */}
+      {!isEmbedded && (
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-2 text-xs font-bold text-[#C5A059] mb-2 px-3.5 py-1 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30">
             <Layers className="w-4 h-4" />
             <span>المَعْرِضُ التَّفَاعُلِي الشَّامِل</span>
           </div>
@@ -100,16 +104,18 @@ export function HikamArchive() {
             ابحث وفلتر جميع الحكم المصممة حسب الموضوع أو اللغة وتأمل دقائق أسرارها.
           </p>
         </div>
+      )}
 
-        {/* Search Input */}
-        <div className="relative w-full md:w-80">
+      {/* Search Bar Controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+        <div className="relative w-full sm:w-96">
           <Search className="w-4 h-4 text-[#C5A059] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="ابحث برقم الحكمة، نصها، أو الكلمة..."
-            className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-white dark:bg-[#12241D] border border-[#E7DFD5] dark:border-[#203A2F] text-sm text-[#1D2A24] dark:text-[#E8F0EC] placeholder-[#596B62]/60 focus:outline-none focus:border-[#C5A059] transition"
+            placeholder="ابحث برقم الحكمة (1-264)، نصها، أو الكلمة..."
+            className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-white dark:bg-[#12241D] border border-[#E7DFD5] dark:border-[#203A2F] text-sm text-[#1D2A24] dark:text-[#E8F0EC] placeholder-[#596B62]/60 focus:outline-none focus:border-[#C5A059] transition shadow-sm"
           />
           {searchQuery && (
             <button
@@ -119,6 +125,10 @@ export function HikamArchive() {
               <X className="w-4 h-4" />
             </button>
           )}
+        </div>
+
+        <div className="text-xs font-semibold text-[#52796F] dark:text-[#95B8A8]">
+          عرض <span className="font-mono text-[#1B4332] dark:text-[#E5C378] font-bold">{filteredHikam.length}</span> من 264 درة عطائية
         </div>
       </div>
 
@@ -392,6 +402,6 @@ export function HikamArchive() {
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 }

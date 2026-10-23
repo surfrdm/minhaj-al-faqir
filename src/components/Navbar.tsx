@@ -91,13 +91,10 @@ export function Navbar() {
               <span className="sr-only">التعريف بالطريقة وشيخها</span>
             </button>
 
-            {/* Title & Mohammedia Designation */}
-            <a href="#" className="flex flex-col text-right">
-              <span className="font-amiri text-xl sm:text-2xl font-bold tracking-wide text-[#143628] dark:text-[#E8F0EC]">
+            {/* Title */}
+            <a href="#" className="flex items-center text-right">
+              <span className="font-amiri text-2xl sm:text-3xl font-bold tracking-wide text-[#143628] dark:text-[#E8F0EC]">
                 مِنْهَاجُ الفَقِير
-              </span>
-              <span className="text-[10px] sm:text-[11px] font-sans tracking-wider text-[#C5A059] dark:text-[#D4AF37] font-semibold">
-                الطريقة القادرية البودشيشية • مدينة المحمدية
               </span>
             </a>
           </div>
