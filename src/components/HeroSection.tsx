@@ -18,16 +18,6 @@ export function HeroSection() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[380px] bg-[#C5A059]/10 dark:bg-[#1B4332]/25 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Official Boutchichiyya Mohammedia Logo */}
-        <div className="flex flex-col items-center justify-center mb-6">
-          <div className="w-44 sm:w-56 md:w-64 p-3 rounded-2xl bg-white/60 dark:bg-[#122820]/60 backdrop-blur-sm border border-[#C5A059]/30 shadow-md hover:scale-105 transition-all duration-300">
-            <img
-              src="/images/logo_boutchichiyya_mohammedia.png"
-              alt="شعار الطريقة القادرية البودشيشية - مدينة المحمدية"
-              className="w-full h-auto object-contain filter drop-shadow-sm"
-            />
-          </div>
-        </div>
 
         {/* Top Spiritual Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#9E7B35] dark:text-[#E5C378] text-xs sm:text-sm font-semibold mb-8">
