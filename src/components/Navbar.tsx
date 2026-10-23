@@ -73,19 +73,21 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Brand Seal / Logo */}
+          {/* Brand Seal / Official Boutchichiyya Mohammedia Emblem */}
           <a href="#" className="flex items-center gap-3.5 group">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1B4332] to-[#143628] dark:from-[#2D6A4F] dark:to-[#1B4332] flex items-center justify-center text-[#C5A059] shadow-md border border-[#C5A059]/40 group-hover:scale-105 transition-transform duration-300">
-              <span className="font-amiri text-2xl font-bold leading-none select-none">
-                م
-              </span>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#1B4332] to-[#143628] dark:from-[#2D6A4F] dark:to-[#1B4332] flex items-center justify-center p-1.5 shadow-md border border-[#C5A059]/50 group-hover:scale-105 transition-transform duration-300">
+              <img
+                src="/images/rosette_boutchichiyya.png"
+                alt="شعار الطريقة القادرية البودشيشية"
+                className="w-full h-full object-contain filter drop-shadow"
+              />
             </div>
             <div className="flex flex-col text-right">
-              <span className="font-amiri text-2xl font-bold tracking-wide text-[#143628] dark:text-[#E8F0EC]">
+              <span className="font-amiri text-xl sm:text-2xl font-bold tracking-wide text-[#143628] dark:text-[#E8F0EC]">
                 مِنْهَاجُ الفَقِير
               </span>
-              <span className="text-[11px] font-sans tracking-wider text-[#C5A059] dark:text-[#D4AF37] font-medium">
-                الأكاديمية التكوينية والتأصيلية • الطريقة البودشيشية
+              <span className="text-[10px] sm:text-[11px] font-sans tracking-wider text-[#C5A059] dark:text-[#D4AF37] font-semibold">
+                الطريقة القادرية البودشيشية • مدينة المحمدية
               </span>
             </div>
           </a>

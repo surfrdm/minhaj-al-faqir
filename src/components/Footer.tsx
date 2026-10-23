@@ -20,16 +20,20 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-white/10 text-right">
           {/* Brand & Vision */}
           <div className="md:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#C5A059] flex items-center justify-center text-[#143628] font-amiri text-2xl font-bold">
-                م
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-full bg-white/10 p-1.5 flex items-center justify-center border border-[#C5A059]/50 shadow-md">
+                <img
+                  src="/images/rosette_boutchichiyya.png"
+                  alt="شعار الطريقة القادرية البودشيشية"
+                  className="w-full h-full object-contain filter drop-shadow"
+                />
               </div>
               <div>
                 <span className="font-amiri text-2xl font-bold block">
                   مِنْهَاجُ الفَقِير
                 </span>
-                <span className="text-xs text-[#C5A059] block">
-                  الأكاديمية التكوينية والتأصيلية لسالكي الطريقة القادرية البودشيشية
+                <span className="text-xs text-[#C5A059] block font-medium">
+                  الطريقة القادرية البودشيشية • زاوية مدينة المحمدية
                 </span>
               </div>
             </div>
