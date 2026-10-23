@@ -1,0 +1,150 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Moon,
+  Sun,
+  Menu,
+  X,
+  GraduationCap,
+  Scale,
+  Sparkles,
+  BookOpen,
+  Layers,
+  HelpCircle,
+  Clock,
+} from "lucide-react";
+
+export function Navbar() {
+  const [isDark, setIsDark] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const isDarkStored =
+      localStorage.getItem("theme") === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    if (isDarkStored) {
+      document.documentElement.classList.add("dark");
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+      setIsDark(false);
+    }
+
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const toggleTheme = () => {
+    if (isDark) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+      setIsDark(false);
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setIsDark(true);
+    }
+  };
+
+  const navLinks = [
+    { href: "#tracks", label: "الأسلاك التكوينية", icon: GraduationCap },
+    { href: "#evidence", label: "التأصيل الشرعي", icon: Scale },
+    { href: "#wazifa", label: "الأوراد والوظيفة", icon: Clock },
+    { href: "#academy", label: "الأكاديمية والمتون", icon: BookOpen },
+    { href: "#hikma-today", label: "حكمة اليوم", icon: Sparkles },
+    { href: "#archive", label: "الحكم العطائية (٢٦٤)", icon: Layers },
+    { href: "#glossary", label: "معجم الطريق", icon: HelpCircle },
+  ];
+
+  return (
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 bg-[#FAF7F2]/95 dark:bg-[#0B1914]/95 backdrop-blur-md border-b border-[#E7DFD5]/80 dark:border-[#203A2F] ${
+        scrolled ? "shadow-md" : "shadow-sm"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Brand Seal / Logo */}
+          <a href="#" className="flex items-center gap-3.5 group">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#1B4332] to-[#143628] dark:from-[#2D6A4F] dark:to-[#1B4332] flex items-center justify-center text-[#C5A059] shadow-md border border-[#C5A059]/40 group-hover:scale-105 transition-transform duration-300">
+              <span className="font-amiri text-2xl font-bold leading-none select-none">
+                م
+              </span>
+            </div>
+            <div className="flex flex-col text-right">
+              <span className="font-amiri text-2xl font-bold tracking-wide text-[#143628] dark:text-[#E8F0EC]">
+                مِنْهَاجُ الفَقِير
+              </span>
+              <span className="text-[11px] font-sans tracking-wider text-[#C5A059] dark:text-[#D4AF37] font-medium">
+                الأكاديمية التكوينية والتأصيلية • الطريقة البودشيشية
+              </span>
+            </div>
+          </a>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navLinks.map((item) => {
+              const Icon = item.icon;
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all duration-200"
+                >
+                  <Icon className="w-3.5 h-3.5 text-[#C5A059]" />
+                  <span>{item.label}</span>
+                </a>
+              );
+            })}
+          </nav>
+
+          {/* Actions: Theme Toggle & Mobile Menu Trigger */}
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={toggleTheme}
+              aria-label="تبديل الوضع الليلي والنهاري"
+              className="p-2.5 rounded-full border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#D4AF37] bg-white/70 dark:bg-[#12241D] hover:bg-[#C5A059]/15 hover:border-[#C5A059] transition-all duration-200 shadow-sm"
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2.5 rounded-lg border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#E8F0EC] bg-white/70 dark:bg-[#12241D]"
+              aria-label="القائمة"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-[#FAF7F2] dark:bg-[#0B1914] border-b border-[#E7DFD5] dark:border-[#203A2F] px-4 pt-2 pb-6 space-y-2 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
+          {navLinks.map((item) => {
+            const Icon = item.icon;
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15"
+              >
+                <Icon className="w-4 h-4 text-[#C5A059]" />
+                <span>{item.label}</span>
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </header>
+  );
+}

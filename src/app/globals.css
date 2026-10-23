@@ -1,26 +1,111 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@variant dark (&:where(.dark, .dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-paper: #FAF7F2;
+    --bg-card: #FFFFFF;
+    --bg-card-muted: #F4EFE6;
+    --border-warm: #E7DFD5;
+    --primary-green: #1B4332;
+    --primary-green-dark: #143628;
+    --primary-green-light: #2D6A4F;
+    --accent-gold: #C5A059;
+    --accent-gold-light: #DFC07D;
+    --accent-gold-dark: #9E7B35;
+    --text-primary: #1D2A24;
+    --text-muted: #596B62;
+  }
+
+  .dark {
+    --bg-paper: #0B1914;
+    --bg-card: #12241D;
+    --bg-card-muted: #172D24;
+    --border-warm: #203A2F;
+    --primary-green: #2D6A4F;
+    --primary-green-dark: #1B4332;
+    --primary-green-light: #40916C;
+    --accent-gold: #D4AF37;
+    --accent-gold-light: #E9D087;
+    --accent-gold-dark: #B38E22;
+    --text-primary: #EAF2ED;
+    --text-muted: #9BB0A5;
   }
 }
 
+@theme {
+  --font-amiri: var(--font-amiri), serif;
+  --font-sans: var(--font-ibm-arabic), system-ui, sans-serif;
+  --font-cormorant: var(--font-cormorant), serif;
+  --font-jakarta: var(--font-jakarta), sans-serif;
+
+  --color-paper: var(--bg-paper);
+  --color-paper-card: var(--bg-card);
+  --color-paper-muted: var(--bg-card-muted);
+  --color-border-warm: var(--border-warm);
+
+  --color-sufi-900: #0B1914;
+  --color-sufi-800: #143628;
+  --color-sufi-700: #1B4332;
+  --color-sufi-600: #2D6A4F;
+  --color-sufi-500: #40916C;
+  --color-sufi-400: #52B788;
+  --color-sufi-100: #D8F3DC;
+
+  --color-gold-600: #9E7B35;
+  --color-gold-500: #C5A059;
+  --color-gold-400: #D4AF37;
+  --color-gold-300: #E5C378;
+  --color-gold-100: #FAF1DC;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-ibm-arabic), system-ui, -apple-system, sans-serif;
+}
+
+.font-amiri {
+  font-family: var(--font-amiri), serif;
+}
+
+.font-ibm {
+  font-family: var(--font-ibm-arabic), sans-serif;
+}
+
+.font-cormorant {
+  font-family: var(--font-cormorant), serif;
+}
+
+.font-jakarta {
+  font-family: var(--font-jakarta), sans-serif;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C5A05944;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C5A05988;
+}
+
+/* Gold shimmer border effect */
+.border-gold-gradient {
+  border-image: linear-gradient(to bottom, #C5A059 0%, #1B4332 50%, #C5A059 100%) 1;
+}
+
+/* Subtle paper texture */
+.bg-subtle-pattern {
+  background-image: radial-gradient(#C5A059 0.6px, transparent 0.6px);
+  background-size: 24px 24px;
 }
