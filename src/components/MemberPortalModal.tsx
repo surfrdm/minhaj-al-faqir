@@ -562,7 +562,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                   <ul className="text-xs space-y-2 text-[#52796F] dark:text-[#95B8A8]">
                     <li className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-[#C5A059]" />
-                      <span>تحميل لوحات الأربعين النووية (42) بدقة الطباعة الأصلية 300 DPI.</span>
+                      <span>الاطلاع والتأمل في كامل لوحات الأربعين النووية (42) والشروح المصاحبة.</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-[#C5A059]" />

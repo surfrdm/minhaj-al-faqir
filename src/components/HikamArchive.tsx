@@ -8,7 +8,6 @@ import {
   Sparkles,
   BookOpen,
   X,
-  Download,
   Share2,
   Copy,
   Check,
@@ -267,22 +266,23 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
                 </div>
 
                 <div className="w-full flex items-center gap-2 mt-3">
-                  <a
-                    href={selectedHikma.capsule_image_url}
-                    download={`Hikma_${selectedHikma.number}.jpg`}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white dark:bg-[#12241D] border border-[#E7DFD5] dark:border-[#203A2F] text-xs font-medium text-[#1D2A24] dark:text-[#E8F0EC] hover:border-[#C5A059]"
-                  >
-                    <Download className="w-3.5 h-3.5 text-[#C5A059]" />
-                    <span>تحميل</span>
-                  </a>
-
                   <button
                     onClick={handleWhatsAppModalShare}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 text-xs font-semibold text-[#1B4332] dark:text-[#25D366]"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 text-xs font-semibold text-[#1B4332] dark:text-[#25D366] hover:bg-[#25D366]/25 transition"
                   >
                     <Share2 className="w-3.5 h-3.5" />
-                    <span>واتساب</span>
+                    <span>مشاركة الحكمة</span>
                   </button>
+
+                  <a
+                    href="https://www.facebook.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="صفحة الطريقة القادرية البودشيشية بمدينة المحمدية"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition"
+                  >
+                    <span>صفحة فيسبوك</span>
+                  </a>
                 </div>
               </div>
 

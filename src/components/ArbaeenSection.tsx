@@ -5,7 +5,6 @@ import arbaeenData from "@/data/arbaeen.json";
 import {
   Search,
   BookOpen,
-  Download,
   Share2,
   ZoomIn,
   X,
@@ -260,28 +259,28 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
 
                 <p className="text-xs text-[#718279] dark:text-[#8D9F95] leading-relaxed">
                   هذه اللوحة الشريفة مصممة ومعتمدة بهوية الطريقة القادرية البودشيشية (مدينة المحمدية)،
-                  قابلة للتحميل والمشاركة بهدف نشر جوامع كلم الحبيب المصطفى ﷺ وتربية القلوب.
+                  مخصصة للمدارسة ونشر جوامع كلم الحبيب المصطفى ﷺ وتربية القلوب.
                 </p>
               </div>
 
               {/* Action Buttons */}
               <div className="pt-6 space-y-2.5">
-                <a
-                  href={selectedHadith.image}
-                  download={`Hadith_${selectedHadith.id}_Minhaj_Al_Faqir.png`}
-                  className="w-full py-3 rounded-xl bg-[#1B4332] hover:bg-[#143628] text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all border border-[#C5A059]/40"
-                >
-                  <Download className="w-4 h-4 text-[#C5A059]" />
-                  <span>تحميل اللوحة بدقة الطباعة (PNG)</span>
-                </a>
-
                 <button
                   onClick={() => shareOnWhatsApp(selectedHadith)}
-                  className="w-full py-2.5 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+                  className="w-full py-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all"
                 >
                   <Share2 className="w-4 h-4" />
-                  <span>مشاركة عبر واتساب</span>
+                  <span>مشاركة الحديث عبر واتساب</span>
                 </button>
+
+                <a
+                  href="https://www.facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-semibold flex items-center justify-center gap-2 transition-all"
+                >
+                  <span>متابعة صفحة الطريقة بالفيسبوك (مدينة المحمدية)</span>
+                </a>
               </div>
             </div>
           </div>

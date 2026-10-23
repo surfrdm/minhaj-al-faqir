@@ -7,7 +7,6 @@ import {
   ChevronRight,
   ChevronLeft,
   Share2,
-  Download,
   Copy,
   Check,
   Maximize2,
@@ -186,22 +185,23 @@ export function HikmaOfTheDay() {
 
           {/* Action Bar below Image */}
           <div className="w-full max-w-[380px] mt-4 flex items-center justify-between gap-2">
-            <a
-              href={currentHikma.capsule_image_url}
-              download={`Hikma_${currentHikma.number}.jpg`}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-white dark:bg-[#172D24] border border-[#E7DFD5] dark:border-[#203A2F] text-xs font-medium text-[#1D2A24] dark:text-[#E8F0EC] hover:border-[#C5A059] hover:text-[#C5A059] transition"
-            >
-              <Download className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>تحميل الكبسولة</span>
-            </a>
-
             <button
               onClick={handleWhatsAppShare}
               className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-xs font-semibold text-[#1B4332] dark:text-[#25D366] transition"
             >
               <Share2 className="w-3.5 h-3.5" />
-              <span>واتساب</span>
+              <span>مشاركة الحكمة</span>
             </button>
+
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="صفحة الطريقة القادرية البودشيشية بمدينة المحمدية"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition"
+            >
+              <span>صفحة فيسبوك</span>
+            </a>
           </div>
         </div>
 
