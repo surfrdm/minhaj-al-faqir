@@ -94,7 +94,7 @@ export function HikamArchive() {
             <span>المَعْرِضُ التَّفَاعُلِي الشَّامِل</span>
           </div>
           <h2 className="font-amiri text-3xl sm:text-4xl font-bold text-[#143628] dark:text-[#FAF7F2]">
-            أَرْشِيفُ الحِكَمِ العَطَائِيَّةِ (٢٦٤ كَبْسُولَة)
+            أَرْشِيفُ الحِكَمِ العَطَائِيَّةِ (264 كَبْسُولَة)
           </h2>
           <p className="text-sm text-[#596B62] dark:text-[#9BB0A5] font-ibm mt-1">
             ابحث وفلتر جميع الحكم المصممة حسب الموضوع أو اللغة وتأمل دقائق أسرارها.
@@ -138,7 +138,7 @@ export function HikamArchive() {
                 : "bg-white dark:bg-[#12241D] text-[#596B62] dark:text-[#9BB0A5] border border-[#E7DFD5] dark:border-[#203A2F] hover:border-[#C5A059]"
             }`}
           >
-            {t === "all" ? "كافة الحكم (٢٦٤)" : t}
+            {t === "all" ? "كافة الحكم (264)" : t}
           </button>
         ))}
       </div>

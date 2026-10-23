@@ -13,12 +13,15 @@ import {
   Layers,
   HelpCircle,
   Clock,
+  User,
 } from "lucide-react";
+import { MemberPortalModal } from "./MemberPortalModal";
 
 export function Navbar() {
   const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [portalOpen, setPortalOpen] = useState(false);
 
   useEffect(() => {
     const isDarkStored =
@@ -58,7 +61,7 @@ export function Navbar() {
     { href: "#wazifa", label: "الأوراد والوظيفة", icon: Clock },
     { href: "#academy", label: "الأكاديمية والمتون", icon: BookOpen },
     { href: "#hikma-today", label: "حكمة اليوم", icon: Sparkles },
-    { href: "#archive", label: "الحكم العطائية (٢٦٤)", icon: Layers },
+    { href: "#archive", label: "الحكم العطائية (264)", icon: Layers },
     { href: "#glossary", label: "معجم الطريق", icon: HelpCircle },
   ];
 
@@ -104,12 +107,20 @@ export function Navbar() {
             })}
           </nav>
 
-          {/* Actions: Theme Toggle & Mobile Menu Trigger */}
-          <div className="flex items-center gap-2.5">
+          {/* Actions: Member Portal, Theme Toggle & Mobile Menu */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <button
+              onClick={() => setPortalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#1B4332] hover:bg-[#143628] text-[#FAF7F2] text-xs font-semibold shadow-sm hover:shadow-md transition-all duration-200 border border-[#C5A059]/40 hover:-translate-y-0.5"
+            >
+              <User className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>فضاء الفقير</span>
+            </button>
+
             <button
               onClick={toggleTheme}
               aria-label="تبديل الوضع الليلي والنهاري"
-              className="p-2.5 rounded-full border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#D4AF37] bg-white/70 dark:bg-[#12241D] hover:bg-[#C5A059]/15 hover:border-[#C5A059] transition-all duration-200 shadow-sm"
+              className="p-2 sm:p-2.5 rounded-full border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#D4AF37] bg-white/70 dark:bg-[#12241D] hover:bg-[#C5A059]/15 hover:border-[#C5A059] transition-all duration-200 shadow-sm"
             >
               {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
@@ -117,7 +128,7 @@ export function Navbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2.5 rounded-lg border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#E8F0EC] bg-white/70 dark:bg-[#12241D]"
+              className="lg:hidden p-2 sm:p-2.5 rounded-lg border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#E8F0EC] bg-white/70 dark:bg-[#12241D]"
               aria-label="القائمة"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -129,6 +140,16 @@ export function Navbar() {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#FAF7F2] dark:bg-[#0B1914] border-b border-[#E7DFD5] dark:border-[#203A2F] px-4 pt-2 pb-6 space-y-2 shadow-xl animate-in fade-in slide-in-from-top-3 duration-200">
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setPortalOpen(true);
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-[#1B4332] border border-[#C5A059]/40 mb-2"
+          >
+            <User className="w-4 h-4 text-[#C5A059]" />
+            <span>فضاء الفقير (الملزومات والمساهمات)</span>
+          </button>
           {navLinks.map((item) => {
             const Icon = item.icon;
             return (
@@ -145,6 +166,9 @@ export function Navbar() {
           })}
         </div>
       )}
+
+      {/* Faqir Member Portal Modal */}
+      <MemberPortalModal isOpen={portalOpen} onClose={() => setPortalOpen(false)} />
     </header>
   );
 }

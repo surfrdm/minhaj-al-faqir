@@ -74,7 +74,7 @@ export function Footer() {
               </li>
               <li>
                 <a href="#archive" className="hover:text-[#C5A059] transition">
-                  • أرشيف الحكم العطائية (٢٦٤)
+                  • أرشيف الحكم العطائية (264)
                 </a>
               </li>
               <li>
