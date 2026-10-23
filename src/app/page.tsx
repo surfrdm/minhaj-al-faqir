@@ -1,10 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
-import { HikmaOfTheDay } from "@/components/HikmaOfTheDay";
-import { CurriculumRoadmap } from "@/components/CurriculumRoadmap";
-import { ArbaeenSection } from "@/components/ArbaeenSection";
-import { HikamArchive } from "@/components/HikamArchive";
-import { GlossarySection } from "@/components/GlossarySection";
+import { UnifiedKnowledgeHub } from "@/components/UnifiedKnowledgeHub";
 import { Footer } from "@/components/Footer";
 
 export default function Home() {
@@ -13,11 +9,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <HeroSection />
-        <HikmaOfTheDay />
-        <CurriculumRoadmap />
-        <ArbaeenSection />
-        <HikamArchive />
-        <GlossarySection />
+        <UnifiedKnowledgeHub />
       </main>
       <Footer />
     </div>
