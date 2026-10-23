@@ -59,7 +59,7 @@ export function Navbar() {
     { href: "#tracks", label: "الأسلاك التكوينية", icon: GraduationCap },
     { href: "#evidence", label: "التأصيل الشرعي", icon: Scale },
     { href: "#wazifa", label: "الأوراد والوظيفة", icon: Clock },
-    { href: "#academy", label: "الأكاديمية والمتون", icon: BookOpen },
+    { href: "#arbaeen", label: "الأربعين النووية (42)", icon: BookOpen },
     { href: "#hikma-today", label: "حكمة اليوم", icon: Sparkles },
     { href: "#archive", label: "الحكم العطائية (264)", icon: Layers },
     { href: "#glossary", label: "معجم الطريق", icon: HelpCircle },
