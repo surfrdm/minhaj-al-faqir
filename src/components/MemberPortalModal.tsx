@@ -524,7 +524,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                     دفتر الورد اليومي والوظيفة
                   </h4>
                   <p className="text-xs text-[#52796F] dark:text-[#95B8A8]">
-                    متابعة يومية لأداء الورد العام (صباحاً ومساءً)، صلاة الفاتح، والصلاة المشيشية الشريفة.
+                    متابعة يومية لأداء الوظيفة الراتبة والأوراد وتلاوة الحزب القرآني.
                   </p>
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#0B1914] border border-[#C5A059]/30">

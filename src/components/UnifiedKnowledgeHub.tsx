@@ -142,9 +142,9 @@ const CATEGORIES: NavCategory[] = [
       {
         id: "wazifa",
         title: "الأوراد والوظيفة اليومية",
-        badge: "الورد العام",
-        count: "الصلوات الراتبة",
-        desc: "صلاة الفاتح، الصلاة المشيشية، وأذكار الصباح والمساء",
+        badge: "الوظيفة الراتبة",
+        count: "المجالس اليومية",
+        desc: "عمارة مجالس الذكر بالوظيفة الراتبة وتلاوة الحزب القرآني بين المغرب والعشاء",
         icon: Clock,
       },
     ],
@@ -703,89 +703,46 @@ export function UnifiedKnowledgeHub() {
                 <div className="space-y-6" id="wazifa">
                   <div className="p-4 rounded-xl bg-gradient-to-r from-[#1B4332]/10 to-[#C5A059]/10 border border-[#C5A059]/30">
                     <h4 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
-                      فقه الأوراد والوظيفة الراتبة في الطريقة البودشيشية
+                      فقه الوظيفة الراتبة في الطريقة البودشيشية
                     </h4>
                     <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                      التربية اليومية القائمة على المحافظة على الورد العام صباحاً ومساءً، وعمارة المجالس بالوظيفة الراتبة وصلاة الفاتح والصلاة المشيشية.
+                      التربية اليومية القائمة على عمارة المجالس بالوظيفة الراتبة وتلاوة الحزب القرآني الراتب بالزاوية.
                     </p>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3 flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
-                            <Clock className="w-4 h-4 text-[#C5A059]" />
-                            <h5 className="font-amiri text-base font-bold">الورد العام (صباحاً وعشياً)</h5>
-                          </div>
-                          <a
-                            href="https://www.facebook.com/zaouia.mohammedia"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-1 rounded text-[#1877F2] hover:bg-[#1877F2]/10"
-                            title="صفحة الزاوية على فيسبوك"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                        </div>
-                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
-                          • 100 مرة: الاستغفار (أستغفر الله العظيم وأتوب إليه)<br />
-                          • 100 مرة: الصلاة على النبي ﷺ<br />
-                          • 100 مرة: الهيللة (لا إله إلا الله)<br />
-                          يُؤدى بعد صلاة الصبح وبعد صلاة العصر/المغرب، وهو عهد السالك وركيزة صفاء قلبه.
-                        </p>
+                  <div className="p-5 sm:p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                        <Sparkles className="w-5 h-5 text-[#C5A059]" />
+                        <h5 className="font-amiri text-lg font-bold">الوظيفة الراتبة</h5>
                       </div>
-                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
+                      <div className="flex items-center gap-2">
+                        <a
+                          href="https://www.facebook.com/zaouia.mohammedia"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="py-1 px-3 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
+                          title="صفحة الزاوية على فيسبوك"
+                        >
+                          <span>فيسبوك</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
                         <button
                           onClick={() => {
-                            const text = `📿 الورد العام لمريدي الطريقة القادرية البودشيشية:\n100 استغفار + 100 صلاة على النبي + 100 لا إله إلا الله (صباحاً ومساءً).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            const text = `✨ الوظيفة الراتبة في الطريقة البودشيشية:\nالوظيفة الراتبة وتلاوة الحزب القرآني الراتب كل يوم بين المغرب والعشاء بالزاوية.\n\nطالع تفاصيل الوظيفة: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
                             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
                           }}
-                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                          className="py-1 px-3 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
                         >
-                          <Share2 className="w-3 h-3" />
-                          <span>مشاركة الورد</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3 flex flex-col justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
-                            <Sparkles className="w-4 h-4 text-[#C5A059]" />
-                            <h5 className="font-amiri text-base font-bold">الوظيفة الراتبة والصلوات</h5>
-                          </div>
-                          <a
-                            href="https://www.facebook.com/zaouia.mohammedia"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-1 rounded text-[#1877F2] hover:bg-[#1877F2]/10"
-                            title="صفحة الزاوية على فيسبوك"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                        </div>
-                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
-                          • الوظيفة الجامعة التي تجمع الفقراء في الزاوية كل يوم بين المغرب والعشاء.<br />
-                          • تلاوة الحزب القرآني الراتب.<br />
-                          • الصلاة المشيشية لسيدي عبد السلام بن مشيش.<br />
-                          • صلاة الفاتح لما أغلق، وجوهرة الكمال في مجالس الجمعة.
-                        </p>
-                      </div>
-                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
-                        <button
-                          onClick={() => {
-                            const text = `✨ الوظيفة الراتبة في الطريقة البودشيشية:\nالوظيفة الجامعة، الحزب القرآني الراتب، الصلاة المشيشية، وصلاة الفاتح.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
-                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
-                          }}
-                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
-                        >
-                          <Share2 className="w-3 h-3" />
+                          <Share2 className="w-3.5 h-3.5" />
                           <span>مشاركة الوظيفة</span>
                         </button>
                       </div>
                     </div>
+                    <p className="text-sm text-[#1D2A24]/90 dark:text-[#D5E2DB] font-ibm leading-relaxed">
+                      • الوظيفة التي تجمع الفقراء في الزاوية كل يوم بين المغرب والعشاء.<br />
+                      • تلاوة الحزب القرآني الراتب.
+                    </p>
                   </div>
 
                   {/* فقه الطريق: آداب مجالس الذكر (11 أدباً) */}
