@@ -32,16 +32,16 @@ export function CurriculumRoadmap() {
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378] text-xs font-semibold mb-4 border border-[#C5A059]/30">
-            <GraduationCap className="w-4 h-4 text-[#C5A059]" />
-            <span>المَنْهَجُ التَّكْوِينِيُّ المَدْرَسِيُّ المُتَدَرِّجُ</span>
+            <Sparkles className="w-4 h-4 text-[#C5A059]" />
+            <span>مَعَالِمُ التَّكْوِينِ الذَّاتِيِّ وَالارْتِقَاءِ الرُّوحِيِّ</span>
           </div>
           <h2 className="font-amiri text-3xl sm:text-5xl font-bold text-[#143628] dark:text-[#FAF7F2] mb-4">
-            أَسْلَاكُ مِنْهَاجِ الفَقِيرِ (المَدْرَسَةُ التَّعْلِيمِيَّةُ)
+            مَدَارِجُ مِنْهَاجِ الفَقِيرِ (مَسَارَاتُ التَّزْكِيَةِ وَالسُّلُوكِ)
           </h2>
           <p className="text-[#596B62] dark:text-[#9BB0A5] font-ibm text-base sm:text-lg leading-relaxed">
-            تدرج بيداغوجي واضح يصحب السالك كـ «القراية في المدرسة»:
-            من فهم الفقر والصحبة، إلى امتلاك التأصيل الشرعي القطعي لممارسات الطريق،
-            ثم مواظبة الأوراد والوظيفة، ودراسة الأربعين النووية وأمهات متون السلوك.
+            تدرج روحي وسلوكي مبارك يصحب المريد في مدارج القرب:
+            من فهم حقيقة الفقر ولزوم صحبة العارفين، إلى امتلاك التأصيل الشرعي الراسخ لآداب الطريق،
+            وصولاً إلى ثبات الأوراد والوظيفة، ومدارسة الأربعين النووية وأمهات درر السلوك.
           </p>
         </div>
 

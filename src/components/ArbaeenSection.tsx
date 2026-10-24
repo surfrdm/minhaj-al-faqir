@@ -6,12 +6,15 @@ import {
   Search,
   BookOpen,
   Share2,
-  ZoomIn,
   X,
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Scroll
+  Scroll,
+  ExternalLink,
+  Copy,
+  Check,
+  Languages,
 } from "lucide-react";
 
 interface Hadith {
@@ -21,17 +24,25 @@ interface Hadith {
   theme: string;
   narrator: string;
   source: string;
-  image: string;
+  image?: string;
+  text_ar: string;
+  text_fr?: string;
+  text_en?: string;
+  suluk_lesson?: string;
 }
 
 interface ArbaeenSectionProps {
   isEmbedded?: boolean;
 }
 
+const ZAWIYA_FACEBOOK_URL = "https://www.facebook.com/zaouia.mohammedia";
+
 export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTheme, setSelectedTheme] = useState("all");
   const [selectedHadith, setSelectedHadith] = useState<Hadith | null>(null);
+  const [modalLang, setModalLang] = useState<"ar" | "fr" | "en">("ar");
+  const [copied, setCopied] = useState(false);
 
   // Extract themes
   const themes = useMemo(() => {
@@ -41,13 +52,17 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
 
   // Filtered Hadiths
   const filteredHadiths = useMemo(() => {
-    return arbaeenData.filter((h) => {
+    return (arbaeenData as Hadith[]).filter((h) => {
+      const q = searchQuery.trim().toLowerCase();
       const matchesSearch =
-        searchQuery.trim() === "" ||
-        h.id.toString() === searchQuery.trim() ||
-        h.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        h.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        h.narrator.toLowerCase().includes(searchQuery.toLowerCase());
+        q === "" ||
+        h.id.toString() === q ||
+        h.title.toLowerCase().includes(q) ||
+        h.topic.toLowerCase().includes(q) ||
+        h.narrator.toLowerCase().includes(q) ||
+        (h.text_ar && h.text_ar.toLowerCase().includes(q)) ||
+        (h.text_fr && h.text_fr.toLowerCase().includes(q)) ||
+        (h.text_en && h.text_en.toLowerCase().includes(q));
 
       const matchesTheme = selectedTheme === "all" || h.theme === selectedTheme;
 
@@ -60,19 +75,36 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
     if (!selectedHadith) return;
     const currentIndex = arbaeenData.findIndex((h) => h.id === selectedHadith.id);
     const nextIndex = (currentIndex + 1) % arbaeenData.length;
-    setSelectedHadith(arbaeenData[nextIndex]);
+    setSelectedHadith(arbaeenData[nextIndex] as Hadith);
   };
 
   const handlePrev = () => {
     if (!selectedHadith) return;
     const currentIndex = arbaeenData.findIndex((h) => h.id === selectedHadith.id);
     const prevIndex = (currentIndex - 1 + arbaeenData.length) % arbaeenData.length;
-    setSelectedHadith(arbaeenData[prevIndex]);
+    setSelectedHadith(arbaeenData[prevIndex] as Hadith);
   };
 
   const shareOnWhatsApp = (h: Hadith) => {
-    const text = `📖 الحديث ${h.id} من الأربعين النووية:\n«${h.title}»\n${h.source} - ${h.narrator}\n\nطالع اللوحة الشريفة على منصة منهاج الفقير: ${window.location.origin}/#arbaeen`;
+    let hadithText = h.text_ar;
+    if (modalLang === "fr" && h.text_fr) hadithText = h.text_fr;
+    if (modalLang === "en" && h.text_en) hadithText = h.text_en;
+
+    const text = `📖 حديث شريف (#${h.id}/42 من الأربعين النووية):\n«${h.title}»\n\nنص الحديث:\n${hadithText}\n\nالراوي والمصدر: ${h.narrator} — ${h.source}\n\nطالع زاد المنهاج كاملاً: ${typeof window !== "undefined" ? window.location.origin : ""}/#arbaeen`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const copyHadith = (h: Hadith) => {
+    let hadithText = h.text_ar;
+    if (modalLang === "fr" && h.text_fr) hadithText = h.text_fr;
+    if (modalLang === "en" && h.text_en) hadithText = h.text_en;
+
+    const text = `الحديث الشريف (#${h.id}/42 من الأربعين النووية):\n«${h.title}»\n\nنص الحديث الشريف:\n${hadithText}\n\nعن: ${h.narrator}\nالمصدر: ${h.source}\nالموضوع: ${h.topic}\nالمدارسة السلوكية: ${h.suluk_lesson || ""}\n\n— منصة منهاج الفقير`;
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
@@ -87,16 +119,15 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 border border-[#1B4332]/20 dark:border-[#C5A059]/30 text-[#1B4332] dark:text-[#E5C378] text-xs sm:text-sm font-semibold mb-4">
               <Scroll className="w-4 h-4 text-[#C5A059]" />
-              <span>السلك العلمي والأكاديمي • زاوية مدينة المحمدية</span>
+              <span>مَسَاقُ الحَدِيثِ النَّبَوِيِّ الشَّرِيفِ • نُصُوصٌ مُحَقَّقَةٌ كَامِلَةٌ</span>
             </div>
 
             <h2 className="font-amiri text-3xl sm:text-4xl lg:text-5xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wide mb-4 leading-tight">
-              الأَرْبَعُونَ النَّوَوِيَّةُ • مَسَاقُ التَّرْبِيَةِ وَالسُّلُوكِ
+              الأَرْبَعُونَ النَّوَوِيَّةُ • مَسَارُ التَّزْكِيَةِ وَالسُّلُوكِ
             </h2>
 
             <p className="font-ibm text-sm sm:text-base text-[#1D2A24]/80 dark:text-[#C5D5CC] leading-relaxed">
-              42 لوحة فنية عالية الدقة تجمع جوامع كِلم المصطفى ﷺ، مؤطرة بشعار وهوية الطريقة القادرية البودشيشية (مدينة المحمدية)؛
-              تُمثّل القواعد الكلية لدين الإسلام ومقامات الإحسان لسالك طريق الله.
+              42 حديثاً شريفاً مكتوبة بكامل المتن والسند والتخريج، مع الترجمات الفرنسية والإنجليزية والمدارسة السلوكية الأصيلة، وروابط مباشرة لمشاهدة التصاميم الفنية على فيسبوك.
             </p>
           </div>
         )}
@@ -108,17 +139,17 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
             <div className="relative w-full sm:w-96">
               <input
                 type="text"
-                placeholder="ابحث برقم الحديث (1-42) أو بموضوعه (النيات، الورع، الإحسان)..."
+                placeholder="ابحث برقم الحديث (1-42)، بكلمة من نصه، أو بموضوعه..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-4 pr-10 py-3 rounded-xl bg-white dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] text-[#143628] dark:text-[#FAF7F2] text-xs sm:text-sm placeholder-[#9AA5A0] focus:outline-none focus:border-[#C5A059] shadow-sm transition-all"
+                className="w-full pl-4 pr-10 py-3 rounded-xl bg-white dark:bg-[#12241D] border border-[#E7DFD5] dark:border-[#203D31] text-[#143628] dark:text-[#FAF7F2] text-xs sm:text-sm placeholder-[#9AA5A0] focus:outline-none focus:border-[#C5A059] shadow-sm transition-all"
               />
               <Search className="w-4 h-4 text-[#C5A059] absolute right-3.5 top-1/2 -translate-y-1/2" />
             </div>
 
             {/* Total Badge */}
             <div className="text-xs font-semibold text-[#52796F] dark:text-[#95B8A8]">
-              عرض <span className="font-mono text-[#1B4332] dark:text-[#E5C378] font-bold">{filteredHadiths.length}</span> من 42 حديثاً
+              عرض <span className="font-mono text-[#1B4332] dark:text-[#E5C378] font-bold">{filteredHadiths.length}</span> من 42 حديثاً شريفاً بكامل المتن
             </div>
           </div>
 
@@ -131,7 +162,7 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                   selectedTheme === t
                     ? "bg-[#1B4332] text-[#FAF7F2] shadow-sm border border-[#C5A059]/40"
-                    : "bg-white dark:bg-[#122820] text-[#52796F] dark:text-[#95B8A8] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059]"
+                    : "bg-white dark:bg-[#12241D] text-[#52796F] dark:text-[#95B8A8] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059]"
                 }`}
               >
                 {t === "all" ? "كافة الأحاديث (42)" : t}
@@ -140,147 +171,270 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
           </div>
         </div>
 
-        {/* Hadith Posters Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+        {/* Hadith Illuminated Manuscript Tiles Grid (Text-First Architecture) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
           {filteredHadiths.map((h) => (
             <div
               key={h.id}
-              onClick={() => setSelectedHadith(h)}
-              className="group cursor-pointer rounded-2xl bg-white dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] p-2 sm:p-2.5 shadow-sm hover:shadow-xl hover:border-[#C5A059] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+              onClick={() => {
+                setSelectedHadith(h);
+                setModalLang("ar");
+              }}
+              className="group cursor-pointer rounded-2xl bg-gradient-to-br from-[#FFFDF9] to-[#FAF5ED] dark:from-[#0E2019] dark:to-[#081410] border border-[#E7DFD5] dark:border-[#203D31] p-5 shadow-sm hover:shadow-lg hover:border-[#C5A059] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
             >
-              {/* Poster Image Container */}
-              <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[#F4EFE6] dark:bg-[#0E2019] mb-3 border border-[#C5A059]/20 shadow-inner">
-                <img
-                  src={h.image}
-                  alt={h.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                  <div className="w-9 h-9 rounded-full bg-white/90 text-[#1B4332] flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity transform scale-75 group-hover:scale-100 duration-300">
-                    <ZoomIn className="w-4 h-4 text-[#C5A059]" />
-                  </div>
+              <div>
+                {/* Top Tile Bar */}
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
+                    #{h.id} / 42
+                  </span>
+                  <span className="text-[10px] font-semibold text-[#C5A059] truncate max-w-[130px]">
+                    {h.topic}
+                  </span>
                 </div>
 
-                {/* Number Badge */}
-                <span className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-[#1B4332]/90 text-[#FAF7F2] font-mono text-[11px] font-bold shadow border border-[#C5A059]/40">
-                  #{h.id}
-                </span>
+                {/* Hadith Calligraphic Title */}
+                <div className="py-1">
+                  <h3 className="font-amiri text-base sm:text-lg font-bold text-[#143628] dark:text-[#FAF7F2] leading-snug text-right mb-2">
+                    «{h.title}»
+                  </h3>
+                </div>
+
+                {/* Hadith Text Snippet Preview */}
+                <p className="font-amiri text-xs text-[#1D2A24]/75 dark:text-[#C5D5CC] line-clamp-3 leading-relaxed text-right mb-2">
+                  {h.text_ar}
+                </p>
               </div>
 
-              {/* Title & Metadata */}
-              <div className="text-right px-1">
-                <span className="text-[10px] text-[#C5A059] dark:text-[#D4AF37] font-semibold block mb-1">
-                  {h.topic}
+              {/* Bottom Tile Info */}
+              <div className="pt-3 mt-2 border-t border-[#E7DFD5]/80 dark:border-[#203D31]/80 space-y-1 text-right">
+                <span className="text-[11px] text-[#52796F] dark:text-[#95B8A8] font-ibm block truncate">
+                  عن: {h.narrator}
                 </span>
-                <h3 className="font-amiri text-sm sm:text-base font-bold text-[#143628] dark:text-[#E8F0EC] line-clamp-1 leading-snug mb-1">
-                  {h.title}
-                </h3>
-                <span className="text-[10px] text-[#718279] dark:text-[#8D9F95] block">
-                  {h.source}
-                </span>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-[#84928A]">{h.source}</span>
+                  <span className="text-[#C5A059] font-medium group-hover:translate-x-[-2px] transition-transform">
+                    اقرأ المتن كاملاً ↗
+                  </span>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Full-Screen Poster Zoom & Details Modal */}
+      {/* Full-Screen Illuminated Details Modal with Complete Text */}
       {selectedHadith && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
           onClick={() => setSelectedHadith(null)}
         >
           <div
-            className="relative w-full max-w-4xl max-h-[92vh] bg-[#FAF7F2] dark:bg-[#0E2019] rounded-2xl border border-[#C5A059]/40 shadow-2xl overflow-hidden flex flex-col md:flex-row"
+            className="relative w-full max-w-5xl bg-[#FAF7F2] dark:bg-[#0B1914] rounded-3xl border border-[#C5A059]/40 shadow-2xl overflow-hidden my-6"
             onClick={(e) => e.stopPropagation()}
             dir="rtl"
           >
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedHadith(null)}
-              className="absolute top-4 left-4 z-20 p-2 rounded-full bg-black/50 hover:bg-black/80 text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Poster Image (Left/Top) */}
-            <div className="md:w-3/5 bg-[#122820] flex items-center justify-center p-4 sm:p-6 overflow-hidden relative">
-              <img
-                src={selectedHadith.image}
-                alt={selectedHadith.title}
-                className="max-h-[75vh] w-auto object-contain rounded-xl shadow-2xl border border-[#C5A059]/30"
-              />
-
-              {/* Navigation Arrows */}
-              <button
-                onClick={handlePrev}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/70 text-white transition-all shadow"
-                title="الحديث السابق"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={handleNext}
-                className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/70 text-white transition-all shadow"
-                title="الحديث التالي"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Info & Actions (Right/Bottom) */}
-            <div className="md:w-2/5 p-6 flex flex-col justify-between overflow-y-auto">
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="px-2.5 py-1 rounded-full bg-[#C5A059]/20 text-[#9E7B35] dark:text-[#E5C378] text-xs font-mono font-bold">
-                    الحديث رقم {selectedHadith.id} من 42
-                  </span>
-                  <span className="text-xs text-[#52796F] dark:text-[#95B8A8] font-semibold">
-                    • {selectedHadith.theme}
-                  </span>
-                </div>
-
-                <h3 className="font-amiri text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] mb-3 leading-snug">
-                  {selectedHadith.title}
-                </h3>
-
-                <div className="space-y-2 text-xs text-[#52796F] dark:text-[#A7C2B5] font-ibm pb-4 mb-4 border-b border-[#E7DFD5] dark:border-[#203D31]">
-                  <p>
-                    <strong className="text-[#143628] dark:text-[#FAF7F2]">الراوي:</strong> {selectedHadith.narrator}
-                  </p>
-                  <p>
-                    <strong className="text-[#143628] dark:text-[#FAF7F2]">المصدر:</strong> {selectedHadith.source}
-                  </p>
-                  <p>
-                    <strong className="text-[#143628] dark:text-[#FAF7F2]">الموضوع السلوكي:</strong> {selectedHadith.topic}
-                  </p>
-                </div>
-
-                <p className="text-xs text-[#718279] dark:text-[#8D9F95] leading-relaxed">
-                  هذه اللوحة الشريفة مصممة ومعتمدة بهوية الطريقة القادرية البودشيشية (مدينة المحمدية)،
-                  مخصصة للمدارسة ونشر جوامع كلم الحبيب المصطفى ﷺ وتربية القلوب.
-                </p>
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E7DFD5] dark:border-[#203A2F] bg-white dark:bg-[#12241D]">
+              <div className="flex items-center gap-3">
+                <span className="px-3 py-1 rounded-full bg-[#1B4332] text-[#E5C378] text-xs font-mono font-bold">
+                  الحديث الشريف #{selectedHadith.id} من 42
+                </span>
+                <span className="text-xs text-[#C5A059] font-semibold">
+                  {selectedHadith.topic} • {selectedHadith.theme}
+                </span>
               </div>
 
-              {/* Action Buttons */}
-              <div className="pt-6 space-y-2.5">
+              <div className="flex items-center gap-2">
+                {/* Prev / Next controls in modal */}
                 <button
-                  onClick={() => shareOnWhatsApp(selectedHadith)}
-                  className="w-full py-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+                  onClick={handlePrev}
+                  className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#0E2019] hover:bg-[#C5A059]/20 text-[#143628] dark:text-[#FAF7F2] transition"
+                  title="الحديث السابق"
                 >
-                  <Share2 className="w-4 h-4" />
-                  <span>مشاركة الحديث عبر واتساب</span>
+                  <ChevronRight className="w-4 h-4" />
                 </button>
-
-                <a
-                  href="https://www.facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-xs font-semibold flex items-center justify-center gap-2 transition-all"
+                <button
+                  onClick={handleNext}
+                  className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#0E2019] hover:bg-[#C5A059]/20 text-[#143628] dark:text-[#FAF7F2] transition"
+                  title="الحديث التالي"
                 >
-                  <span>متابعة صفحة الطريقة بالفيسبوك (مدينة المحمدية)</span>
-                </a>
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setSelectedHadith(null)}
+                  className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-[#596B62] dark:text-[#9BB0A5]"
+                  aria-label="إغلاق"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 max-h-[80vh] overflow-y-auto">
+              {/* Left Column: Illuminated Seal & Social Action */}
+              <div className="md:col-span-4 flex flex-col justify-between rounded-2xl bg-gradient-to-br from-white to-[#F4EFE6] dark:from-[#0E2019] dark:to-[#081410] border border-[#C5A059]/30 p-5 shadow-inner">
+                <div className="text-center py-3">
+                  <div className="w-14 h-14 rounded-2xl bg-[#C5A059]/15 flex items-center justify-center mx-auto mb-3 border border-[#C5A059]/30">
+                    <Scroll className="w-7 h-7 text-[#C5A059]" />
+                  </div>
+                  <span className="font-amiri text-xs text-[#C5A059] font-bold block mb-1">
+                    الأَرْبَعُونَ النَّوَوِيَّةُ لِلْإِمَامِ النَّوَوِيِّ
+                  </span>
+                  <h4 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
+                    «{selectedHadith.title}»
+                  </h4>
+                  <span className="text-xs font-mono font-bold text-[#1B4332] dark:text-[#E5C378]">
+                    #{selectedHadith.id} • {selectedHadith.theme}
+                  </span>
+                </div>
+
+                {/* Takhrij summary card */}
+                <div className="my-4 p-3 rounded-xl bg-white/70 dark:bg-[#12241D]/70 border border-[#E7DFD5] dark:border-[#203D31] text-xs font-ibm space-y-1 text-right">
+                  <p className="text-[#143628] dark:text-[#FAF7F2]">
+                    <strong>الراوي:</strong> {selectedHadith.narrator}
+                  </p>
+                  <p className="text-[#52796F] dark:text-[#95B8A8]">
+                    <strong>المصدر:</strong> {selectedHadith.source}
+                  </p>
+                </div>
+
+                <div className="w-full space-y-2">
+                  <a
+                    href={ZAWIYA_FACEBOOK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-xs font-semibold text-[#1877F2] dark:text-[#5B9DF8] transition group shadow-sm"
+                    title="مشاهدة اللوحة الفنية والتصميم الكامل على فيسبوك"
+                  >
+                    <span>مشاهدة التصميم على فيسبوك</span>
+                    <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-[-2px] transition-transform" />
+                  </a>
+
+                  <button
+                    onClick={() => shareOnWhatsApp(selectedHadith)}
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-xs font-semibold text-[#128C7E] dark:text-[#25D366] transition shadow-sm"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span>مشاركة عبر واتساب</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column: Complete Hadith Text & Spiritual Commentary */}
+              <div className="md:col-span-8 flex flex-col justify-between space-y-5">
+                <div className="space-y-5">
+                  {/* Language Selector & Copy Action */}
+                  <div className="flex items-center justify-between border-b border-[#E7DFD5] dark:border-[#203A2F] pb-3">
+                    <div className="flex items-center gap-1 bg-white dark:bg-[#12241D] p-1 rounded-xl border border-[#E7DFD5] dark:border-[#203A2F]">
+                      <button
+                        onClick={() => setModalLang("ar")}
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold transition ${
+                          modalLang === "ar"
+                            ? "bg-[#1B4332] text-white"
+                            : "text-[#52796F] dark:text-[#9BB0A5] hover:text-[#1B4332]"
+                        }`}
+                      >
+                        العربية (المتن كاملاً)
+                      </button>
+                      <button
+                        onClick={() => setModalLang("fr")}
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold transition ${
+                          modalLang === "fr"
+                            ? "bg-[#1B4332] text-white"
+                            : "text-[#52796F] dark:text-[#9BB0A5] hover:text-[#1B4332]"
+                        }`}
+                      >
+                        Français
+                      </button>
+                      <button
+                        onClick={() => setModalLang("en")}
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold transition ${
+                          modalLang === "en"
+                            ? "bg-[#1B4332] text-white"
+                            : "text-[#52796F] dark:text-[#9BB0A5] hover:text-[#1B4332]"
+                        }`}
+                      >
+                        English
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => copyHadith(selectedHadith)}
+                      className="flex items-center gap-1 text-xs text-[#52796F] dark:text-[#9BB0A5] hover:text-[#C5A059]"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-500" />
+                          <span className="text-emerald-600">تم النسخ</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>نسخ المتن</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Complete Hadith Text by Language */}
+                  {modalLang === "ar" && (
+                    <div className="space-y-4 text-right animate-in fade-in duration-200">
+                      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#12241D] border-r-4 border-[#C5A059] shadow-sm">
+                        <span className="text-[11px] font-bold text-[#C5A059] block mb-2">
+                          نَصُّ الحَدِيثِ الشَّرِيفِ كَامِلاً:
+                        </span>
+                        <p className="font-amiri text-lg sm:text-xl font-bold leading-loose text-[#143628] dark:text-[#FAF7F2]">
+                          «{selectedHadith.text_ar}»
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {modalLang === "fr" && (
+                    <div className="space-y-4 text-left animate-in fade-in duration-200" dir="ltr">
+                      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#12241D] border-l-4 border-[#C5A059] shadow-sm">
+                        <span className="text-[11px] font-bold text-[#C5A059] block mb-2 uppercase tracking-wider">
+                          Texte Intégral du Hadith (Français):
+                        </span>
+                        <p className="font-serif text-base sm:text-lg leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
+                          {selectedHadith.text_fr || "Traduction en cours..."}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {modalLang === "en" && (
+                    <div className="space-y-4 text-left animate-in fade-in duration-200" dir="ltr">
+                      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#12241D] border-l-4 border-[#C5A059] shadow-sm">
+                        <span className="text-[11px] font-bold text-[#C5A059] block mb-2 uppercase tracking-wider">
+                          Complete Hadith Text (English):
+                        </span>
+                        <p className="font-serif text-base sm:text-lg leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
+                          {selectedHadith.text_en || "Translation under scholarly review..."}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Spiritual Lesson / المدارسة السلوكية والقواعد الكلية */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-[#FAF7F2] to-[#F5EFE6] dark:from-[#0E2019] dark:to-[#0A1813] border border-[#C5A059]/40 text-right space-y-1.5 shadow-inner">
+                    <span className="text-xs font-bold text-[#C5A059] flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>المَدَارَسَةُ السَّلُوكِيَّةُ وَالقَوَاعِدُ الكُلِّيَّةُ لِأَهْلِ الطَّرِيقِ:</span>
+                    </span>
+                    <p className="text-xs sm:text-sm font-ibm text-[#1D2A24]/90 dark:text-[#C5D5CC] leading-relaxed">
+                      {selectedHadith.suluk_lesson}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] text-left">
+                  <span className="text-[11px] font-mono text-[#596B62] dark:text-[#9BB0A5]">
+                    Al-Arba&apos;in An-Nawawiyya • Hadith #{selectedHadith.id} • Tariqa Qadiriyya Boutchichiyya
+                  </span>
+                </div>
               </div>
             </div>
           </div>

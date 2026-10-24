@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect } from "react";
 import {
   Sparkles,
   ChevronRight,
@@ -9,21 +8,21 @@ import {
   Share2,
   Copy,
   Check,
-  Maximize2,
-  X,
   Shuffle,
   Calendar,
   Languages,
   BookOpen,
+  ExternalLink,
 } from "lucide-react";
 import { HikmaItem, getHikmaOfTheDay, getHikmaByNumber, TOTAL_HIKAM, HIKAM_LIST } from "@/lib/hikam";
+
+const ZAWIYA_FACEBOOK_URL = "https://www.facebook.com/zaouia.mohammedia";
 
 export function HikmaOfTheDay() {
   const [currentHikma, setCurrentHikma] = useState<HikmaItem>(HIKAM_LIST[0]);
   const [todayHikma, setTodayHikma] = useState<HikmaItem>(HIKAM_LIST[0]);
   const [activeLang, setActiveLang] = useState<"ar" | "fr" | "en">("ar");
   const [copied, setCopied] = useState(false);
-  const [zoomOpen, setZoomOpen] = useState(false);
 
   useEffect(() => {
     const today = getHikmaOfTheDay(new Date());
@@ -58,11 +57,11 @@ export function HikmaOfTheDay() {
   const handleCopyText = async () => {
     let textToCopy = "";
     if (activeLang === "ar") {
-      textToCopy = `الحكمة العطائية رقم (${currentHikma.number}):\n\n"${currentHikma.text_ar}"\n\nالشرح:\n${currentHikma.explanation_ar}\n\n— مسار السالك`;
+      textToCopy = `الحكمة العطائية رقم (${currentHikma.number}):\n\n"${currentHikma.text_ar}"\n\nالشرح السلوكي:\n${currentHikma.explanation_ar}\n\n— منصة منهاج الفقير`;
     } else if (activeLang === "fr") {
-      textToCopy = `Hikma Al-'Ata'iyya N°${currentHikma.number}:\n\n« ${currentHikma.text_fr} »\n\n— Chemin du Salik`;
+      textToCopy = `Sagesse Al-'Ata'iyya N°${currentHikma.number}:\n\n« ${currentHikma.text_fr} »\n\n— Plateforme Minhaj Al-Faqir`;
     } else {
-      textToCopy = `Hikma Al-'Ata'iyya #${currentHikma.number}:\n\n"${currentHikma.text_en}"\n\n— Path of the Salik`;
+      textToCopy = `Hikma Al-'Ata'iyya #${currentHikma.number}:\n\n"${currentHikma.text_en}"\n\n— Minhaj Al-Faqir Platform`;
     }
 
     try {
@@ -75,13 +74,28 @@ export function HikmaOfTheDay() {
   };
 
   const handleWhatsAppShare = () => {
-    const shareText = encodeURIComponent(
-      `✨ *حكمة اليوم من الحِكَم العطائية (#${currentHikma.number})* ✨\n\n` +
-      `"${currentHikma.text_ar}"\n\n` +
-      `*الشرح:* ${currentHikma.explanation_ar}\n\n` +
-      `🌱 *منصة التكوين الروحي - مسار السالك*`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${shareText}`, "_blank");
+    let shareText = "";
+    if (activeLang === "ar") {
+      shareText =
+        `✨ *حكمة اليوم من الحِكَم العطائية (#${currentHikma.number})* ✨\n\n` +
+        `"${currentHikma.text_ar}"\n\n` +
+        `*الشرح السلوكي:* ${currentHikma.explanation_ar}\n\n` +
+        `🌱 *منصة منهاج الفقير - الزاوية البودشيشية*`;
+    } else if (activeLang === "fr") {
+      shareText =
+        `✨ *Sagesse Al-'Ata'iyya (#${currentHikma.number})* ✨\n\n` +
+        `« ${currentHikma.text_fr} »\n\n` +
+        `*Explication:* ${currentHikma.explanation_ar}\n\n` +
+        `🌱 *Plateforme Minhaj Al-Faqir*`;
+    } else {
+      shareText =
+        `✨ *Hikma Al-'Ata'iyya (#${currentHikma.number})* ✨\n\n` +
+        `"${currentHikma.text_en}"\n\n` +
+        `*Commentary:* ${currentHikma.explanation_ar}\n\n` +
+        `🌱 *Minhaj Al-Faqir Platform*`;
+    }
+
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, "_blank");
   };
 
   return (
@@ -91,13 +105,13 @@ export function HikmaOfTheDay() {
         <div>
           <div className="flex items-center gap-2.5 text-[#C5A059] text-sm font-semibold mb-2">
             <Sparkles className="w-4 h-4" />
-            <span>غِذَاءُ الرُّوحِ اليَوْمِي</span>
+            <span>غِذَاءُ الرُّوحِ اليَوْمِي • تَجَلِّيَاتُ الحِكْمَةِ</span>
           </div>
           <h2 className="font-amiri text-3xl sm:text-4xl font-bold text-[#143628] dark:text-[#FAF7F2]">
             حِكْمَةُ اليَوْمِ مِنَ الحِكَمِ العَطَائِيَّةِ
           </h2>
           <p className="text-sm sm:text-base text-[#596B62] dark:text-[#9BB0A5] font-ibm mt-1">
-            كبسولة بصرية متجددة تلقائياً كل 24 ساعة، مع الشرح والترجمة بثلاث لغات.
+            نصوص محققة متجددة تلقائياً كل 24 ساعة، مع الشرح السلوكي والترجمة الأدبية بثلاث لغات.
           </p>
         </div>
 
@@ -106,7 +120,7 @@ export function HikmaOfTheDay() {
           {!isToday && (
             <button
               onClick={handleResetToday}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-xs font-semibold hover:bg-[#C5A059]/25 transition"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-xs font-semibold hover:bg-[#C5A059]/25 transition"
               title="العودة لحكمة اليوم"
             >
               <Calendar className="w-3.5 h-3.5" />
@@ -116,17 +130,17 @@ export function HikmaOfTheDay() {
 
           <button
             onClick={handleRandom}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white dark:bg-[#12241D] border border-[#E7DFD5] dark:border-[#203A2F] text-xs text-[#1D2A24] dark:text-[#E8F0EC] hover:border-[#C5A059] transition"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-[#12241D] border border-[#E7DFD5] dark:border-[#203A2F] text-xs text-[#1D2A24] dark:text-[#E8F0EC] hover:border-[#C5A059] transition"
             title="حكمة عشوائية"
           >
             <Shuffle className="w-3.5 h-3.5 text-[#C5A059]" />
             <span>عشوائية</span>
           </button>
 
-          <div className="flex items-center gap-1 bg-white dark:bg-[#12241D] p-1 rounded-lg border border-[#E7DFD5] dark:border-[#203A2F]">
+          <div className="flex items-center gap-1 bg-white dark:bg-[#12241D] p-1 rounded-xl border border-[#E7DFD5] dark:border-[#203A2F]">
             <button
               onClick={handlePrev}
-              className="p-1.5 rounded hover:bg-[#FAF7F2] dark:hover:bg-[#1B4332] text-[#1B4332] dark:text-[#E8F0EC]"
+              className="p-1.5 rounded-lg hover:bg-[#FAF7F2] dark:hover:bg-[#1B4332] text-[#1B4332] dark:text-[#E8F0EC] transition"
               title="الحكمة السابقة"
               aria-label="الحكمة السابقة"
             >
@@ -137,7 +151,7 @@ export function HikmaOfTheDay() {
             </span>
             <button
               onClick={handleNext}
-              className="p-1.5 rounded hover:bg-[#FAF7F2] dark:hover:bg-[#1B4332] text-[#1B4332] dark:text-[#E8F0EC]"
+              className="p-1.5 rounded-lg hover:bg-[#FAF7F2] dark:hover:bg-[#1B4332] text-[#1B4332] dark:text-[#E8F0EC] transition"
               title="الحكمة التالية"
               aria-label="الحكمة التالية"
             >
@@ -147,61 +161,67 @@ export function HikmaOfTheDay() {
         </div>
       </div>
 
-      {/* Main Interactive Card */}
-      <div className="bg-white dark:bg-[#12241D] rounded-3xl border border-[#E7DFD5] dark:border-[#203A2F] shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 transition-all">
-        {/* Left/Capsule Column: The Visual Capsule (Illustrator export) */}
-        <div className="lg:col-span-5 relative bg-[#143628]/5 dark:bg-[#0B1914] p-6 sm:p-8 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-l border-[#E7DFD5] dark:border-[#203A2F]">
-          {/* Badge */}
-          <div className="w-full flex items-center justify-between mb-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1B4332] text-[#E5C378] text-xs font-medium">
-              <span>حكمة رقم</span>
-              <strong className="font-mono text-sm">{currentHikma.number}</strong>
-            </span>
+      {/* Main Interactive Card (Illuminated Manuscript Layout) */}
+      <div className="bg-white dark:bg-[#12241D] rounded-3xl border border-[#C5A059]/40 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 transition-all">
+        {/* Left Column: Illuminated Manuscript Emblem & Facebook Action */}
+        <div className="lg:col-span-5 relative bg-gradient-to-br from-[#FAF7F2] via-[#F4EFE6] to-[#EBE4D5] dark:from-[#0B1914] dark:via-[#0F221B] dark:to-[#081410] p-6 sm:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-l border-[#E7DFD5] dark:border-[#203A2F]">
+          <div>
+            {/* Badges */}
+            <div className="w-full flex items-center justify-between mb-6">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1B4332] text-[#E5C378] text-xs font-medium shadow-sm">
+                <span>حكمة رقم</span>
+                <strong className="font-mono text-sm">#{currentHikma.number}</strong>
+              </span>
 
-            <span className="text-xs px-2.5 py-1 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] border border-[#C5A059]/30">
-              {currentHikma.topic}
-            </span>
-          </div>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] border border-[#C5A059]/30 font-semibold">
+                {currentHikma.topic}
+              </span>
+            </div>
 
-          {/* Capsule Image Viewer with Aspect Ratio & Zoom Overlay */}
-          <div
-            onClick={() => setZoomOpen(true)}
-            className="group relative w-full max-w-[380px] aspect-[4/5] rounded-2xl overflow-hidden shadow-lg border border-[#C5A059]/30 bg-black cursor-pointer hover:shadow-2xl transition-all duration-300"
-          >
-            <Image
-              src={currentHikma.capsule_image_url}
-              alt={`الكبسولة البصرية للحكمة رقم ${currentHikma.number}`}
-              fill
-              sizes="(max-width: 768px) 100vw, 420px"
-              priority
-              className="object-contain group-hover:scale-[1.02] transition-transform duration-500"
-            />
-            {/* Hover overlay hint */}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-xs font-medium">
-              <Maximize2 className="w-5 h-5 text-[#E5C378]" />
-              <span>اضغط للتكبير الكامل</span>
+            {/* Illuminated Center Seal */}
+            <div className="relative aspect-square max-w-[280px] mx-auto rounded-3xl border-2 border-[#C5A059]/40 bg-white/60 dark:bg-[#0E2019]/60 backdrop-blur-sm p-6 flex flex-col items-center justify-center text-center shadow-inner group">
+              {/* Outer decorative ring */}
+              <div className="w-16 h-16 rounded-2xl bg-[#C5A059]/15 flex items-center justify-center mb-4 border border-[#C5A059]/30 shadow-sm group-hover:scale-105 transition-transform">
+                <Sparkles className="w-8 h-8 text-[#C5A059]" />
+              </div>
+
+              <span className="font-amiri text-xs text-[#C5A059] font-bold block mb-1">
+                سَيِّدِي ابْنُ عَطَاءِ اللَّهِ السَّكَنْدَرِيُّ
+              </span>
+
+              <h3 className="font-amiri text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] mb-2 leading-relaxed">
+                الحِكَمُ العَطَائِيَّةُ
+              </h3>
+
+              <div className="w-12 h-0.5 bg-[#C5A059]/40 mb-2" />
+
+              <span className="text-[11px] font-mono font-bold text-[#1B4332] dark:text-[#E5C378]">
+                الدُّرَّةُ #{currentHikma.number}
+              </span>
             </div>
           </div>
 
-          {/* Action Bar below Image */}
-          <div className="w-full max-w-[380px] mt-4 flex items-center justify-between gap-2">
-            <button
-              onClick={handleWhatsAppShare}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-xs font-semibold text-[#1B4332] dark:text-[#25D366] transition"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-              <span>مشاركة الحكمة</span>
-            </button>
-
+          {/* Social Links: Facebook Poster & WhatsApp Share */}
+          <div className="w-full mt-6 space-y-2">
             <a
-              href="https://www.facebook.com"
+              href={ZAWIYA_FACEBOOK_URL}
               target="_blank"
               rel="noopener noreferrer"
-              title="صفحة الطريقة القادرية البودشيشية بمدينة المحمدية"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-xs font-semibold text-[#1877F2] dark:text-[#5B9DF8] transition group shadow-sm"
+              title="مشاهدة اللوحة الفنية والتصميم الكامل على فيسبوك"
             >
-              <span>صفحة فيسبوك</span>
+              <span>مشاهدة اللوحة الفنية على فيسبوك</span>
+              <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-[-2px] transition-transform" />
             </a>
+
+            <button
+              onClick={handleWhatsAppShare}
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-xs font-semibold text-[#128C7E] dark:text-[#25D366] transition shadow-sm"
+              title="مشاركة نص الحكمة مع الشرح عبر واتساب"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>مشاركة الحكمة عبر واتساب</span>
+            </button>
           </div>
         </div>
 
@@ -267,16 +287,16 @@ export function HikmaOfTheDay() {
               <div className="space-y-6 animate-in fade-in duration-300">
                 {/* Arabic Vocalized Text in Amiri */}
                 <div className="relative p-6 sm:p-7 rounded-2xl bg-[#FAF7F2] dark:bg-[#0B1914] border-r-4 border-[#C5A059]">
-                  <p className="font-amiri text-2xl sm:text-3xl lg:text-3xl leading-[1.8] sm:leading-[1.8] font-bold text-[#143628] dark:text-[#FAF7F2] text-right">
+                  <p className="font-amiri text-2xl sm:text-3xl leading-[1.8] sm:leading-[1.8] font-bold text-[#143628] dark:text-[#FAF7F2] text-right">
                     «{currentHikma.text_ar}»
                   </p>
                 </div>
 
-                {/* Explanation */}
+                {/* Explanation from Notion */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#C5A059]">
                     <BookOpen className="w-4 h-4" />
-                    <span>الشَّرْحُ وَالبَيَانُ المَنْهَجِي</span>
+                    <span>الشَّرْحُ السَّلُوكِيُّ المُحَقَّقُ</span>
                   </div>
                   <p className="text-base sm:text-lg text-[#1D2A24]/90 dark:text-[#C5D5CC] font-ibm leading-relaxed text-right">
                     {currentHikma.explanation_ar}
@@ -289,22 +309,19 @@ export function HikmaOfTheDay() {
               <div className="space-y-6 text-left animate-in fade-in duration-300" dir="ltr">
                 {/* French Translation in Cormorant */}
                 <div className="p-6 sm:p-7 rounded-2xl bg-[#FAF7F2] dark:bg-[#0B1914] border-l-4 border-[#C5A059]">
-                  <p className="font-cormorant text-2xl sm:text-3xl italic leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
-                    « {currentHikma.text_fr} »
+                  <p className="font-serif italic text-xl sm:text-2xl leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
+                    « {currentHikma.text_fr || "Traduction en cours de révision..."} »
                   </p>
                 </div>
 
-                {/* French Reflection / Notes */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-[#C5A059] uppercase tracking-wider">
+                {/* Arabic Commentary alongside French */}
+                <div className="space-y-3 text-right" dir="rtl">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#C5A059]">
                     <BookOpen className="w-4 h-4" />
-                    <span>Méditation & Commentaire Spirituel</span>
+                    <span>الشَّرْحُ السَّلُوكِيُّ (العربية)</span>
                   </div>
-                  <p className="text-base sm:text-lg text-[#1D2A24]/90 dark:text-[#C5D5CC] font-jakarta leading-relaxed">
-                    Cette parole lumineuse de Shaykh Ibn &apos;Ata Allah As-Sakandari
-                    rappelle au cheminant la subtilité des illusions de l&apos;ego et
-                    l&apos;importance vitale de la sincérité, du lâcher-prise intérieur
-                    et de la confiance inébranlable en la grâce divine.
+                  <p className="text-sm sm:text-base text-[#1D2A24]/90 dark:text-[#C5D5CC] font-ibm leading-relaxed">
+                    {currentHikma.explanation_ar}
                   </p>
                 </div>
               </div>
@@ -314,21 +331,19 @@ export function HikmaOfTheDay() {
               <div className="space-y-6 text-left animate-in fade-in duration-300" dir="ltr">
                 {/* English Translation */}
                 <div className="p-6 sm:p-7 rounded-2xl bg-[#FAF7F2] dark:bg-[#0B1914] border-l-4 border-[#C5A059]">
-                  <p className="font-cormorant text-2xl sm:text-3xl italic leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
-                    &ldquo;{currentHikma.text_en}&rdquo;
+                  <p className="font-serif text-xl sm:text-2xl leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
+                    “ {currentHikma.text_en || "English translation under scholarly review..."} ”
                   </p>
                 </div>
 
-                {/* English Reflection */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-[#C5A059] uppercase tracking-wider">
+                {/* Arabic Commentary alongside English */}
+                <div className="space-y-3 text-right" dir="rtl">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#C5A059]">
                     <BookOpen className="w-4 h-4" />
-                    <span>Spiritual Reflection</span>
+                    <span>الشَّرْحُ السَّلُوكِيُّ (العربية)</span>
                   </div>
-                  <p className="text-base sm:text-lg text-[#1D2A24]/90 dark:text-[#C5D5CC] font-jakarta leading-relaxed">
-                    This sacred aphorism from the Hikam invites the seeker to look
-                    beyond outer causes and rest their trust purely in the timeless
-                    grace and mercy of the Creator.
+                  <p className="text-sm sm:text-base text-[#1D2A24]/90 dark:text-[#C5D5CC] font-ibm leading-relaxed">
+                    {currentHikma.explanation_ar}
                   </p>
                 </div>
               </div>
@@ -345,33 +360,6 @@ export function HikmaOfTheDay() {
           </div>
         </div>
       </div>
-
-      {/* Modal Zoom Viewer */}
-      {zoomOpen && (
-        <div
-          onClick={() => setZoomOpen(false)}
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
-        >
-          <button
-            onClick={() => setZoomOpen(false)}
-            className="absolute top-6 right-6 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
-            aria-label="إغلاق"
-          >
-            <X className="w-6 h-6" />
-          </button>
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative max-w-2xl w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl border border-[#C5A059]/40"
-          >
-            <Image
-              src={currentHikma.capsule_image_url}
-              alt={`تكبير الكبسولة رقم ${currentHikma.number}`}
-              fill
-              className="object-contain"
-            />
-          </div>
-        </div>
-      )}
     </section>
   );
 }

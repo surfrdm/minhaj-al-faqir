@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import {
   Search,
   Filter,
@@ -14,12 +13,15 @@ import {
   ChevronLeft,
   ChevronRight,
   Layers,
+  ExternalLink,
 } from "lucide-react";
 import { HIKAM_LIST, HikmaItem, getAllTopics } from "@/lib/hikam";
 
 interface HikamArchiveProps {
   isEmbedded?: boolean;
 }
+
+const ZAWIYA_FACEBOOK_URL = "https://www.facebook.com/zaouia.mohammedia";
 
 export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,10 +46,10 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
         return (
           h.number.toString() === q ||
           h.text_ar.toLowerCase().includes(q) ||
-          h.text_fr.toLowerCase().includes(q) ||
-          h.text_en.toLowerCase().includes(q) ||
-          h.explanation_ar.toLowerCase().includes(q) ||
-          h.topic.toLowerCase().includes(q)
+          (h.text_fr && h.text_fr.toLowerCase().includes(q)) ||
+          (h.text_en && h.text_en.toLowerCase().includes(q)) ||
+          (h.explanation_ar && h.explanation_ar.toLowerCase().includes(q)) ||
+          (h.topic && h.topic.toLowerCase().includes(q))
         );
       });
     }
@@ -63,11 +65,11 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
     if (!selectedHikma) return;
     let text = "";
     if (modalLang === "ar") {
-      text = `الحكمة (${selectedHikma.number}):\n"${selectedHikma.text_ar}"\n\nالشرح:\n${selectedHikma.explanation_ar}`;
+      text = `الحكمة العطائية رقم (${selectedHikma.number}):\n"${selectedHikma.text_ar}"\n\nالشرح السلوكي:\n${selectedHikma.explanation_ar}\n\n— منصة منهاج الفقير`;
     } else if (modalLang === "fr") {
-      text = `Hikma N°${selectedHikma.number}:\n« ${selectedHikma.text_fr} »`;
+      text = `Sagesse Al-'Ata'iyya N°${selectedHikma.number}:\n« ${selectedHikma.text_fr} »\n\n— Plateforme Minhaj Al-Faqir`;
     } else {
-      text = `Hikma #${selectedHikma.number}:\n"${selectedHikma.text_en}"`;
+      text = `Hikma Al-'Ata'iyya #${selectedHikma.number}:\n"${selectedHikma.text_en}"\n\n— Minhaj Al-Faqir Platform`;
     }
 
     try {
@@ -81,10 +83,27 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
 
   const handleWhatsAppModalShare = () => {
     if (!selectedHikma) return;
-    const text = encodeURIComponent(
-      `✨ *الحكمة العطائية (#${selectedHikma.number})* ✨\n\n"${selectedHikma.text_ar}"\n\n*الشرح:* ${selectedHikma.explanation_ar}\n\n🌱 *منصة مسار السالك*`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+    let text = "";
+    if (modalLang === "ar") {
+      text =
+        `✨ *الحكمة العطائية (#${selectedHikma.number})* ✨\n\n` +
+        `"${selectedHikma.text_ar}"\n\n` +
+        `*الشرح السلوكي:* ${selectedHikma.explanation_ar}\n\n` +
+        `🌱 *منصة منهاج الفقير*`;
+    } else if (modalLang === "fr") {
+      text =
+        `✨ *Sagesse Al-'Ata'iyya (#${selectedHikma.number})* ✨\n\n` +
+        `« ${selectedHikma.text_fr} »\n\n` +
+        `*Explication:* ${selectedHikma.explanation_ar}\n\n` +
+        `🌱 *Plateforme Minhaj Al-Faqir*`;
+    } else {
+      text =
+        `✨ *Hikma Al-'Ata'iyya (#${selectedHikma.number})* ✨\n\n` +
+        `"${selectedHikma.text_en}"\n\n` +
+        `*Commentary:* ${selectedHikma.explanation_ar}\n\n` +
+        `🌱 *Minhaj Al-Faqir Platform*`;
+    }
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   return (
@@ -94,13 +113,13 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
         <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-[#C5A059] mb-2 px-3.5 py-1 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30">
             <Layers className="w-4 h-4" />
-            <span>المَعْرِضُ التَّفَاعُلِي الشَّامِل</span>
+            <span>المَعْرِضُ التَّفَاعُلِي الشَّامِل • نُصُوصٌ مُحَقَّقَةٌ</span>
           </div>
           <h2 className="font-amiri text-3xl sm:text-4xl font-bold text-[#143628] dark:text-[#FAF7F2]">
-            أَرْشِيفُ الحِكَمِ العَطَائِيَّةِ (264 كَبْسُولَة)
+            أَرْشِيفُ الحِكَمِ العَطَائِيَّةِ (264 دُرَّة)
           </h2>
           <p className="text-sm text-[#596B62] dark:text-[#9BB0A5] font-ibm mt-1">
-            ابحث وفلتر جميع الحكم المصممة حسب الموضوع أو اللغة وتأمل دقائق أسرارها.
+            الأرشيف العلمي التفاعلي الكامل المصنف بالمقامات الروحية، مع الشرح السلوكي والترجمات الفرنسية والإنجليزية.
           </p>
         </div>
       )}
@@ -160,7 +179,7 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
         </span>
       </div>
 
-      {/* Grid of Capsules */}
+      {/* Grid of Illuminated Typographic Tiles */}
       {visibleHikam.length === 0 ? (
         <div className="text-center py-20 bg-white dark:bg-[#12241D] rounded-3xl border border-[#E7DFD5] dark:border-[#203A2F] p-8">
           <BookOpen className="w-12 h-12 text-[#C5A059] mx-auto mb-4 opacity-50" />
@@ -172,7 +191,7 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {visibleHikam.map((hikma) => (
             <div
               key={hikma.id}
@@ -180,31 +199,42 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
                 setSelectedHikma(hikma);
                 setModalLang("ar");
               }}
-              className="group bg-white dark:bg-[#12241D] rounded-2xl border border-[#E7DFD5] dark:border-[#203A2F] overflow-hidden shadow-sm hover:shadow-xl hover:border-[#C5A059] transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              className="group bg-gradient-to-br from-[#FFFDF9] to-[#FAF5ED] dark:from-[#0E2019] dark:to-[#081410] rounded-2xl border border-[#E7DFD5] dark:border-[#203D31] p-5 hover:border-[#C5A059] hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between"
             >
-              {/* Capsule Image Thumbnail */}
-              <div className="relative aspect-[4/5] bg-black overflow-hidden">
-                <Image
-                  src={hikma.capsule_image_url}
-                  alt={`حكمة عطائية رقم ${hikma.number}`}
-                  fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 200px"
-                  className="object-contain group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-                <span className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[11px] font-mono text-[#E5C378] border border-[#C5A059]/40">
-                  #{hikma.number}
-                </span>
+              <div>
+                {/* Top Card Bar */}
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
+                    #{hikma.number}
+                  </span>
+                  <span className="text-[11px] font-semibold text-[#C5A059] truncate max-w-[150px]">
+                    {hikma.topic}
+                  </span>
+                </div>
+
+                {/* Vocalized Quote */}
+                <div className="relative py-2">
+                  <span className="text-2xl font-amiri text-[#C5A059]/30 select-none block mb-1">
+                    ❝
+                  </span>
+                  <p className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2] line-clamp-3 leading-relaxed text-right">
+                    «{hikma.text_ar}»
+                  </p>
+                </div>
               </div>
 
-              {/* Card Meta */}
-              <div className="p-3 text-right">
-                <span className="text-[10px] text-[#C5A059] font-medium block truncate mb-1">
-                  {hikma.topic}
+              {/* Bottom Card Bar: Languages Available & Click Hint */}
+              <div className="pt-3 mt-3 border-t border-[#E7DFD5]/80 dark:border-[#203D31]/80 flex items-center justify-between text-[10px]">
+                <span className="text-[#84928A] flex items-center gap-1 font-mono">
+                  <span>AR</span>
+                  <span>•</span>
+                  <span>FR</span>
+                  <span>•</span>
+                  <span>EN</span>
                 </span>
-                <p className="font-amiri text-xs font-bold text-[#143628] dark:text-[#FAF7F2] line-clamp-2 leading-relaxed">
-                  {hikma.text_ar}
-                </p>
+                <span className="text-[#C5A059] font-medium group-hover:translate-x-[-2px] transition-transform">
+                  طالع الشرح ↗
+                </span>
               </div>
             </div>
           ))}
@@ -216,14 +246,14 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
         <div className="text-center mt-12">
           <button
             onClick={() => setDisplayCount((prev) => prev + 24)}
-            className="px-8 py-3 rounded-xl bg-white dark:bg-[#12241D] border border-[#C5A059] text-xs font-semibold text-[#143628] dark:text-[#E8F0EC] hover:bg-[#C5A059] hover:text-[#143628] shadow-sm transition"
+            className="px-8 py-3 rounded-2xl bg-white dark:bg-[#12241D] border border-[#C5A059] text-xs font-semibold text-[#143628] dark:text-[#E8F0EC] hover:bg-[#C5A059] hover:text-[#143628] shadow-sm transition"
           >
             عرض المزيد من الحكم (+24)
           </button>
         </div>
       )}
 
-      {/* Interactive Detail Modal */}
+      {/* Interactive Detail Modal (Illuminated Manuscript) */}
       {selectedHikma && (
         <div
           onClick={() => setSelectedHikma(null)}
@@ -254,39 +284,46 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
 
             {/* Modal Body */}
             <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 max-h-[75vh] overflow-y-auto">
-              {/* Capsule Image in Modal */}
-              <div className="md:col-span-5 flex flex-col items-center">
-                <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-md border border-[#C5A059]/30 bg-black">
-                  <Image
-                    src={selectedHikma.capsule_image_url}
-                    alt={`حكمة رقم ${selectedHikma.number}`}
-                    fill
-                    className="object-contain"
-                  />
+              {/* Left Column: Illuminated Seal & Social Action */}
+              <div className="md:col-span-5 flex flex-col justify-between rounded-2xl bg-gradient-to-br from-white to-[#F4EFE6] dark:from-[#0E2019] dark:to-[#081410] border border-[#C5A059]/30 p-6 shadow-inner">
+                <div className="text-center py-4">
+                  <div className="w-14 h-14 rounded-2xl bg-[#C5A059]/15 flex items-center justify-center mx-auto mb-3 border border-[#C5A059]/30">
+                    <Sparkles className="w-7 h-7 text-[#C5A059]" />
+                  </div>
+                  <span className="font-amiri text-xs text-[#C5A059] font-bold block mb-1">
+                    سَيِّدِي ابْنُ عَطَاءِ اللَّهِ السَّكَنْدَرِيُّ
+                  </span>
+                  <h4 className="font-amiri text-xl font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
+                    الحِكَمُ العَطَائِيَّةُ
+                  </h4>
+                  <span className="text-xs font-mono font-bold text-[#1B4332] dark:text-[#E5C378]">
+                    الدرة رقم #{selectedHikma.number} من 264
+                  </span>
                 </div>
 
-                <div className="w-full flex items-center gap-2 mt-3">
-                  <button
-                    onClick={handleWhatsAppModalShare}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 text-xs font-semibold text-[#1B4332] dark:text-[#25D366] hover:bg-[#25D366]/25 transition"
-                  >
-                    <Share2 className="w-3.5 h-3.5" />
-                    <span>مشاركة الحكمة</span>
-                  </button>
-
+                <div className="w-full space-y-2 mt-4">
                   <a
-                    href="https://www.facebook.com"
+                    href={ZAWIYA_FACEBOOK_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title="صفحة الطريقة القادرية البودشيشية بمدينة المحمدية"
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs font-medium text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition"
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-xs font-semibold text-[#1877F2] dark:text-[#5B9DF8] transition"
+                    title="مشاهدة اللوحة الفنية والتصميم الكامل على فيسبوك"
                   >
-                    <span>صفحة فيسبوك</span>
+                    <span>مشاهدة اللوحة على فيسبوك</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
+
+                  <button
+                    onClick={handleWhatsAppModalShare}
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-xs font-semibold text-[#128C7E] dark:text-[#25D366] transition"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span>مشاركة عبر واتساب</span>
+                  </button>
                 </div>
               </div>
 
-              {/* Text & Explanations in Modal */}
+              {/* Right Column: Text & Explanations in Modal */}
               <div className="md:col-span-7 flex flex-col justify-between">
                 <div>
                   {/* Language Selector */}
@@ -345,7 +382,7 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
                   {/* Content per language */}
                   {modalLang === "ar" && (
                     <div className="space-y-4 text-right">
-                      <div className="p-4 rounded-xl bg-white dark:bg-[#12241D] border-r-4 border-[#C5A059]">
+                      <div className="p-4 rounded-2xl bg-white dark:bg-[#12241D] border-r-4 border-[#C5A059] shadow-sm">
                         <p className="font-amiri text-xl sm:text-2xl font-bold leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
                           «{selectedHikma.text_ar}»
                         </p>
@@ -353,7 +390,7 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
 
                       <div className="space-y-2">
                         <span className="text-xs font-bold text-[#C5A059] block">
-                          الشرح والتوجيه السلوكي:
+                          الشَّرْحُ السَّلُوكِيُّ المُحَقَّقُ:
                         </span>
                         <p className="text-sm font-ibm text-[#1D2A24]/90 dark:text-[#C5D5CC] leading-relaxed">
                           {selectedHikma.explanation_ar}
@@ -364,37 +401,44 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
 
                   {modalLang === "fr" && (
                     <div className="space-y-4 text-left" dir="ltr">
-                      <div className="p-4 rounded-xl bg-white dark:bg-[#12241D] border-l-4 border-[#C5A059]">
-                        <p className="font-cormorant text-xl sm:text-2xl italic leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
-                          « {selectedHikma.text_fr} »
+                      <div className="p-4 rounded-2xl bg-white dark:bg-[#12241D] border-l-4 border-[#C5A059] shadow-sm">
+                        <p className="font-serif text-xl sm:text-2xl italic leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
+                          « {selectedHikma.text_fr || "Traduction en cours de révision..."} »
                         </p>
                       </div>
-                      <p className="text-sm font-jakarta text-[#596B62] dark:text-[#9BB0A5] leading-relaxed">
-                        Parole de sagesse transmise par Shaykh Ibn &apos;Ata Allah.
-                        Elle souligne la lucidité spirituelle face aux épreuves et
-                        la conformité du cœur avec la volonté divine.
-                      </p>
+                      <div className="text-right" dir="rtl">
+                        <span className="text-xs font-bold text-[#C5A059] block mb-1">
+                          الشَّرْحُ السَّلُوكِيُّ:
+                        </span>
+                        <p className="text-sm font-ibm text-[#1D2A24]/90 dark:text-[#C5D5CC] leading-relaxed">
+                          {selectedHikma.explanation_ar}
+                        </p>
+                      </div>
                     </div>
                   )}
 
                   {modalLang === "en" && (
                     <div className="space-y-4 text-left" dir="ltr">
-                      <div className="p-4 rounded-xl bg-white dark:bg-[#12241D] border-l-4 border-[#C5A059]">
-                        <p className="font-cormorant text-xl sm:text-2xl italic leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
-                          &ldquo;{selectedHikma.text_en}&rdquo;
+                      <div className="p-4 rounded-2xl bg-white dark:bg-[#12241D] border-l-4 border-[#C5A059] shadow-sm">
+                        <p className="font-serif text-xl sm:text-2xl leading-relaxed text-[#143628] dark:text-[#FAF7F2]">
+                          “ {selectedHikma.text_en || "English translation under scholarly review..."} ”
                         </p>
                       </div>
-                      <p className="text-sm font-jakarta text-[#596B62] dark:text-[#9BB0A5] leading-relaxed">
-                        Wisdom of Shaykh Ibn &apos;Ata Allah, pointing towards spiritual
-                        clarity, shedding ego attachment and finding contentment in the Divine.
-                      </p>
+                      <div className="text-right" dir="rtl">
+                        <span className="text-xs font-bold text-[#C5A059] block mb-1">
+                          الشَّرْحُ السَّلُوكِيُّ:
+                        </span>
+                        <p className="text-sm font-ibm text-[#1D2A24]/90 dark:text-[#C5D5CC] leading-relaxed">
+                          {selectedHikma.explanation_ar}
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
 
                 <div className="mt-6 pt-3 border-t border-[#E7DFD5] dark:border-[#203A2F] text-left">
                   <span className="text-[11px] font-mono text-[#596B62] dark:text-[#9BB0A5]">
-                    Al-Hikam Al-&apos;Ata&apos;iyya • Capsule #{selectedHikma.number}
+                    Al-Hikam Al-&apos;Ata&apos;iyya • #{selectedHikma.number} • Tariqa Qadiriyya Boutchichiyya
                   </span>
                 </div>
               </div>

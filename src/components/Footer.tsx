@@ -53,7 +53,7 @@ export function Footer() {
             <ul className="space-y-2 text-xs text-[#FAF7F2]/80 font-ibm">
               <li>
                 <a href="#tracks" className="hover:text-[#C5A059] transition">
-                  • الأسلاك التكوينية (المدرسة)
+                  • مدارج الارتقاء الروحي
                 </a>
               </li>
               <li>

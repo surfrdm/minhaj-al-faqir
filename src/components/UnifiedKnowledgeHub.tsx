@@ -19,6 +19,16 @@ import {
   ExternalLink,
   Search,
   Filter,
+  Award,
+  PhoneOff,
+  EyeOff,
+  Volume2,
+  Users,
+  Compass,
+  Droplets,
+  HeartHandshake,
+  VolumeX,
+  Radio,
 } from "lucide-react";
 import { ArbaeenSection } from "./ArbaeenSection";
 import { HikamArchive } from "./HikamArchive";
@@ -93,10 +103,10 @@ const CATEGORIES: NavCategory[] = [
       },
       {
         id: "tracks",
-        title: "الأسلاك التكوينية المدرسية",
-        badge: "4 أسلاك",
-        count: "4 مسارات",
-        desc: "تدرج بيداغوجي مدرسي للسالك من البداية للتحقيق",
+        title: "مَسَارَاتُ الارْتِقَاءِ الرُّوحِيِّ",
+        badge: "4 مسارات",
+        count: "4 معالم",
+        desc: "تَدَرُّجٌ رُوحِيٌّ وَسُلُوكِيٌّ لِلسَّالِكِ مِنَ البِدَايَةِ إِلَى التَّحْقِيقِ",
         icon: GraduationCap,
       },
     ],
@@ -498,10 +508,19 @@ export function UnifiedKnowledgeHub() {
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5">
                               <span className="text-[11px] px-2 py-0.5 rounded-md bg-white dark:bg-[#0E2019] text-[#84928A] border border-[#E7DFD5] dark:border-[#203D31]">
                                 {v.qism}
                               </span>
+                              <a
+                                href="https://www.facebook.com/zaouia.mohammedia"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1 rounded-lg text-[#1877F2] dark:text-[#5B9DF8] hover:bg-[#1877F2]/15 transition"
+                                title="مشاهدة اللوحة على فيسبوك"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </a>
                               <button
                                 onClick={() => {
                                   const text = `📜 بيت من متن ابن عاشر (البيت #${v.number} - ${v.bab}):\n«${v.firstHemistich} ❖ ${v.secondHemistich}»\n\nالشرح:\n${v.sharh}\n\nطالع المزيد على منصة منهاج الفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#ibn-ashir`;
@@ -568,9 +587,33 @@ export function UnifiedKnowledgeHub() {
                   <div className="grid gap-4">
                     {/* Sibha Evidence */}
                     <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
-                      <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
-                        <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
-                        <h5 className="font-amiri text-base font-bold">1. تأصيل التسبيح بالسبحة (عقد الأذكار)</h5>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                          <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
+                          <h5 className="font-amiri text-base font-bold">1. تأصيل التسبيح بالسبحة (عقد الأذكار)</h5>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href="https://www.facebook.com/zaouia.mohammedia"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
+                            title="مشاهدة لوحة التأصيل على فيسبوك"
+                          >
+                            <span>فيسبوك</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                          <button
+                            onClick={() => {
+                              const text = `⚖️ تأصيل التسبيح بالسبحة في الطريقة البودشيشية:\nحديث أم المؤمنين صفية رضي الله عنها في إقرار النبي ﷺ للتسبيح بالنوى، ورسالة الحافظ السيوطي 'المنحة في السبحة'.\n\nطالع التأصيل كاملاً: ${typeof window !== "undefined" ? window.location.origin : ""}/#evidence`;
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                            }}
+                            className="p-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                            title="مشاركة عبر واتساب"
+                          >
+                            <Share2 className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                       <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
                         • حديث أم المؤمنين صفية رضي الله عنها: «دخل عليّ رسول الله ﷺ وبين يدي أربعة آلاف نواة أسبح بها، فقال: لقد سبحت بهذا! ألا أعلمك بأكثر مما سبحت به؟...» (رواه الترمذي والحاكم وصححه، وأقرّها على أصل التسبيح بالنوى ولم ينكره).<br />
@@ -580,9 +623,33 @@ export function UnifiedKnowledgeHub() {
 
                     {/* Jahran Evidence */}
                     <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
-                      <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
-                        <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
-                        <h5 className="font-amiri text-base font-bold">2. تأصيل الذكر جهراً والذكر الجماعي</h5>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                          <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
+                          <h5 className="font-amiri text-base font-bold">2. تأصيل الذكر جهراً والذكر الجماعي</h5>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href="https://www.facebook.com/zaouia.mohammedia"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
+                            title="مشاهدة لوحة التأصيل على فيسبوك"
+                          >
+                            <span>فيسبوك</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                          <button
+                            onClick={() => {
+                              const text = `⚖️ تأصيل الذكر جهراً والجماعي في الطريقة البودشيشية:\nقوله تعالى: {فاذكروا الله كذكركم آباءكم أو أشد ذكراً}، وحديث البخاري عن ابن عباس في رفع الصوت بالذكر، وحديث الصحيحين: {وإن ذكرني في ملأ ذكرته في ملأ خير منهم}.\n\nطالع التأصيل كاملاً: ${typeof window !== "undefined" ? window.location.origin : ""}/#evidence`;
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                            }}
+                            className="p-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                            title="مشاركة عبر واتساب"
+                          >
+                            <Share2 className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                       <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
                         • قوله تعالى: ﴿فَاذْكُرُوا اللَّهَ كَذِكْرِكُمْ آبَاءَكُمْ أَوْ أَشَدَّ ذِكْرًا﴾ (البقرة: 200)، وكان العرب يجهرون بذكر آبائهم فأمر بالجهر بذكره سبحانه.<br />
@@ -593,9 +660,33 @@ export function UnifiedKnowledgeHub() {
 
                     {/* Imara Evidence */}
                     <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
-                      <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
-                        <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
-                        <h5 className="font-amiri text-base font-bold">3. تأصيل العمارة، الوجد، والسماع الروحي</h5>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                          <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
+                          <h5 className="font-amiri text-base font-bold">3. تأصيل العمارة، الوجد، والسماع الروحي</h5>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href="https://www.facebook.com/zaouia.mohammedia"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
+                            title="مشاهدة لوحة التأصيل على فيسبوك"
+                          >
+                            <span>فيسبوك</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                          <button
+                            onClick={() => {
+                              const text = `⚖️ تأصيل العمارة والوجد والسماع في الطريقة البودشيشية:\nحديث الحبشة في المسجد النبوي، وحداء الصحابة في الخندق، وفتوى سلطان العلماء العز بن عبد السلام في غلبة الوجد.\n\nطالع التأصيل كاملاً: ${typeof window !== "undefined" ? window.location.origin : ""}/#evidence`;
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                            }}
+                            className="p-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                            title="مشاركة عبر واتساب"
+                          >
+                            <Share2 className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                       <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
                         • حديث حبشة المسجد ورقصهم بحضرة النبي ﷺ وعائشة رضي الله عنها تنظر، وقوله ﷺ: «دونكم يا بني أرفدة» (متفق عليه).<br />
@@ -620,30 +711,291 @@ export function UnifiedKnowledgeHub() {
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-2">
-                      <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
-                        <Clock className="w-4 h-4 text-[#C5A059]" />
-                        <h5 className="font-amiri text-base font-bold">الورد العام (صباحاً وعشياً)</h5>
+                    <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                            <Clock className="w-4 h-4 text-[#C5A059]" />
+                            <h5 className="font-amiri text-base font-bold">الورد العام (صباحاً وعشياً)</h5>
+                          </div>
+                          <a
+                            href="https://www.facebook.com/zaouia.mohammedia"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 rounded text-[#1877F2] hover:bg-[#1877F2]/10"
+                            title="صفحة الزاوية على فيسبوك"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
+                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
+                          • 100 مرة: الاستغفار (أستغفر الله العظيم وأتوب إليه)<br />
+                          • 100 مرة: الصلاة على النبي ﷺ<br />
+                          • 100 مرة: الهيللة (لا إله إلا الله)<br />
+                          يُؤدى بعد صلاة الصبح وبعد صلاة العصر/المغرب، وهو عهد السالك وركيزة صفاء قلبه.
+                        </p>
                       </div>
-                      <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
-                        • 100 مرة: الاستغفار (أستغفر الله العظيم وأتوب إليه)<br />
-                        • 100 مرة: الصلاة على النبي ﷺ<br />
-                        • 100 مرة: الهيللة (لا إله إلا الله)<br />
-                        يُؤدى بعد صلاة الصبح وبعد صلاة العصر/المغرب، وهو عهد السالك وركيزة صفاء قلبه.
-                      </p>
+                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
+                        <button
+                          onClick={() => {
+                            const text = `📿 الورد العام لمريدي الطريقة القادرية البودشيشية:\n100 استغفار + 100 صلاة على النبي + 100 لا إله إلا الله (صباحاً ومساءً).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                        >
+                          <Share2 className="w-3 h-3" />
+                          <span>مشاركة الورد</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-2">
-                      <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
-                        <Sparkles className="w-4 h-4 text-[#C5A059]" />
-                        <h5 className="font-amiri text-base font-bold">الوظيفة الراتبة والصلوات</h5>
+                    <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                            <Sparkles className="w-4 h-4 text-[#C5A059]" />
+                            <h5 className="font-amiri text-base font-bold">الوظيفة الراتبة والصلوات</h5>
+                          </div>
+                          <a
+                            href="https://www.facebook.com/zaouia.mohammedia"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 rounded text-[#1877F2] hover:bg-[#1877F2]/10"
+                            title="صفحة الزاوية على فيسبوك"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
+                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
+                          • الوظيفة الجامعة التي تجمع الفقراء في الزاوية كل يوم بين المغرب والعشاء.<br />
+                          • تلاوة الحزب القرآني الراتب.<br />
+                          • الصلاة المشيشية لسيدي عبد السلام بن مشيش.<br />
+                          • صلاة الفاتح لما أغلق، وجوهرة الكمال في مجالس الجمعة.
+                        </p>
                       </div>
-                      <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
-                        • الوظيفة الجامعة التي تجمع الفقراء في الزاوية كل يوم بين المغرب والعشاء.<br />
-                        • تلاوة الحزب القرآني الراتب.<br />
-                        • الصلاة المشيشية لسيدي عبد السلام بن مشيش.<br />
-                        • صلاة الفاتح لما أغلق، وجوهرة الكمال في مجالس الجمعة.
-                      </p>
+                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
+                        <button
+                          onClick={() => {
+                            const text = `✨ الوظيفة الراتبة في الطريقة البودشيشية:\nالوظيفة الجامعة، الحزب القرآني الراتب، الصلاة المشيشية، وصلاة الفاتح.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                        >
+                          <Share2 className="w-3 h-3" />
+                          <span>مشاركة الوظيفة</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* فقه الطريق: آداب مجالس الذكر (11 أدباً) */}
+                  <div className="pt-6 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-4">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#C5A059]/15 via-[#1B4332]/10 to-[#C5A059]/15 border border-[#C5A059]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#C5A059]/20 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold mb-1">
+                          <Award className="w-3.5 h-3.5" />
+                          <span>فِقْهُ الطَّرِيقِ • مَجَالِسُ الصَّفَاءِ</span>
+                        </div>
+                        <h5 className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
+                          آدَابُ مَجَالِسِ الذِّكْرِ وَالِانْتِفَاعِ بِأَسْرَارِهَا
+                        </h5>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm mt-1 leading-relaxed">
+                          الانتفاع بمجالس الذكر والاستفادة من أسرارها وفيوضاتها يستوجب من الذاكر التحلي بمجموعة من الآداب:
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <a
+                          href="https://www.facebook.com/zaouia.mohammedia"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="py-1.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1.5 transition"
+                          title="صفحة الزاوية على فيسبوك"
+                        >
+                          <span>فيسبوك</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+
+                        <button
+                          onClick={() => {
+                            const text = `📜 فقه الطريق : آداب الذكر في الطريقة البودشيشية:\nالانتفاع بمجالس الذكر والاستفادة من أسرارها وفيوضاتها يستوجب من الذاكر التحلي بمجموعة من الآداب:\n\n1. الطهارة: متوضئاً، نقي الثياب، طيب الرائحة.\n2. التوجه: استحضار همة شيخه ليكون رفيقاً له في السير.\n3. إقفال الهاتف: حفظاً لحرمة المجلس وحتى لا يشوش على حلقة الذكر.\n4. تغميض العينين: للمساعدة على التركيز في معاني الذكر.\n5. المشاركة جهراً: في الذكر الجماعي بخشوع ونشاط واجتناب النوم.\n6. الامتناع عن شرب الماء أثناء الذكر.\n7. هيئة الحلقة: انعقاد المجلس على هيئة حلقة واجتناب وجود ثغرات.\n8. الهدوء والسكينة: اجتناب الكلام والحركة والتثاؤب والمزاح.\n9. لزوم المجلس من البداية حتى النهاية: 'من قام من المجلس من غير عذر مقبول فقد حرم بركة ذلك المجلس'.\n10. التوقف عن ذكر الورد الفردي أثناء الوظيفة.\n11. الاستماع إلى المذاكرات التربوية والسماع والصمت عن لغو الدنيا.\n\nطالع الوثيقة على منصة منهاج الفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                          }}
+                          className="py-1.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1.5 transition"
+                          title="مشاركة الآداب عبر واتساب"
+                        >
+                          <Share2 className="w-3.5 h-3.5" />
+                          <span>مشاركة الآداب</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 11 Etiquettes Cards Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {/* 1. الطهارة */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <Droplets className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            1. الطَّهَارَةُ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          أن يكون الذاكر متوضئاً، نقي الثياب، طيب الرائحة؛ إجلالاً لحضرة المذكور سبحانه ومجالسة الملائكة الكرام.
+                        </p>
+                      </div>
+
+                      {/* 2. التوجه */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <Compass className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            2. التَّوَجُّهُ الصَّادِقُ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          استحضار همة شيخه ليكون رفيقاً له في السير ومرآة يستمد منها نور الصدق والإخلاص في التوجه إلى الله.
+                        </p>
+                      </div>
+
+                      {/* 3. إقفال الهاتف */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-red-500/15 text-red-600 dark:text-red-400 flex items-center justify-center">
+                            <PhoneOff className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            3. إِقْفَالُ الهَاتِفِ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          إقفال الهاتف أثناء الذكر حفاظاً على حرمة المجلس، وحتى لا يشوش على حلقة الذكر ويشتت أذهان الذاكرين.
+                        </p>
+                      </div>
+
+                      {/* 4. تغميض العينين */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <EyeOff className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            4. تَغْمِيضُ العَيْنَيْنِ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          تغميض العينين للمساعدة على سد منافذ الحواس الظاهرة، والتركيز في معاني الذكر واستحضار عظمة المذكور.
+                        </p>
+                      </div>
+
+                      {/* 5. المشاركة جهراً */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <Volume2 className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            5. المُشَارَكَةُ جَهْراً
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          المشاركة جهراً في الذكر الجماعي بخشوع ونشاط وهمة عالية، ومدافعة النوم والفتور والتكاسل.
+                        </p>
+                      </div>
+
+                      {/* 6. الامتناع عن شرب الماء */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <VolumeX className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            6. الِامْتِنَاعُ عَنْ شُرْبِ المَاءِ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          الامتناع عن شرب الماء أثناء الذكر حفاظاً على حرارة الذكر وتركيز الأنفاس وعدم كسر جمعية المجلس.
+                        </p>
+                      </div>
+
+                      {/* 7. هيئة الحلقة */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <Users className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            7. هَيْئَةُ الحَلْقَةِ المُحْكَمَةِ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          انعقاد المجلس على هيئة حلقة واجتناب وجود ثغرات تفصل بين الذاكرين بحسب الإمكان، لتتصل النفحات.
+                        </p>
+                      </div>
+
+                      {/* 8. الهدوء والسكينة */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <ShieldCheck className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            8. الهُدُوءُ وَالسَّكِينَةُ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          اجتناب كل ما يشوش على حرمة الذكر: الكلام، عدم الالتفات وترك الحركة العابثة، كثرة التثاؤب، والضحك والمزاح.
+                        </p>
+                      </div>
+
+                      {/* 9. الحضور من البداية للنهاية */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <Clock className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            9. الحُضُورُ التَّامُّ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          الحرص على حضور الذكر من البداية حتى النهاية قياساً بالصلاة وعدم الانصراف إلا لضرورة؛ «من قام من المجلس من غير عذر مقبول فقد حُرِم بركة ذلك المجلس».
+                        </p>
+                      </div>
+
+                      {/* 10. التوقف عن الورد الفردي */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <Layers className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            10. لُزُومُ الجَمَاعَةِ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          التوقف عن ذكر الورد الفردي أثناء أداء الوظيفة الراتبة؛ فحق الجماعة مقدم وحرمة الوظيفة أجمع للقلوب.
+                        </p>
+                      </div>
+
+                      {/* 11. الاستماع للمذاكرات التربوية */}
+                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                            <Radio className="w-4 h-4" />
+                          </div>
+                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            11. أَدَبُ المَذَاكَرَةِ وَالسَّمَاعِ
+                          </h6>
+                        </div>
+                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          الاستماع إلى المذاكرات التربوية والسماع الروحي، والصمت التام عن الكلام في مختلف الأمور الدنيوية وغيرها.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

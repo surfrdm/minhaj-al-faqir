@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
+import { ThawabitSection } from "@/components/ThawabitSection";
 import { DailySpiritualHub } from "@/components/DailySpiritualHub";
 import { UnifiedKnowledgeHub } from "@/components/UnifiedKnowledgeHub";
 import { Footer } from "@/components/Footer";
@@ -10,6 +11,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <HeroSection />
+        <ThawabitSection />
         <DailySpiritualHub />
         <UnifiedKnowledgeHub />
       </main>

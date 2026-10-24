@@ -22,10 +22,10 @@ export function PillarsOverview() {
               <GraduationCap className="w-5 h-5" />
             </div>
             <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
-              تكوين الفقير المدرسي
+              مَدَارِجُ الارْتِقَاءِ الرُّوحِيِّ
             </h3>
             <p className="text-xs text-[#596B62] dark:text-[#9BB0A5] leading-relaxed">
-              مسار بيداغوجي متدرج يبدأ من مدخل التربية وصولاً إلى رسوخ المعرفة والتحقيق.
+              مسار سلوكي متدرج يبدأ من مدخل التربية وصولاً إلى رسوخ المعرفة والتحقيق.
             </p>
           </div>
 

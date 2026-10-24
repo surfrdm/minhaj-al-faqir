@@ -18,6 +18,7 @@ import {
   ChevronDown,
   Scroll,
   Award,
+  ShieldCheck,
 } from "lucide-react";
 import { MemberPortalModal } from "./MemberPortalModal";
 
@@ -123,8 +124,17 @@ export function Navbar() {
               title="ورقة تعريفية بفضيلة الشيخ الدكتور سيدي منير القادري بودشيش"
             >
               <Award className="w-4 h-4 text-[#C5A059]" />
-              <span>شيخ الطريقة القادرية البودشيشية</span>
+              <span>شيخ الطريقة</span>
             </Link>
+
+            {/* Direct Link to Thawabit */}
+            <a
+              href="/#thawabit"
+              className="px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>الثوابت الخمسة</span>
+            </a>
 
             {/* Direct Link to Hub */}
             <button
@@ -188,7 +198,7 @@ export function Navbar() {
                         <span>متن ابن عاشر (المرشد المعين)</span>
                       </div>
                       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35]">
-                        317 بيتاً
+                        311 بيتاً
                       </span>
                     </button>
 
@@ -205,7 +215,7 @@ export function Navbar() {
                       className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
                     >
                       <GraduationCap className="w-4 h-4 text-[#C5A059]" />
-                      <span>الأسلاك التكوينية الأربعة</span>
+                      <span>مَدَارِجُ الارْتِقَاءِ الرُّوحِيِّ</span>
                     </button>
                   </div>
                 </div>
@@ -244,6 +254,14 @@ export function Navbar() {
                     >
                       <Clock className="w-4 h-4 text-[#C5A059]" />
                       <span>الأوراد والوظيفة الراتبة</span>
+                    </button>
+
+                    <button
+                      onClick={() => navigateToTab("wazifa")}
+                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
+                    >
+                      <Award className="w-4 h-4 text-[#C5A059]" />
+                      <span>فقه الطريق (آداب الذكر)</span>
                     </button>
 
                     <button
@@ -324,7 +342,7 @@ export function Navbar() {
                 onClick={() => navigateToTab("ibn-ashir")}
                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>متن ابن عاشر (311 بيتاً من نوتيون)</span>
+                <span>متن ابن عاشر (311 بيتاً محققاً)</span>
                 <BookOpen className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
@@ -332,7 +350,7 @@ export function Navbar() {
                 onClick={() => navigateToTab("tracks")}
                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>مدارج السالك الأربعة</span>
+                <span>مَدَارِجُ الارْتِقَاءِ الرُّوحِيِّ</span>
                 <GraduationCap className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
