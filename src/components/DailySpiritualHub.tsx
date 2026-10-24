@@ -80,7 +80,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
     const versesText = currentIbnAshir.verses
       .map((v) => `${v.firstHemistich} ... ${v.secondHemistich}`)
       .join("\n");
-    const text = `📜 درة اليوم من متن ابن عاشر (${currentIbnAshir.chapter}):\nالأبيات: ${currentIbnAshir.verseNumbers}\n\n${versesText}\n\nالشرح:\n${currentIbnAshir.explanation}\n\nالفائدة:\n${currentIbnAshir.practicalBenefit}\n\nطالع زاد اليوم على منصة منهاج الفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-spiritual`;
+    const text = `📜 درة اليوم من متن ابن عاشر (${currentIbnAshir.chapter}):\nالبيت رقم: ${currentIbnAshir.verseNumbers} من 311\n\n${versesText}\n\nالشرح:\n${currentIbnAshir.explanation}\n\nطالع زاد اليوم على منصة منهاج الفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-spiritual`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -301,8 +301,8 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
-                    أبيات {currentIbnAshir.verseNumbers}
+                  <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
+                    البيت #{currentIbnAshir.verseNumbers} من 311
                   </span>
                 </div>
               </div>
@@ -350,7 +350,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                   <button
                     onClick={handlePrevIbnAshir}
                     className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#122820] hover:bg-[#C5A059]/15 border border-[#E7DFD5] dark:border-[#203D31] text-[#143628] dark:text-[#FAF7F2] transition"
-                    title="الدرس السابق"
+                    title="البيت السابق"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -360,7 +360,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                   <button
                     onClick={handleNextIbnAshir}
                     className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#122820] hover:bg-[#C5A059]/15 border border-[#E7DFD5] dark:border-[#203D31] text-[#143628] dark:text-[#FAF7F2] transition"
-                    title="الدرس التالي"
+                    title="البيت التالي"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -372,20 +372,25 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                   className="flex-1 py-1.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
                 >
                   <Share2 className="w-3.5 h-3.5" />
-                  <span>مشاركة الأبيات</span>
+                  <span>مشاركة البيت</span>
                 </button>
 
-                {/* Notion Table Direct Link */}
-                <a
-                  href="https://app.notion.com/p/48b99299da334d0c98526ffbb5c94037?v=874bf180be3846c8ba8dbb5fc2986009"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                {/* Open in Knowledge Hub Catalog */}
+                <button
+                  onClick={() => {
+                    const event = new CustomEvent("switch-knowledge-tab", {
+                      detail: { tabId: "ibn-ashir" },
+                    });
+                    window.dispatchEvent(event);
+                    const el = document.getElementById("knowledge-hub");
+                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
                   className="py-1.5 px-2.5 rounded-xl bg-[#1B4332]/10 dark:bg-[#C5A059]/15 hover:bg-[#C5A059]/25 text-[#1B4332] dark:text-[#E5C378] border border-[#C5A059]/30 text-xs font-semibold flex items-center gap-1 transition"
-                  title="فتح قاعدة بيانات متن ابن عاشر في Notion"
+                  title="عرض فهرس متن ابن عاشر كاملاً في الخزانة"
                 >
-                  <span>نوتيون</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+                  <BookOpen className="w-3.5 h-3.5 text-[#C5A059]" />
+                  <span>الفهرس</span>
+                </button>
               </div>
             </div>
           </div>

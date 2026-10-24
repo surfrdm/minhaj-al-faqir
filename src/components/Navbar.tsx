@@ -96,19 +96,19 @@ export function Navbar() {
             <Link
               href="/"
               title="مِنْهَاجُ الفَقِير - الصفحة الرئيسية"
-              className="flex items-center justify-center p-1 sm:p-1.5 rounded-xl bg-white/80 dark:bg-[#122820] hover:bg-[#C5A059]/15 border border-[#C5A059]/40 hover:border-[#C5A059] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 group relative"
+              className="flex items-center justify-center p-1 sm:p-1.5 rounded-xl bg-white/80 dark:bg-[#122820] hover:bg-[#C5A059]/15 border border-[#C5A059]/40 hover:border-[#C5A059] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 group relative touch-manipulation cursor-pointer"
             >
               <img
                 src="/images/logo_zawiya_mohammedia_clean.png"
                 alt="شعار زاوية مدينة المحمدية - الطريقة القادرية البودشيشية"
-                className="h-10 sm:h-12 w-auto object-contain filter drop-shadow-sm"
+                className="h-10 sm:h-12 w-auto object-contain filter drop-shadow-sm pointer-events-none select-none"
               />
               <span className="sr-only">الصفحة الرئيسية</span>
             </Link>
 
             {/* Title */}
-            <Link href="/" className="flex items-center text-right">
-              <span className="font-amiri text-2xl sm:text-3xl font-bold tracking-wide text-[#143628] dark:text-[#E8F0EC]">
+            <Link href="/" className="flex items-center text-right touch-manipulation cursor-pointer">
+              <span className="font-amiri text-2xl sm:text-3xl font-bold tracking-wide text-[#143628] dark:text-[#E8F0EC] select-none">
                 مِنْهَاجُ الفَقِير
               </span>
             </Link>
@@ -146,7 +146,7 @@ export function Navbar() {
                 className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all"
               >
                 <Layers className="w-3.5 h-3.5 text-[#C5A059]" />
-                <span>المقررات والمتون</span>
+                <span>الدرر والمتون المباركة</span>
                 <ChevronDown className="w-3.5 h-3.5 text-[#84928A]" />
               </button>
 
@@ -279,74 +279,82 @@ export function Navbar() {
 
             {/* Mobile menu button */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 sm:p-2.5 rounded-lg border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#E8F0EC] bg-white/70 dark:bg-[#12241D]"
-              aria-label="القائمة"
+              className="lg:hidden p-2 sm:p-2.5 rounded-xl border border-[#C5A059]/40 text-[#1B4332] dark:text-[#E8F0EC] bg-white/90 dark:bg-[#12241D] hover:bg-[#C5A059]/15 active:scale-95 touch-manipulation cursor-pointer shadow-sm"
+              aria-label="القائمة الرئيسية"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 text-[#C5A059]" /> : <Menu className="w-5 h-5 text-[#1B4332] dark:text-[#C5A059]" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-[#E7DFD5] dark:border-[#203A2F] animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden py-4 px-3 border-t border-[#E7DFD5] dark:border-[#203A2F] bg-[#FAF7F2] dark:bg-[#0B1914] shadow-2xl rounded-b-2xl animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="space-y-1.5">
               {/* Standalone Sheikh Page Link in Mobile Drawer */}
               <Link
                 href="/shaykh"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-[#143628] dark:text-[#E5C378] bg-[#C5A059]/15 border border-[#C5A059]/35 hover:bg-[#C5A059]/25 text-right mb-2 shadow-sm"
+                className="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-[#143628] dark:text-[#E5C378] bg-[#C5A059]/15 border border-[#C5A059]/35 hover:bg-[#C5A059]/25 text-right mb-2 shadow-sm touch-manipulation"
               >
                 <span>شيخ الطريقة القادرية البودشيشية</span>
                 <Award className="w-4 h-4 text-[#C5A059]" />
               </Link>
 
               <button
+                type="button"
                 onClick={() => navigateToTab("arbaeen")}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
                 <span>الأربعين النووية (42 حديثاً)</span>
                 <Scroll className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
+                type="button"
                 onClick={() => navigateToTab("hikam")}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
                 <span>الحكم العطائية (264 حكمة)</span>
                 <Layers className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
+                type="button"
                 onClick={() => navigateToTab("ibn-ashir")}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>متن ابن عاشر (المرشد المعين)</span>
+                <span>متن ابن عاشر (311 بيتاً من نوتيون)</span>
                 <BookOpen className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
+                type="button"
                 onClick={() => navigateToTab("tracks")}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>الأسلاك التكوينية</span>
+                <span>مدارج السالك الأربعة</span>
                 <GraduationCap className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
+                type="button"
                 onClick={() => navigateToTab("evidence")}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>التأصيل الشرعي</span>
+                <span>التأصيل الشرعي لدقائق الطريق</span>
                 <Scale className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
+                type="button"
                 onClick={() => navigateToTab("wazifa")}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
                 <span>الأوراد والوظيفة الراتبة</span>
                 <Clock className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
+                type="button"
                 onClick={() => navigateToTab("glossary")}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
                 <span>معجم مصطلحات الطريق</span>
                 <HelpCircle className="w-4 h-4 text-[#C5A059]" />

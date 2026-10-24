@@ -419,7 +419,7 @@ export default function ShaykhPage() {
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-[#1B4332] hover:bg-[#143628] text-[#FAF7F2] font-semibold shadow-lg shadow-[#1B4332]/25 hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 border border-[#C5A059]/40 text-sm sm:text-base font-ibm"
             >
               <Scroll className="w-5 h-5 text-[#C5A059]" />
-              <span>تصفح المقررات والمتون في منصة «مِنْهَاجُ الفَقِير»</span>
+              <span>استكشاف رحاب الأنوار والمتون في منصة «مِنْهَاجُ الفَقِير»</span>
             </Link>
           </div>
         </div>

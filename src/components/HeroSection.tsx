@@ -54,7 +54,7 @@ export function HeroSection() {
             className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white dark:bg-[#12241D] hover:bg-[#C5A059]/10 text-[#143628] dark:text-[#E8F0EC] font-semibold border border-[#E7DFD5] dark:border-[#203A2F] shadow-sm hover:border-[#C5A059] transition-all duration-200 hover:-translate-y-0.5 text-xs sm:text-sm"
           >
             <BookOpen className="w-4 h-4 text-[#C5A059]" />
-            <span>خزانة المقررات والمتون الشاملة</span>
+            <span>خزانة الدرر والمتون الجامعة</span>
           </a>
         </div>
       </div>
