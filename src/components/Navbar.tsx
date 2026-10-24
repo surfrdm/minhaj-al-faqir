@@ -16,6 +16,7 @@ import {
   User,
   ChevronDown,
   Scroll,
+  Award,
 } from "lucide-react";
 import { MemberPortalModal } from "./MemberPortalModal";
 import { ZawiyaDefinitionModal } from "./ZawiyaDefinitionModal";
@@ -112,6 +113,16 @@ export function Navbar() {
 
           {/* Desktop Navigation Menus (Grouped & Unified) */}
           <nav className="hidden lg:flex items-center gap-2">
+            {/* Direct Link to Shaykh Definition */}
+            <button
+              onClick={() => setZawiyaModalOpen(true)}
+              className="px-3 py-2 rounded-lg text-xs font-semibold text-[#9E7B35] dark:text-[#E5C378] hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/15 border border-[#C5A059]/35 transition-all flex items-center gap-1.5"
+              title="ورقة تعريفية بفضيلة الشيخ الدكتور سيدي منير القادري بودشيش"
+            >
+              <Award className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>شيخ الطريقة (سيدي منير)</span>
+            </button>
+
             {/* Direct Link to Hub */}
             <button
               onClick={() => navigateToTab("arbaeen")}
@@ -265,6 +276,17 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-[#E7DFD5] dark:border-[#203A2F] animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="space-y-1">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setZawiyaModalOpen(true);
+                }}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#9E7B35] dark:text-[#E5C378] bg-[#C5A059]/15 border border-[#C5A059]/30 hover:bg-[#C5A059]/25 text-right mb-2"
+              >
+                <span>تعريف شيخ الطريقة (سيدي منير القادري)</span>
+                <Award className="w-4 h-4 text-[#C5A059]" />
+              </button>
+
               <button
                 onClick={() => navigateToTab("arbaeen")}
                 className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
