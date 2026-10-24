@@ -141,7 +141,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                     <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
                       حكمة اليوم العطائية
                     </h3>
-                    <span className="text-[10px] text-[#C5A059] font-medium block">
+                    <span className="text-xs text-[#C5A059] font-medium block">
                       سيدي ابن عطاء الله السكندري
                     </span>
                   </div>
@@ -187,7 +187,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                   </button>
                 </div>
 
-                <span className="text-[10px] text-[#C5A059] font-semibold px-2">
+                <span className="text-xs text-[#C5A059] font-semibold px-2">
                   {activeHikma.topic}
                 </span>
               </div>
@@ -207,7 +207,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                     </p>
                     <div className="w-12 h-0.5 bg-[#C5A059]/30 mx-auto sm:mr-0" />
                     <div className="pt-1">
-                      <span className="text-[11px] font-bold text-[#C5A059] block mb-1">
+                      <span className="text-xs font-bold text-[#C5A059] block mb-1">
                         الشَّرْحُ السَّلُوكِيُّ المُحَقَّقُ:
                       </span>
                       <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
@@ -224,7 +224,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                     </p>
                     <div className="w-12 h-0.5 bg-[#C5A059]/30" />
                     <div className="pt-1 text-right" dir="rtl">
-                      <span className="text-[11px] font-bold text-[#C5A059] block mb-1">
+                      <span className="text-xs font-bold text-[#C5A059] block mb-1">
                         الشَّرْحُ السَّلُوكِيُّ:
                       </span>
                       <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
@@ -241,7 +241,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                     </p>
                     <div className="w-12 h-0.5 bg-[#C5A059]/30" />
                     <div className="pt-1 text-right" dir="rtl">
-                      <span className="text-[11px] font-bold text-[#C5A059] block mb-1">
+                      <span className="text-xs font-bold text-[#C5A059] block mb-1">
                         الشَّرْحُ السَّلُوكِيُّ:
                       </span>
                       <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
@@ -318,7 +318,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                     <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
                       حديث اليوم النبوي
                     </h3>
-                    <span className="text-[10px] text-[#C5A059] font-medium block">
+                    <span className="text-xs text-[#C5A059] font-medium block">
                       الأربعين النووية للإمام النووي
                     </span>
                   </div>
@@ -331,10 +331,10 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
 
               {/* Topic & Metadata Banner */}
               <div className="flex items-center justify-between mb-4 bg-[#FAF7F2] dark:bg-[#122820] px-3 py-1.5 rounded-xl border border-[#E7DFD5] dark:border-[#203D31]">
-                <span className="text-[11px] font-semibold text-[#1B4332] dark:text-[#E5C378]">
+                <span className="text-xs font-semibold text-[#1B4332] dark:text-[#E5C378]">
                   {todayHadith.topic}
                 </span>
-                <span className="text-[10px] text-[#84928A]">
+                <span className="text-xs text-[#52796F] dark:text-[#A1B3A9]">
                   {todayHadith.theme}
                 </span>
               </div>
@@ -361,7 +361,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                     <p>
                       <strong className="text-[#143628] dark:text-[#FAF7F2]">الراوي والمخرج:</strong> {todayHadith.narrator} — {todayHadith.source}.
                     </p>
-                    <p className="text-[11px] text-[#84928A] dark:text-[#7A9386]">
+                    <p className="text-xs text-[#52796F] dark:text-[#7A9386]">
                       <strong className="text-[#C5A059]">المدارسة السلوكية:</strong> {todayHadith.suluk_lesson}
                     </p>
                   </div>
@@ -434,14 +434,14 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                     <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
                       دُرَّةُ مَتْنِ ابْنِ عَاشِرٍ
                     </h3>
-                    <span className="text-[10px] text-[#C5A059] font-medium block">
+                    <span className="text-xs text-[#C5A059] font-medium block">
                       المُرْشِدُ المُعِينُ عَلَى الضَّرُورِيِّ مِنْ عُلُومِ الدِّينِ
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
+                  <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
                     البيت #{currentIbnAshir.verseNumbers} من {IBN_ASHIR_TOTAL_COUNT}
                   </span>
                 </div>
@@ -449,10 +449,10 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
 
               {/* Chapter Badge & Title */}
               <div className="flex items-center justify-between mb-4 bg-[#FAF7F2] dark:bg-[#122820] px-3 py-1.5 rounded-xl border border-[#E7DFD5] dark:border-[#203D31]">
-                <span className="text-[11px] text-[#1B4332] dark:text-[#E5C378] font-bold">
+                <span className="text-xs text-[#1B4332] dark:text-[#E5C378] font-bold">
                   {currentIbnAshir.chapter}
                 </span>
-                <span className="text-[10px] text-[#84928A]">
+                <span className="text-xs text-[#52796F] dark:text-[#A1B3A9]">
                   {currentIbnAshir.theme}
                 </span>
               </div>
@@ -473,7 +473,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
 
               {/* Concise Scholarly Explanation from Notion */}
               <div className="p-3.5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] mb-4">
-                <span className="text-[11px] font-bold text-[#C5A059] block mb-1">
+                <span className="text-xs font-bold text-[#C5A059] block mb-1">
                   الشَّرْحُ الفِقْهِيُّ وَالسَّلُوكِيُّ:
                 </span>
                 <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
@@ -494,7 +494,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
-                  <span className="text-[10px] font-mono px-1.5 text-[#84928A]">
+                  <span className="text-xs font-mono px-1.5 text-[#52796F] dark:text-[#A1B3A9]">
                     {activeIbnAshirIndex + 1}/{IBN_ASHIR_LESSONS.length}
                   </span>
                   <button

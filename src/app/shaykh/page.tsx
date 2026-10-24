@@ -85,7 +85,7 @@ export default function ShaykhPage() {
                     <span>الإرشاد والتربية الروحية • السند القادري المتصل</span>
                   </div>
 
-                  <span className="text-[11px] px-3 py-1 rounded-full bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5] dark:border-[#1F3D2F] text-[#84928A] font-medium">
+                  <span className="text-xs px-3 py-1 rounded-full bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5] dark:border-[#1F3D2F] text-[#52796F] dark:text-[#A1B3A9] font-medium">
                     آخر تحيين: ربيع الثاني 1448 هـ / أكتوبر 2026
                   </span>
                 </div>

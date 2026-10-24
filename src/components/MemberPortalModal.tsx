@@ -316,7 +316,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
 
           <button
             onClick={() => setView("admin")}
-            className={`px-2.5 py-1 rounded-md text-[11px] font-semibold flex items-center gap-1 transition-all ${
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1 transition-all ${
               view === "admin"
                 ? "bg-[#C5A059] text-[#143628]"
                 : "text-[#C5A059] border border-[#C5A059]/40 hover:bg-[#C5A059]/10"
@@ -349,7 +349,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                   </div>
                 </div>
                 <div className="text-left sm:text-right bg-[#FAF7F2] dark:bg-[#0B1914] px-3.5 py-1.5 rounded-lg border border-[#C5A059]/30">
-                  <span className="text-[11px] text-[#84928A] block">معرف الفقير الرسمي</span>
+                  <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">معرف الفقير الرسمي</span>
                   <span className="font-mono text-xs font-semibold text-[#1B4332] dark:text-[#E5C378]">
                     BDT-2026-{currentMember.id.slice(0, 4)}
                   </span>
@@ -409,7 +409,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         </span>
                         <span className="text-xs text-[#C5A059]">درهم</span>
                       </div>
-                      <span className="text-[11px] text-[#52796F] dark:text-[#95B8A8] mt-1 block">
+                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] mt-1 block">
                         مساهمة ختام السنة
                       </span>
                     </div>
@@ -425,7 +425,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         </span>
                         <span className="text-xs text-green-600">درهم</span>
                       </div>
-                      <span className="text-[11px] text-green-600 dark:text-green-400 mt-1 block">
+                      <span className="text-xs text-green-600 dark:text-green-400 mt-1 block">
                         نسبة الإنجاز: {currentMember.annualPercentage}%
                       </span>
                     </div>
@@ -441,7 +441,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         </span>
                         <span className="text-xs text-amber-600">درهم</span>
                       </div>
-                      <span className="text-[11px] text-amber-600 dark:text-amber-400 mt-1 block">
+                      <span className="text-xs text-amber-600 dark:text-amber-400 mt-1 block">
                         واجب الاستيفاء
                       </span>
                     </div>
@@ -493,11 +493,11 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                           >
                             <span className="text-xs font-semibold block mb-1">{mName}</span>
                             {isPaid ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] text-green-700 dark:text-green-400 font-bold">
+                              <span className="inline-flex items-center gap-1 text-xs text-green-700 dark:text-green-400 font-bold">
                                 <CheckCircle2 className="w-3 h-3" /> تم الأداء
                               </span>
                             ) : (
-                              <span className="text-[10px] text-[#A0AFA6] block">
+                              <span className="text-xs text-[#A0AFA6] block">
                                 متبقي
                               </span>
                             )}
@@ -533,14 +533,14 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
                           ذِكْرُ الوِرْدِ العَامِّ
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] font-bold">
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] font-bold">
                           صباحاً ومساءً
                         </span>
                       </div>
                       <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
                         الاستغفار • الصلاة على النبي ﷺ • كلمة التوحيد
                       </span>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5" /> تم الأداء بحمد الله
                       </span>
                     </div>
@@ -551,14 +551,14 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
                           حِزبان من القرآن الكريم
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] font-bold">
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] font-bold">
                           ختمة شهرية
                         </span>
                       </div>
                       <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
                         حزب بعد الصبح • حزب بعد العصر أو المغرب
                       </span>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5" /> تم أداء حزب الصباح
                       </span>
                     </div>
@@ -569,14 +569,14 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
                           حزب دلائل الخيرات
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] font-bold">
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] font-bold">
                           للإمام الجزولي
                         </span>
                       </div>
                       <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
                         تلاوة الحزب اليومي الراتب في الصلاة على النبي ﷺ
                       </span>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-xs font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5" /> تلاوة الحزب اليومي
                       </span>
                     </div>
@@ -587,14 +587,14 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
                           15 000 لا إله إلا الله
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] font-bold">
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] font-bold">
                           عمارة الأوقات
                         </span>
                       </div>
                       <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
                         عمارة اليوم بكلمة الإخلاص والتوحيد
                       </span>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-950/60 dark:text-yellow-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-950/60 dark:text-yellow-300 text-xs font-semibold">
                         <AlertCircle className="w-3.5 h-3.5" /> قيد الذكر والمتابعة
                       </span>
                     </div>
@@ -780,7 +780,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                     >
                       <div>
                         <span className="font-bold text-xs block">{m.name}</span>
-                        <span className="text-[11px] opacity-80 block">
+                        <span className="text-xs opacity-80 block">
                           {m.city} • الملزومة الشهرية: {m.monthly} درهم • السنوية: {m.annualTarget} درهم
                         </span>
                       </div>
@@ -840,7 +840,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         href="https://app.notion.com/p/Architecture-402b37655def80cabacac119a241b556"
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[11px] text-[#C5A059] flex items-center gap-1 hover:underline"
+                        className="text-xs text-[#C5A059] flex items-center gap-1 hover:underline"
                       >
                         <ExternalLink className="w-3 h-3" />
                         <span>فتح قاعدة Notion الأصلية</span>

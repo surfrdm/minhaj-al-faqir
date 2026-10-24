@@ -193,7 +193,7 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
                   <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
                     #{hikma.number}
                   </span>
-                  <span className="text-[11px] font-semibold text-[#C5A059] truncate max-w-[150px]">
+                  <span className="text-xs font-semibold text-[#C5A059] truncate max-w-[150px]">
                     {hikma.topic}
                   </span>
                 </div>
@@ -210,8 +210,8 @@ export function HikamArchive({ isEmbedded = false }: HikamArchiveProps) {
               </div>
 
               {/* Bottom Card Bar: Languages Available & Click Hint */}
-              <div className="pt-3 mt-3 border-t border-[#E7DFD5]/80 dark:border-[#203D31]/80 flex items-center justify-between text-[10px]">
-                <span className="text-[#84928A] flex items-center gap-1 font-mono">
+              <div className="pt-3 mt-3 border-t border-[#E7DFD5]/80 dark:border-[#203D31]/80 flex items-center justify-between text-xs">
+                <span className="text-[#52796F] dark:text-[#A1B3A9] flex items-center gap-1 font-mono">
                   <span>AR</span>
                   <span>•</span>
                   <span>FR</span>

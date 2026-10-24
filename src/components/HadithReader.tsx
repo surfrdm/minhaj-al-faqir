@@ -100,7 +100,7 @@ export function HadithReader({
               className={`px-2 py-1 text-xs rounded-lg transition font-medium ${
                 fontSize === "md"
                   ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019]"
-                  : "text-[#84928A] hover:text-[#1B4332]"
+                  : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#1B4332]"
               }`}
               title="تصغير الخط"
             >
@@ -111,7 +111,7 @@ export function HadithReader({
               className={`px-2 py-1 text-xs rounded-lg transition font-medium ${
                 fontSize === "lg"
                   ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019]"
-                  : "text-[#84928A] hover:text-[#1B4332]"
+                  : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#1B4332]"
               }`}
               title="الخط الافتراضي"
             >
@@ -122,7 +122,7 @@ export function HadithReader({
               className={`px-2 py-1 text-xs rounded-lg transition font-medium ${
                 fontSize === "xl"
                   ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019]"
-                  : "text-[#84928A] hover:text-[#1B4332]"
+                  : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#1B4332]"
               }`}
               title="تكبير الخط"
             >
@@ -134,30 +134,30 @@ export function HadithReader({
           <div className="flex items-center bg-[#FAF7F2] dark:bg-[#122820] rounded-xl border border-[#E7DFD5] dark:border-[#203D31] p-0.5">
             <button
               onClick={() => setLang("ar")}
-              className={`px-2 py-1 text-[11px] rounded-lg transition font-medium ${
+              className={`px-2 py-1 text-xs rounded-lg transition font-medium ${
                 lang === "ar"
                   ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019]"
-                  : "text-[#84928A] hover:text-[#1B4332]"
+                  : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#1B4332]"
               }`}
             >
               عربي
             </button>
             <button
               onClick={() => setLang("fr")}
-              className={`px-2 py-1 text-[11px] rounded-lg transition font-medium ${
+              className={`px-2 py-1 text-xs rounded-lg transition font-medium ${
                 lang === "fr"
                   ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019]"
-                  : "text-[#84928A] hover:text-[#1B4332]"
+                  : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#1B4332]"
               }`}
             >
               FR
             </button>
             <button
               onClick={() => setLang("en")}
-              className={`px-2 py-1 text-[11px] rounded-lg transition font-medium ${
+              className={`px-2 py-1 text-xs rounded-lg transition font-medium ${
                 lang === "en"
                   ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019]"
-                  : "text-[#84928A] hover:text-[#1B4332]"
+                  : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#1B4332]"
               }`}
             >
               EN
@@ -168,7 +168,7 @@ export function HadithReader({
 
       {/* 2. Small Title & Heading */}
       <div>
-        <span className="text-[11px] text-[#C5A059] font-bold block mb-1">
+        <span className="text-xs text-[#C5A059] font-bold block mb-1">
           عُنْوَانُ الحَدِيثِ
         </span>
         <h1 className="font-amiri text-2xl sm:text-3xl font-bold text-[#143628] dark:text-[#FAF7F2]">
@@ -205,7 +205,7 @@ export function HadithReader({
       <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
         {lang === "fr" && hadith.text_fr && (
           <div className="space-y-1" dir="ltr">
-            <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-wider block">
+            <span className="text-xs font-bold text-[#C5A059] uppercase tracking-wider block">
               Traduction Française:
             </span>
             <p className="font-serif italic text-sm text-[#143628] dark:text-[#FAF7F2] leading-relaxed">
@@ -216,7 +216,7 @@ export function HadithReader({
 
         {lang === "en" && hadith.text_en && (
           <div className="space-y-1" dir="ltr">
-            <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-wider block">
+            <span className="text-xs font-bold text-[#C5A059] uppercase tracking-wider block">
               English Translation:
             </span>
             <p className="font-serif italic text-sm text-[#143628] dark:text-[#FAF7F2] leading-relaxed">
@@ -226,27 +226,27 @@ export function HadithReader({
         )}
 
         {/* Standardized Documentation & Takhrij Metadata Grid */}
-        <div className="pt-3 border-t border-[#E7DFD5]/70 dark:border-[#203D31]/70 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-[#52796F] dark:text-[#95B8A8] font-ibm">
+        <div className="pt-3 border-t border-[#E7DFD5]/70 dark:border-[#203D31]/70 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm">
           <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
-            <span className="text-[10px] text-[#84928A] block">النوع:</span>
+            <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">النوع:</span>
             <span className="font-semibold text-[#143628] dark:text-[#FAF7F2]">حديث نبوي شريف</span>
           </div>
 
           <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
-            <span className="text-[10px] text-[#84928A] block">المصدر والتخريج:</span>
+            <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">المصدر والتخريج:</span>
             <span className="font-semibold text-[#143628] dark:text-[#FAF7F2] line-clamp-1" title={hadith.source}>
               {hadith.source || "قيد المراجعة"}
             </span>
           </div>
 
           <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
-            <span className="text-[10px] text-[#84928A] block">الطبعة:</span>
-            <span className="text-[#84928A]">قيد المراجعة</span>
+            <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">الطبعة:</span>
+            <span className="text-[#52796F] dark:text-[#A1B3A9]">قيد المراجعة</span>
           </div>
 
           <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
-            <span className="text-[10px] text-[#84928A] block">المترجم / المراجع:</span>
-            <span className="text-[#84928A]">قيد المراجعة</span>
+            <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">المترجم / المراجع:</span>
+            <span className="text-[#52796F] dark:text-[#A1B3A9]">قيد المراجعة</span>
           </div>
         </div>
       </div>
@@ -309,7 +309,7 @@ export function HadithReader({
             >
               <ChevronRight className="w-4 h-4 text-[#C5A059] group-hover:translate-x-1 transition-transform" />
               <div>
-                <span className="text-[10px] text-[#84928A] block">السابق</span>
+                <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">السابق</span>
                 <span className="text-xs sm:text-sm font-bold text-[#143628] dark:text-[#FAF7F2]">
                   الحديث #{prevHadithId}
                 </span>
@@ -322,7 +322,7 @@ export function HadithReader({
             >
               <ChevronRight className="w-4 h-4 text-[#C5A059] group-hover:translate-x-1 transition-transform" />
               <div>
-                <span className="text-[10px] text-[#84928A] block">السابق</span>
+                <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">السابق</span>
                 <span className="text-xs sm:text-sm font-bold text-[#143628] dark:text-[#FAF7F2]">
                   الحديث #{prevHadithId}
                 </span>
@@ -340,7 +340,7 @@ export function HadithReader({
               className="py-3 px-4 rounded-2xl bg-white dark:bg-[#0E2019] hover:bg-[#FAF7F2] dark:hover:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] text-left justify-end transition flex items-center gap-2 group"
             >
               <div className="text-left">
-                <span className="text-[10px] text-[#84928A] block">التالي</span>
+                <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">التالي</span>
                 <span className="text-xs sm:text-sm font-bold text-[#143628] dark:text-[#FAF7F2]">
                   الحديث #{nextHadithId}
                 </span>
@@ -353,7 +353,7 @@ export function HadithReader({
               className="py-3 px-4 rounded-2xl bg-white dark:bg-[#0E2019] hover:bg-[#FAF7F2] dark:hover:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] text-left justify-end transition flex items-center gap-2 group"
             >
               <div className="text-left">
-                <span className="text-[10px] text-[#84928A] block">التالي</span>
+                <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">التالي</span>
                 <span className="text-xs sm:text-sm font-bold text-[#143628] dark:text-[#FAF7F2]">
                   الحديث #{nextHadithId}
                 </span>

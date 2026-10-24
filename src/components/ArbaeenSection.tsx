@@ -139,7 +139,7 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
                 <span className="text-xs sm:text-sm font-bold text-[#143628] dark:text-[#FAF7F2] block">
                   الأربعين النووية متاحة أيضاً في صفحة مستقلة كاملة
                 </span>
-                <span className="text-[11px] text-[#52796F] dark:text-[#95B8A8] font-ibm">
+                <span className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm">
                   لقراءة أهدأ ورابط مباشر لكل حديث مع تكبير الخط وحفظ التقدم
                 </span>
               </div>
@@ -222,7 +222,7 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
                   <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
                     #{h.id} / 42
                   </span>
-                  <span className="text-[10px] font-semibold text-[#C5A059] truncate max-w-[130px]">
+                  <span className="text-xs font-semibold text-[#C5A059] truncate max-w-[130px]">
                     {h.topic}
                   </span>
                 </div>
@@ -242,11 +242,11 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
 
               {/* Bottom Tile Info */}
               <div className="pt-3 mt-2 border-t border-[#E7DFD5]/80 dark:border-[#203D31]/80 space-y-1 text-right">
-                <span className="text-[11px] text-[#52796F] dark:text-[#95B8A8] font-ibm block truncate">
+                <span className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm block truncate">
                   عن: {h.narrator}
                 </span>
-                <div className="flex items-center justify-between text-[10px]">
-                  <span className="text-[#84928A]">{h.source}</span>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[#52796F] dark:text-[#A1B3A9]">{h.source}</span>
                   <span className="text-[#C5A059] font-medium group-hover:translate-x-[-2px] transition-transform">
                     اقرأ المتن كاملاً ↗
                   </span>

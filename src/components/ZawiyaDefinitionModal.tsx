@@ -54,7 +54,7 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
               <h2 className="font-amiri text-lg sm:text-2xl font-bold tracking-wide text-[#FAF7F2]">
                 الطَّرِيقَةُ القَادِرِيَّةُ البُودْشِيشِيَّةُ
               </h2>
-              <p className="text-[11px] sm:text-xs text-[#E5C378] font-ibm">
+              <p className="text-xs sm:text-xs text-[#E5C378] font-ibm">
                 زاوية مدينة المحمدية الشريفة • التعريف بالشيخ والمنهج التربوي
               </p>
             </div>
@@ -66,7 +66,7 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
               title="الانتقال إلى الصفحة الكاملة المستقلة لشيخ الطريقة"
             >
               <span>فتح في صفحة كاملة</span>
-              <span className="text-[10px]">↗</span>
+              <span className="text-xs">↗</span>
             </a>
             <button
               onClick={onClose}
@@ -133,7 +133,7 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
 
                   {/* Title & Honorifics */}
                   <div className="flex-1">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#9E7B35] dark:text-[#E5C378] text-[11px] font-semibold mb-2">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#9E7B35] dark:text-[#E5C378] text-xs font-semibold mb-2">
                       <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
                       <span>الإرشاد والتربية الروحية • السند القادري المتصل</span>
                     </div>

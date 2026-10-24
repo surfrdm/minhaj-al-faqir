@@ -24,7 +24,7 @@ export function HeroSection() {
         >
           <GraduationCap className="w-4 h-4 text-[#C5A059]" />
           <span>الأكاديمية العلمية والتأصيلية • زاوية مدينة المحمدية</span>
-          <span className="text-[11px] opacity-70 group-hover:opacity-100 transition-opacity">←</span>
+          <span className="text-xs opacity-70 group-hover:opacity-100 transition-opacity">←</span>
         </Link>
 
         {/* 1. Main Title & Short Definition */}
@@ -49,7 +49,7 @@ export function HeroSection() {
             className="group relative p-5 rounded-2xl bg-white dark:bg-[#0E2019] border-2 border-[#1B4332]/40 dark:border-[#C5A059]/50 hover:border-[#C5A059] shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/20 text-[#1B4332] dark:text-[#E5C378]">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/20 text-[#1B4332] dark:text-[#E5C378]">
                 الخطوة الأولى
               </span>
               <div className="w-9 h-9 rounded-xl bg-[#1B4332]/10 dark:bg-[#C5A059]/15 flex items-center justify-center text-[#1B4332] dark:text-[#E5C378]">
@@ -76,7 +76,7 @@ export function HeroSection() {
             className="group relative p-5 rounded-2xl bg-gradient-to-br from-[#FFFDF9] to-[#F7F2E8] dark:from-[#122820] dark:to-[#0A1813] border-2 border-[#C5A059]/60 hover:border-[#C5A059] shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#C5A059]/20 text-[#8C6D23] dark:text-[#E5C378]">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#C5A059]/20 text-[#8C6D23] dark:text-[#E5C378]">
                 محطة يومية
               </span>
               <div className="w-9 h-9 rounded-xl bg-[#C5A059]/20 flex items-center justify-center text-[#C5A059]">
@@ -103,7 +103,7 @@ export function HeroSection() {
             className="group relative p-5 rounded-2xl bg-white dark:bg-[#0E2019] border-2 border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FAF7F2] dark:bg-[#122820] text-[#52796F] dark:text-[#95B8A8] border border-[#E7DFD5] dark:border-[#203D31]">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#FAF7F2] dark:bg-[#122820] text-[#52796F] dark:text-[#95B8A8] border border-[#E7DFD5] dark:border-[#203D31]">
                 الخزانة الكبرى
               </span>
               <div className="w-9 h-9 rounded-xl bg-[#1B4332]/10 dark:bg-[#C5A059]/15 flex items-center justify-center text-[#143628] dark:text-[#FAF7F2]">

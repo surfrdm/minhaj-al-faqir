@@ -351,7 +351,7 @@ export function CircularShowcase3D() {
                     {/* Top Floating Badge on Active Card */}
                     {isCenter && (
                       <div className="absolute top-3 right-3 left-3 flex items-center justify-between pointer-events-none">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#143628]/90 text-[#E5C378] text-[11px] sm:text-xs font-semibold backdrop-blur-md shadow-md border border-[#C5A059]/30">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#143628]/90 text-[#E5C378] text-xs sm:text-xs font-semibold backdrop-blur-md shadow-md border border-[#C5A059]/30">
                           {card.categoryBadge}
                         </span>
 

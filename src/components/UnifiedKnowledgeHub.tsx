@@ -273,7 +273,7 @@ export function UnifiedKnowledgeHub() {
                 <span>{branch.title}</span>
                 {branch.badge && (
                   <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded ${
+                    className={`text-xs px-1.5 py-0.5 rounded ${
                       isActive
                         ? "bg-[#C5A059] text-[#143628] font-bold"
                         : "bg-[#1B4332]/10 dark:bg-white/10 text-[#C5A059]"
@@ -297,7 +297,7 @@ export function UnifiedKnowledgeHub() {
                   <Layers className="w-4 h-4 text-[#C5A059]" />
                   <h3 className="font-amiri text-lg font-bold">فهرس المناهل والمدارج الروحية</h3>
                 </div>
-                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378]">
+                <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378]">
                   5 مدارج
                 </span>
               </div>
@@ -306,7 +306,7 @@ export function UnifiedKnowledgeHub() {
               <div className="space-y-4 font-ibm text-xs">
                 {CATEGORIES.map((cat) => (
                   <div key={cat.id} className="space-y-1.5">
-                    <div className="px-2 pt-1 text-[11px] font-bold text-[#84928A] dark:text-[#8E9F96] flex items-center justify-between">
+                    <div className="px-2 pt-1 text-xs font-bold text-[#52796F] dark:text-[#8E9F96] flex items-center justify-between">
                       <span>{cat.title}</span>
                     </div>
 
@@ -339,7 +339,7 @@ export function UnifiedKnowledgeHub() {
                                   {branch.title}
                                 </span>
                                 <span
-                                  className={`text-[10px] block mt-0.5 line-clamp-1 ${
+                                  className={`text-xs block mt-0.5 line-clamp-1 ${
                                     isActive ? "text-[#E5C378]" : "text-[#6B7D74] dark:text-[#8E9F96]"
                                   }`}
                                 >
@@ -364,7 +364,7 @@ export function UnifiedKnowledgeHub() {
               </div>
 
               {/* Academy Identity Footer Note */}
-              <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] text-[11px] text-[#84928A] dark:text-[#7A8C82] flex items-center gap-2">
+              <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] text-xs text-[#52796F] dark:text-[#7A8C82] flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-[#C5A059] shrink-0" />
                 <span>معالم تزكية وتأصيل معتمدة على هدي المشيخة الصوفية الجليلة</span>
               </div>
@@ -430,7 +430,7 @@ export function UnifiedKnowledgeHub() {
                     {/* Top Header Card */}
                     <div className="p-5 rounded-2xl bg-gradient-to-r from-[#1B4332]/10 via-[#C5A059]/10 to-[#1B4332]/10 border border-[#C5A059]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div>
-                        <span className="text-[11px] font-semibold text-[#C5A059] block mb-1">
+                        <span className="text-xs font-semibold text-[#C5A059] block mb-1">
                           منظومة المرشد المعين على الضروري من علوم الدين
                         </span>
                         <h4 className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
@@ -451,7 +451,7 @@ export function UnifiedKnowledgeHub() {
                     <div className="p-4 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-sm">
                       {/* Search Input */}
                       <div className="relative flex-1">
-                        <Search className="w-4 h-4 text-[#84928A] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <Search className="w-4 h-4 text-[#52796F] dark:text-[#A1B3A9] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         <input
                           type="text"
                           value={searchIbnAshir}
@@ -485,7 +485,7 @@ export function UnifiedKnowledgeHub() {
                       </div>
 
                       {/* Count pill */}
-                      <div className="text-[11px] text-[#84928A] font-mono shrink-0 text-left">
+                      <div className="text-xs text-[#52796F] dark:text-[#A1B3A9] font-mono shrink-0 text-left">
                         {filteredVerses.length} بيتاً
                       </div>
                     </div>
@@ -503,14 +503,14 @@ export function UnifiedKnowledgeHub() {
                                 #{v.number}
                               </span>
                               <div>
-                                <span className="text-[10px] text-[#C5A059] font-medium block">
+                                <span className="text-xs text-[#C5A059] font-medium block">
                                   {v.bab}
                                 </span>
                               </div>
                             </div>
 
                             <div className="flex items-center gap-1.5">
-                              <span className="text-[11px] px-2 py-0.5 rounded-md bg-white dark:bg-[#0E2019] text-[#84928A] border border-[#E7DFD5] dark:border-[#203D31]">
+                              <span className="text-xs px-2 py-0.5 rounded-md bg-white dark:bg-[#0E2019] text-[#52796F] dark:text-[#A1B3A9] border border-[#E7DFD5] dark:border-[#203D31]">
                                 {v.qism}
                               </span>
                               <a
@@ -721,7 +721,7 @@ export function UnifiedKnowledgeHub() {
                             <BookOpen className="w-5 h-5 text-[#C5A059]" />
                             <h5 className="font-amiri text-base font-bold">حِزْبَانِ مِنَ القُرْآنِ الكَرِيمِ</h5>
                           </div>
-                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
+                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-xs font-bold">
                             صباحاً ومساءً
                           </span>
                         </div>
@@ -752,7 +752,7 @@ export function UnifiedKnowledgeHub() {
                             <Sparkles className="w-5 h-5 text-[#C5A059]" />
                             <h5 className="font-amiri text-base font-bold">حِزْبُ دَلَائِلِ الخَيْرَاتِ</h5>
                           </div>
-                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
+                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-xs font-bold">
                             الصلاة على النبي ﷺ
                           </span>
                         </div>
@@ -783,7 +783,7 @@ export function UnifiedKnowledgeHub() {
                             <Compass className="w-5 h-5 text-[#C5A059]" />
                             <h5 className="font-amiri text-base font-bold">ذِكْرُ الوِرْدِ العَامِّ</h5>
                           </div>
-                          <span className="px-2 py-0.5 rounded-full bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] text-[10px] font-bold">
+                          <span className="px-2 py-0.5 rounded-full bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] text-xs font-bold">
                             صباحاً ومساءً
                           </span>
                         </div>
@@ -814,7 +814,7 @@ export function UnifiedKnowledgeHub() {
                             <Layers className="w-5 h-5 text-[#C5A059]" />
                             <h5 className="font-amiri text-base font-bold">15,000 هَيْلَلَة (لَا إِلَهَ إِلَّا اللهُ)</h5>
                           </div>
-                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
+                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-xs font-bold">
                             عمارة الأوقات
                           </span>
                         </div>
@@ -849,7 +849,7 @@ export function UnifiedKnowledgeHub() {
                           <h5 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
                             الوظيفة الراتبة بالزاوية (مجلس الجماعة)
                           </h5>
-                          <span className="text-[11px] text-[#52796F] dark:text-[#95B8A8] font-ibm">
+                          <span className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm">
                             بين صلاتي المغرب والعشاء يومياً بمقرات الزاوية
                           </span>
                         </div>
@@ -887,7 +887,7 @@ export function UnifiedKnowledgeHub() {
                   <div className="pt-6 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-4">
                     <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#C5A059]/15 via-[#1B4332]/10 to-[#C5A059]/15 border border-[#C5A059]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div>
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#C5A059]/20 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold mb-1">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#C5A059]/20 text-[#9E7B35] dark:text-[#E5C378] text-xs font-bold mb-1">
                           <Award className="w-3.5 h-3.5" />
                           <span>فِقْهُ الطَّرِيقِ • مَجَالِسُ الصَّفَاءِ</span>
                         </div>

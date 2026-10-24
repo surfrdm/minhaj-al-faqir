@@ -195,7 +195,7 @@ export function HikmaOfTheDay() {
 
               <div className="w-12 h-0.5 bg-[#C5A059]/40 mb-2" />
 
-              <span className="text-[11px] font-mono font-bold text-[#1B4332] dark:text-[#E5C378]">
+              <span className="text-xs font-mono font-bold text-[#1B4332] dark:text-[#E5C378]">
                 الدُّرَّةُ #{currentHikma.number}
               </span>
             </div>

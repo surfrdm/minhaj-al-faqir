@@ -79,7 +79,7 @@ export function GlossarySection() {
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378]">
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378]">
                     {item.category}
                   </span>
                   {item.plural !== "-" && (

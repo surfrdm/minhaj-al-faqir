@@ -82,7 +82,7 @@ export default function MasarPage() {
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Breadcrumb Navigation */}
-        <div className="flex items-center justify-between text-xs sm:text-sm text-[#84928A] dark:text-[#84928A] mb-8 pb-4 border-b border-[#E7DFD5] dark:border-[#203A2F]">
+        <div className="flex items-center justify-between text-xs sm:text-sm text-[#52796F] dark:text-[#A1B3A9] mb-8 pb-4 border-b border-[#E7DFD5] dark:border-[#203A2F]">
           <div className="flex items-center gap-2">
             <Link
               href="/"
@@ -147,7 +147,7 @@ export default function MasarPage() {
               <p className="text-xs sm:text-sm text-[#2D3F36] dark:text-[#D1DDD6] font-medium leading-relaxed">
                 «{MASAR_DATA.meta.notice}»
               </p>
-              <p className="text-[11px] sm:text-xs text-[#6B7D74] dark:text-[#8FA097] mt-1.5">
+              <p className="text-xs sm:text-xs text-[#6B7D74] dark:text-[#8FA097] mt-1.5">
                 طريق القوم مبناه على الصحبة الحية واللقاء والمشافهة وأخذ الأوراد بالإذن المعتمد من شيخ الطريقة، وهذا المسار معين على الضبط والمذاكرة فقط.
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function MasarPage() {
               <h2 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
                 مستوى تقدمك في المسار التكويني
               </h2>
-              <p className="text-xs text-[#84928A]">
+              <p className="text-xs text-[#52796F] dark:text-[#A1B3A9]">
                 أكملت {completedStages.length} من أصل {MASAR_DATA.stages.length} مراحل ({progressPercentage}%)
               </p>
             </div>
@@ -180,13 +180,13 @@ export default function MasarPage() {
                         ? "bg-[#1B4332] text-[#FAF7F2] shadow-sm"
                         : isCompleted
                         ? "bg-[#C5A059]/20 text-[#9E7B35] dark:text-[#E5C378] border border-[#C5A059]/30"
-                        : "bg-[#FAF7F2] dark:bg-[#0B1914] text-[#84928A] border border-[#E7DFD5] dark:border-[#203A2F] hover:border-[#C5A059]"
+                        : "bg-[#FAF7F2] dark:bg-[#0B1914] text-[#52796F] dark:text-[#A1B3A9] border border-[#E7DFD5] dark:border-[#203A2F] hover:border-[#C5A059]"
                     }`}
                   >
                     {isCompleted ? (
                       <CheckCircle2 className="w-3.5 h-3.5 text-[#C5A059]" />
                     ) : (
-                      <span className="w-3.5 h-3.5 rounded-full border border-current flex items-center justify-center text-[9px] font-mono">
+                      <span className="w-3.5 h-3.5 rounded-full border border-current flex items-center justify-center text-xs font-mono">
                         {stage.id}
                       </span>
                     )}
@@ -231,10 +231,10 @@ export default function MasarPage() {
                     </span>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-semibold text-[#84928A]">
+                        <span className="text-xs font-semibold text-[#52796F] dark:text-[#A1B3A9]">
                           المرحلة {stage.id} من 6
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#9E7B35] dark:text-[#E5C378] bg-[#C5A059]/15 px-2 py-0.5 rounded-md border border-[#C5A059]/20">
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-[#9E7B35] dark:text-[#E5C378] bg-[#C5A059]/15 px-2 py-0.5 rounded-md border border-[#C5A059]/20">
                           <Clock className="w-3 h-3" />
                           <span>المدة: {stage.duration}</span>
                         </span>
@@ -251,7 +251,7 @@ export default function MasarPage() {
                     className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer self-start sm:self-auto ${
                       isCompleted
                         ? "bg-[#1B4332] text-[#FAF7F2] border border-[#C5A059]/40 shadow-sm"
-                        : "bg-[#FAF7F2] dark:bg-[#1A382D] text-[#84928A] dark:text-[#A1B3A9] border border-[#E7DFD5] dark:border-[#203A2F] hover:border-[#C5A059]"
+                        : "bg-[#FAF7F2] dark:bg-[#1A382D] text-[#52796F] dark:text-[#A1B3A9] border border-[#E7DFD5] dark:border-[#203A2F] hover:border-[#C5A059]"
                     }`}
                   >
                     {isCompleted ? (
@@ -261,7 +261,7 @@ export default function MasarPage() {
                       </>
                     ) : (
                       <>
-                        <Circle className="w-4 h-4 text-[#84928A]" />
+                        <Circle className="w-4 h-4 text-[#52796F] dark:text-[#A1B3A9]" />
                         <span>تحديد كمكتمل</span>
                       </>
                     )}
@@ -341,7 +341,7 @@ export default function MasarPage() {
                             المقررات والكتب المعتمدة
                           </h3>
                         </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded-md bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] font-medium">
+                        <span className="text-xs px-2 py-0.5 rounded-md bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] font-medium">
                           شرط الاعتماد
                         </span>
                       </div>
@@ -357,16 +357,16 @@ export default function MasarPage() {
                                 <h4 className="font-amiri text-sm font-bold text-[#143628] dark:text-[#FAF7F2]">
                                   {book.title || "عنوان قيد المراجعة"}
                                 </h4>
-                                <span className="text-[10px] text-[#C5A059]">
+                                <span className="text-xs text-[#C5A059]">
                                   {book.author || "قيد المراجعة"}
                                 </span>
                               </div>
                               {book.note && (
-                                <p className="text-xs text-[#84928A] mt-1">
+                                <p className="text-xs text-[#52796F] dark:text-[#A1B3A9] mt-1">
                                   {book.note}
                                 </p>
                               )}
-                              <div className="mt-2 text-[10px] text-[#84928A] flex items-center gap-2">
+                              <div className="mt-2 text-xs text-[#52796F] dark:text-[#A1B3A9] flex items-center gap-2">
                                 <span>الطبعة: {book.edition || "قيد المراجعة"}</span>
                                 <span>•</span>
                                 <span>التحقيق: {book.editor || "قيد المراجعة"}</span>
@@ -379,7 +379,7 @@ export default function MasarPage() {
                           <p className="text-xs font-semibold text-[#143628] dark:text-[#FAF7F2] mb-1">
                             المقررات والكتب قيد مراجعة واعتماد اللجنة العلمية للطريقة
                           </p>
-                          <p className="text-[11px] text-[#84928A] leading-relaxed">
+                          <p className="text-xs text-[#52796F] dark:text-[#A1B3A9] leading-relaxed">
                             لا يُنشر كتاب في هذا المسار إلا بعد إجازته الصريحة والتأكد من توافر طبعة محققة منضبطة تجمع بين الشريعة والحقيقة والاستقامة.
                           </p>
                         </div>
@@ -390,7 +390,7 @@ export default function MasarPage() {
 
                 {/* Next Stage Navigation Link */}
                 <div className="mt-6 pt-4 border-t border-[#E7DFD5]/60 dark:border-[#203A2F]/60 flex items-center justify-between">
-                  <span className="text-xs text-[#84928A]">
+                  <span className="text-xs text-[#52796F] dark:text-[#A1B3A9]">
                     {isCompleted
                       ? "✓ تم إنجاز متطلبات هذه المرحلة"
                       : "احرص على المذاكرة مع المقدّم وإخوانك في الزاوية"}

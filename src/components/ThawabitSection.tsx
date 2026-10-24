@@ -200,7 +200,7 @@ export function ThawabitSection() {
                   <h3 className="font-amiri text-xl font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
                     {t.title}
                   </h3>
-                  <span className="text-[11px] font-semibold text-[#C5A059] block mb-2">
+                  <span className="text-xs font-semibold text-[#C5A059] block mb-2">
                     {t.tagline}
                   </span>
 
@@ -212,7 +212,7 @@ export function ThawabitSection() {
                 {/* Expanded Detailed Points */}
                 {isExpanded && (
                   <div className="px-5 pb-5 pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-3 bg-[#FAF7F2]/60 dark:bg-[#081410]/60 animate-in fade-in duration-200">
-                    <span className="text-[11px] font-bold text-[#1B4332] dark:text-[#E5C378] block">
+                    <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378] block">
                       التفاصيل والتوجيهات المعتمدة:
                     </span>
                     <div className="space-y-2">
@@ -254,7 +254,7 @@ export function ThawabitSection() {
                 {/* Footer Expand Toggle Button */}
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : t.id)}
-                  className="w-full py-2 px-4 bg-[#FAF7F2] dark:bg-[#122820] text-center text-[11px] font-semibold text-[#84928A] hover:text-[#C5A059] border-t border-[#E7DFD5] dark:border-[#203D31] flex items-center justify-center gap-1 transition"
+                  className="w-full py-2 px-4 bg-[#FAF7F2] dark:bg-[#122820] text-center text-xs font-semibold text-[#52796F] dark:text-[#A1B3A9] hover:text-[#C5A059] border-t border-[#E7DFD5] dark:border-[#203D31] flex items-center justify-center gap-1 transition"
                 >
                   <span>{isExpanded ? "طي التفاصيل" : "عرض التوجيهات بالتفصيل"}</span>
                   <ChevronDown
