@@ -15,6 +15,7 @@ import {
   User,
   Award,
   ShieldCheck,
+  ChevronLeft,
 } from "lucide-react";
 import { MemberPortalModal } from "./MemberPortalModal";
 
@@ -165,13 +166,13 @@ export function Navbar() {
 
           {/* Actions: Member Portal, Theme Toggle & Mobile Menu */}
           <div className="flex items-center gap-2 sm:gap-2.5">
-            <button
-              onClick={() => setPortalOpen(true)}
+            <Link
+              href="/faqir"
               className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#1B4332] hover:bg-[#143628] text-[#FAF7F2] text-xs font-semibold shadow-sm hover:shadow-md transition-all duration-200 border border-[#C5A059]/40 hover:-translate-y-0.5 cursor-pointer"
             >
               <User className="w-3.5 h-3.5 text-[#C5A059]" />
               <span>فضاء الفقير</span>
-            </button>
+            </Link>
 
             <button
               onClick={toggleTheme}
@@ -197,6 +198,19 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="lg:hidden py-4 px-3 border-t border-[#E7DFD5] dark:border-[#203A2F] bg-[#FAF7F2] dark:bg-[#0B1914] shadow-2xl rounded-b-2xl animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="space-y-1.5">
+              {/* Standalone Faqir Portal Link in Mobile Drawer */}
+              <Link
+                href="/faqir"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-[#FAF7F2] bg-[#1B4332] border border-[#C5A059]/40 hover:bg-[#143628] text-right mb-1 shadow-sm touch-manipulation"
+              >
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-[#C5A059]" />
+                  <span>فضاء الفقير (الرزنامة والمتتبع والمفكرة)</span>
+                </div>
+                <ChevronLeft className="w-4 h-4 text-[#C5A059]" />
+              </Link>
+
               {/* Standalone Sheikh Page Link in Mobile Drawer */}
               <Link
                 href="/shaykh"
