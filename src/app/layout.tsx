@@ -58,9 +58,13 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
+      suppressHydrationWarning
       className={`${amiri.variable} ${ibmArabic.variable} ${cormorant.variable} ${jakarta.variable} scroll-smooth`}
     >
-      <body className="min-h-screen bg-[#FAF7F2] text-[#1D2A24] dark:bg-[#0B1914] dark:text-[#E8F0EC] font-sans antialiased selection:bg-[#C5A059]/25 selection:text-[#1B4332] dark:selection:text-[#E5C378]">
+      <body
+        suppressHydrationWarning
+        className="min-h-screen bg-[#FAF7F2] text-[#1D2A24] dark:bg-[#0B1914] dark:text-[#E8F0EC] font-sans antialiased selection:bg-[#C5A059]/25 selection:text-[#1B4332] dark:selection:text-[#E5C378]"
+      >
         {children}
         <WixDirectEditor />
       </body>
