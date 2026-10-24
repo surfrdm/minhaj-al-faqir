@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   Scroll,
 } from "lucide-react";
+import userEdits from "@/data/user_edits.json";
 
 export const metadata: Metadata = {
   title: "شيخ الطريقة القادرية البودشيشية | فضيلة الدكتور الشيخ سيدي منير القادري بودشيش",
@@ -27,6 +28,15 @@ export const metadata: Metadata = {
 };
 
 export default function ShaykhPage() {
+  const shaykh = userEdits.shaykh || {};
+  const badge = shaykh.badge || "الإرشاد والتربية الروحية • السند القادري المتصل";
+  const name = shaykh.name || "الشيخ الدكتور سيدي منير القادري بودشيش";
+  const role = shaykh.role || "شيخ الطريقة القادرية البودشيشية ومربيها الروحي";
+  const description = shaykh.description || "ورقة تعريفية شاملة تبرز استمرارية السند التربوي والروحي للطريقة، وتجمع بين رسوخ التكوين الشرعي الأصيل والانفتاح الأكاديمي والفكري المعاصر.";
+  const sannadTitle = shaykh.sannad_title || "السند التربوي والوراثة الروحية";
+  const sannadP1 = shaykh.sannad_p1 || "يُعدّ الشيخ الدكتور سيدي منير القادري بودشيش أحد أبرز أعلام الطريقة القادرية البودشيشية في المرحلة الراهنة، حيث آلت إليه مهمة الإرشاد والتربية الروحية بناء على وصيتين مباركتين للشيخين سيدي حمزة بن العباس وسيدي جمال الدين، رحمهما الله، في سياق استمرارية السند التربوي والروحي للطريقة.";
+  const sannadP2 = shaykh.sannad_p2 || "وقد اقترن اسمه بحضور علمي متميز جمع بين التكوين الشرعي والمعرفة العصرية، إذ راكم سيدي منير مسارا أكاديميا متنوعا يعكس انفتاحا على الحقول الإنسانية والاجتماعية والاقتصادية، بما يعزز مقاربته للتصوف في أبعاده الفكرية والتواصلية المعاصرة.";
+
   return (
     <div className="flex flex-col min-h-screen bg-[#FAF7F2] dark:bg-[#07130E] text-[#1D2A24] dark:text-[#E8F0EC]" dir="rtl">
       <Navbar />
@@ -82,7 +92,7 @@ export default function ShaykhPage() {
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                   <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/35 text-[#9E7B35] dark:text-[#E5C378] text-xs sm:text-sm font-semibold">
                     <Sparkles className="w-4 h-4 text-[#C5A059]" />
-                    <span>الإرشاد والتربية الروحية • السند القادري المتصل</span>
+                    <span>{badge}</span>
                   </div>
 
                   <span className="text-xs px-3 py-1 rounded-full bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5] dark:border-[#1F3D2F] text-[#52796F] dark:text-[#A1B3A9] font-medium">
@@ -91,15 +101,15 @@ export default function ShaykhPage() {
                 </div>
 
                 <h1 className="font-amiri text-3xl sm:text-4xl lg:text-5xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-tight pt-1">
-                  الشيخ الدكتور سيدي منير القادري بودشيش
+                  {name}
                 </h1>
 
                 <p className="font-amiri text-xl sm:text-2xl text-[#C5A059] dark:text-[#D4AF37] font-semibold leading-relaxed">
-                  شيخ الطريقة القادرية البودشيشية ومربيها الروحي
+                  {role}
                 </p>
 
                 <p className="font-ibm text-sm sm:text-base text-[#1D2A24]/80 dark:text-[#D5E2DB] leading-relaxed max-w-2xl">
-                  ورقة تعريفية شاملة تبرز استمرارية السند التربوي والروحي للطريقة، وتجمع بين رسوخ التكوين الشرعي الأصيل والانفتاح الأكاديمي والفكري المعاصر.
+                  {description}
                 </p>
               </div>
             </div>
@@ -117,17 +127,13 @@ export default function ShaykhPage() {
                 <Award className="w-6 h-6" />
               </div>
               <h2 className="font-amiri text-2xl sm:text-3xl font-bold">
-                السند التربوي والوراثة الروحية
+                {sannadTitle}
               </h2>
             </div>
 
             <div className="space-y-5 font-ibm text-base sm:text-lg text-[#1D2A24]/90 dark:text-[#DCE7E1] leading-loose">
-              <p>
-                يُعدّ <strong className="text-[#143628] dark:text-[#FAF7F2] font-semibold">الشيخ الدكتور سيدي منير القادري بودشيش</strong> أحد أبرز أعلام الطريقة القادرية البودشيشية في المرحلة الراهنة، حيث <strong className="text-[#1B4332] dark:text-[#E5C378] font-semibold">آلت إليه مهمة الإرشاد والتربية الروحية بناء على وصيتين مباركتين للشيخين سيدي حمزة بن العباس وسيدي جمال الدين، رحمهما الله</strong>، في سياق استمرارية السند التربوي والروحي للطريقة.
-              </p>
-              <p>
-                وقد اقترن اسمه بحضور علمي متميز جمع بين <strong className="text-[#143628] dark:text-[#FAF7F2] font-semibold">التكوين الشرعي والمعرفة العصرية</strong>، إذ راكم سيدي منير مسارا أكاديميا متنوعا يعكس انفتاحا على الحقول الإنسانية والاجتماعية والاقتصادية، بما يعزز مقاربته للتصوف في أبعاده الفكرية والتواصلية المعاصرة.
-              </p>
+              <p>{sannadP1}</p>
+              <p>{sannadP2}</p>
             </div>
           </section>
 
