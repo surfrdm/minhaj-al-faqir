@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Sparkles,
   Scroll,
@@ -252,13 +253,39 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
               </div>
             </div>
 
-            {/* Action Buttons: Facebook Poster Link & WhatsApp Share */}
-            <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex flex-col sm:flex-row items-center gap-2">
+            {/* Action Buttons: Standalone Link, Copy Link, Facebook, & WhatsApp */}
+            <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex flex-wrap items-center gap-2">
+              <Link
+                href={`/hikma/${activeHikma.number}`}
+                className="py-2 px-3 rounded-xl bg-[#1B4332]/10 hover:bg-[#1B4332]/20 dark:bg-[#C5A059]/15 dark:hover:bg-[#C5A059]/25 text-[#1B4332] dark:text-[#E5C378] text-xs font-semibold flex items-center justify-center gap-1 transition"
+                title="قراءة الحكمة في صفحة مستقلة"
+              >
+                <span>قراءة</span>
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </Link>
+
+              <button
+                onClick={() =>
+                  copyToClipboard(
+                    `${typeof window !== "undefined" ? window.location.origin : ""}/hikma/${activeHikma.number}`,
+                    "hikma-link"
+                  )
+                }
+                className="p-2 rounded-xl bg-white dark:bg-[#122820] hover:bg-[#FAF7F2] dark:hover:bg-[#1a382d] border border-[#E7DFD5] dark:border-[#203D31] text-[#C5A059] transition"
+                title="نسخ رابط الحكمة"
+              >
+                {copiedSection === "hikma-link" ? (
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <Copy className="w-3.5 h-3.5" />
+                )}
+              </button>
+
               <a
                 href={ZAWIYA_FACEBOOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:flex-1 py-2 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition group"
+                className="flex-1 py-2 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition group"
                 title="زيارة صفحة الزاوية على فيسبوك"
               >
                 <span>زيارة صفحة الزاوية</span>
@@ -267,7 +294,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
 
               <button
                 onClick={shareHikma}
-                className="w-full sm:w-auto py-2 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
+                className="py-2 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
                 title="مشاركة الحكمة مع الشرح عبر واتساب"
               >
                 <Share2 className="w-3.5 h-3.5" />
@@ -342,13 +369,39 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex flex-col sm:flex-row items-center gap-2">
+            {/* Action Buttons: Standalone Link, Copy Link, Facebook, & WhatsApp */}
+            <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex flex-wrap items-center gap-2">
+              <Link
+                href={`/hadith/${todayHadith.id}`}
+                className="py-2 px-3 rounded-xl bg-[#1B4332]/10 hover:bg-[#1B4332]/20 dark:bg-[#C5A059]/15 dark:hover:bg-[#C5A059]/25 text-[#1B4332] dark:text-[#E5C378] text-xs font-semibold flex items-center justify-center gap-1 transition"
+                title="قراءة الحديث في صفحة مستقلة"
+              >
+                <span>قراءة</span>
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </Link>
+
+              <button
+                onClick={() =>
+                  copyToClipboard(
+                    `${typeof window !== "undefined" ? window.location.origin : ""}/hadith/${todayHadith.id}`,
+                    "hadith-link"
+                  )
+                }
+                className="p-2 rounded-xl bg-white dark:bg-[#122820] hover:bg-[#FAF7F2] dark:hover:bg-[#1a382d] border border-[#E7DFD5] dark:border-[#203D31] text-[#C5A059] transition"
+                title="نسخ رابط الحديث"
+              >
+                {copiedSection === "hadith-link" ? (
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <Copy className="w-3.5 h-3.5" />
+                )}
+              </button>
+
               <a
                 href={ZAWIYA_FACEBOOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:flex-1 py-2 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition group"
+                className="flex-1 py-2 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition group"
                 title="زيارة صفحة الزاوية على فيسبوك"
               >
                 <span>زيارة صفحة الزاوية</span>
@@ -357,7 +410,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
 
               <button
                 onClick={shareHadith}
-                className="w-full sm:w-auto py-2 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
+                className="py-2 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
                 title="مشاركة الحديث الشريف عبر واتساب"
               >
                 <Share2 className="w-3.5 h-3.5" />
