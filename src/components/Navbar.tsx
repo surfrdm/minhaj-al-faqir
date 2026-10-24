@@ -180,6 +180,19 @@ export function Navbar() {
                     </button>
 
                     <button
+                      onClick={() => navigateToTab("ibn-ashir")}
+                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center justify-between text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
+                    >
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-[#C5A059]" />
+                        <span>متن ابن عاشر (المرشد المعين)</span>
+                      </div>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35]">
+                        317 بيتاً
+                      </span>
+                    </button>
+
+                    <button
                       onClick={() => navigateToTab("hikma-day")}
                       className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
                     >
@@ -302,6 +315,13 @@ export function Navbar() {
               >
                 <span>الحكم العطائية (264 حكمة)</span>
                 <Layers className="w-4 h-4 text-[#C5A059]" />
+              </button>
+              <button
+                onClick={() => navigateToTab("ibn-ashir")}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/10 text-right"
+              >
+                <span>متن ابن عاشر (المرشد المعين)</span>
+                <BookOpen className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button
                 onClick={() => navigateToTab("tracks")}

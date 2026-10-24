@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Bookmark,
   Share2,
+  ExternalLink,
 } from "lucide-react";
 import { ArbaeenSection } from "./ArbaeenSection";
 import { HikamArchive } from "./HikamArchive";
@@ -27,10 +28,13 @@ export type KnowledgeTab =
   | "arbaeen"
   | "hikam"
   | "hikma-day"
+  | "ibn-ashir"
   | "tracks"
   | "evidence"
   | "wazifa"
   | "glossary";
+
+import { IBN_ASHIR_LESSONS } from "@/lib/ibn-ashir";
 
 interface NavBranch {
   id: KnowledgeTab;
@@ -97,9 +101,17 @@ const CATEGORIES: NavCategory[] = [
   },
   {
     id: "taasil",
-    title: "مساق التأصيل الشرعي والفقهي",
-    subtitle: "البراهين النقلية والعقلية لممارسات الطريق",
+    title: "مساق التأصيل الفقهي والشرعي",
+    subtitle: "الثوابت المغربية: فقه مالك وعقد الأشعري وتصوف الجنيد",
     branches: [
+      {
+        id: "ibn-ashir",
+        title: "متن ابن عاشر (المرشد المعين)",
+        badge: "317 بيتاً",
+        count: "الأبيات والشروح",
+        desc: "منظومة الثوابت الثلاث: التوحيد والفقه والتصوف",
+        icon: BookOpen,
+      },
       {
         id: "evidence",
         title: "دقائق الطريق المبرهنة",
@@ -379,6 +391,91 @@ export function UnifiedKnowledgeHub() {
 
               {/* 4. CURRICULUM ROADMAP (4 TRACKS) */}
               {activeTab === "tracks" && <CurriculumRoadmap />}
+
+              {/* 5. MATN IBN ASHIR VIEW */}
+              {activeTab === "ibn-ashir" && (
+                <div className="space-y-6" id="ibn-ashir">
+                  {/* Top Header Card */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-r from-[#1B4332]/10 via-[#C5A059]/10 to-[#1B4332]/10 border border-[#C5A059]/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                      <span className="text-[11px] font-semibold text-[#C5A059] block mb-1">
+                        منظومة المرشد المعين على الضروري من علوم الدين
+                      </span>
+                      <h4 className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
+                        متن الإمام عبد الواحد بن عاشر (المتوفى 1040هـ)
+                      </h4>
+                      <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm mt-1">
+                        الجامع لثوابت المذهب المغربي الشريف: في عقد الأشعري وفقه مالك وفي طريقة الجنيد السالك.
+                      </p>
+                    </div>
+
+                    <a
+                      href="https://app.notion.com/p/48b99299da334d0c98526ffbb5c94037?v=874bf180be3846c8ba8dbb5fc2986009"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2.5 rounded-xl bg-[#1B4332] hover:bg-[#143628] text-[#FAF7F2] text-xs font-semibold flex items-center gap-2 shadow-sm transition shrink-0 border border-[#C5A059]/40"
+                    >
+                      <span>قاعدة بيانات ابن عاشر في Notion</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-[#C5A059]" />
+                    </a>
+                  </div>
+
+                  {/* List of Lessons */}
+                  <div className="grid gap-5">
+                    {IBN_ASHIR_LESSONS.map((lesson) => (
+                      <div
+                        key={lesson.id}
+                        className="p-5 sm:p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-4 hover:border-[#C5A059]/50 transition-all shadow-sm"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E7DFD5] dark:border-[#203D31] pb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center font-mono text-xs font-bold">
+                              {lesson.id}
+                            </span>
+                            <div>
+                              <span className="text-[10px] text-[#C5A059] font-medium block">
+                                {lesson.chapter}
+                              </span>
+                              <h5 className="font-amiri text-base sm:text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                                {lesson.title}
+                              </h5>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
+                              أبيات: {lesson.verseNumbers}
+                            </span>
+                            <span className="text-[11px] px-2 py-0.5 rounded-md bg-white dark:bg-[#0E2019] text-[#84928A] border border-[#E7DFD5] dark:border-[#203D31]">
+                              {lesson.theme}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Verses poetry */}
+                        <div className="space-y-2 p-4 rounded-xl bg-white/80 dark:bg-[#0A1813] border border-[#C5A059]/30 shadow-inner">
+                          {lesson.verses.map((v, i) => (
+                            <div
+                              key={i}
+                              className="flex flex-col sm:flex-row items-center justify-between gap-1 sm:gap-2 px-3 py-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#122820] text-center font-amiri font-bold text-sm sm:text-base text-[#143628] dark:text-[#FAF7F2] leading-relaxed"
+                            >
+                              <span className="sm:text-right flex-1">{v.firstHemistich}</span>
+                              <span className="text-[#C5A059] text-xs font-mono select-none px-1">❖</span>
+                              <span className="sm:text-left flex-1">{v.secondHemistich}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Explanation */}
+                        <div className="p-3.5 rounded-xl bg-white/60 dark:bg-[#0E2019]/60 border border-[#E7DFD5] dark:border-[#203D31] text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                          <strong className="text-[#143628] dark:text-[#FAF7F2] block mb-1">الشرح:</strong>
+                          {lesson.explanation}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* 5. SHARIA EVIDENCE FOR TARIQA PRACTICES */}
               {activeTab === "evidence" && (
