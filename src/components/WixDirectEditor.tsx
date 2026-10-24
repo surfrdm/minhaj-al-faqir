@@ -9,6 +9,7 @@ import {
   RotateCcw,
   Sparkles,
   Info,
+  Share2,
 } from "lucide-react";
 
 function getElementKey(el: HTMLElement): string {
@@ -186,6 +187,31 @@ export function WixDirectEditor() {
     }
   };
 
+  const handleShareWhatsApp = () => {
+    if (typeof window === "undefined") return;
+    const local = localStorage.getItem("minhaj_direct_edits");
+    let msg = `السلام عليكم، قمت بإجراء تعديلات على منصة منهاج الفقير (${window.location.href}):\n\n`;
+    if (local) {
+      try {
+        const edits = JSON.parse(local);
+        const keys = Object.keys(edits).filter((k) =>
+          k.startsWith(`${window.location.pathname}::`)
+        );
+        if (keys.length > 0) {
+          msg += `عدد التعديلات التي قمت بها في هذه الصفحة: ${keys.length}\n`;
+          keys.slice(0, 4).forEach((k, i) => {
+            const tmp = document.createElement("div");
+            tmp.innerHTML = edits[k];
+            const textSnippet = tmp.textContent?.trim().slice(0, 90);
+            msg += `• (${i + 1}): «${textSnippet}»\n`;
+          });
+        }
+      } catch (e) {}
+    }
+    msg += `\nيرجى اعتماد هذه التعديلات ونشرها.`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, "_blank");
+  };
+
   const handleReset = () => {
     if (typeof window === "undefined") return;
     if (confirm("هل تريد حقاً استرجاع النصوص الأصلية لهذه الصفحة؟")) {
@@ -258,7 +284,16 @@ export function WixDirectEditor() {
               className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#C5A059] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C378] text-[#143628] font-bold text-xs flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition cursor-pointer"
             >
               <Save className="w-4 h-4 text-[#143628]" />
-              <span>حفظ التعديلات في الصفحة (Sauvegarder)</span>
+              <span>حفظ في المتصفح</span>
+            </button>
+
+            <button
+              onClick={handleShareWhatsApp}
+              className="px-3.5 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#20BA5A] text-white font-bold text-xs flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition cursor-pointer"
+              title="إرسال التعديلات عبر واتساب للمصمم/المشرف لاعتمادها"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>إرسال التعديلات عبر واتساب</span>
             </button>
 
             <button
