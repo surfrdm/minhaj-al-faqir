@@ -524,29 +524,78 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                     دفتر الورد اليومي والوظيفة
                   </h4>
                   <p className="text-xs text-[#52796F] dark:text-[#95B8A8]">
-                    متابعة يومية لأداء الوظيفة الراتبة والأوراد وتلاوة الحزب القرآني.
+                    متابعة يومية للبرنامج الروحي: حزبا القرآن، حزب دلائل الخيرات، Dhikr Wird général، 15 000 لا إله إلا الله، والوظيفة بالزاوية.
                   </p>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#0B1914] border border-[#C5A059]/30">
-                      <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378] block mb-1">
-                        الورد الصباحي
-                      </span>
-                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block mb-2">
-                        100 استغفار • 100 صلاة على النبي • 100 لا إله إلا الله
+                    {/* 1. Dhikr Wird général */}
+                    <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#0B1914] border border-[#C5A059]/30 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
+                          Dhikr Wird général
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] font-bold">
+                          صباحاً ومساءً
+                        </span>
+                      </div>
+                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
+                        الاستغفار • الصلاة على النبي ﷺ • كلمة التوحيد
                       </span>
                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-[11px] font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5" /> تم الأداء بحمد الله
                       </span>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#0B1914] border border-[#C5A059]/30">
-                      <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378] block mb-1">
-                        الورد المسائي
+
+                    {/* 2. حزبان من القرآن الكريم */}
+                    <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#0B1914] border border-[#C5A059]/30 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
+                          حِزبان من القرآن الكريم
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] font-bold">
+                          ختمة شهرية
+                        </span>
+                      </div>
+                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
+                        حزب بعد الصبح • حزب بعد العصر أو المغرب
                       </span>
-                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block mb-2">
-                        100 استغفار • 100 صلاة على النبي • 100 لا إله إلا الله
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-[11px] font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> تم أداء حزب الصباح
+                      </span>
+                    </div>
+
+                    {/* 3. حزب دلائل الخيرات */}
+                    <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#0B1914] border border-[#C5A059]/30 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
+                          حزب دلائل الخيرات
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] font-bold">
+                          للإمام الجزولي
+                        </span>
+                      </div>
+                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
+                        تلاوة الحزب اليومي الراتب في الصلاة على النبي ﷺ
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 text-[11px] font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> تلاوة الحزب اليومي
+                      </span>
+                    </div>
+
+                    {/* 4. 15 000 لا إله إلا الله */}
+                    <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#0B1914] border border-[#C5A059]/30 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
+                          15 000 لا إله إلا الله
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] font-bold">
+                          عمارة الأوقات
+                        </span>
+                      </div>
+                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
+                        عمارة اليوم بكلمة الإخلاص والتوحيد
                       </span>
                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-950/60 dark:text-yellow-300 text-[11px] font-semibold">
-                        <AlertCircle className="w-3.5 h-3.5" /> في انتظار وقت العشي
+                        <AlertCircle className="w-3.5 h-3.5" /> قيد الذكر والمتابعة
                       </span>
                     </div>
                   </div>

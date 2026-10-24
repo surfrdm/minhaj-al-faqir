@@ -142,9 +142,9 @@ const CATEGORIES: NavCategory[] = [
       {
         id: "wazifa",
         title: "الأوراد والوظيفة اليومية",
-        badge: "الوظيفة الراتبة",
-        count: "المجالس اليومية",
-        desc: "عمارة مجالس الذكر بالوظيفة الراتبة وتلاوة الحزب القرآني بين المغرب والعشاء",
+        badge: "Dhikr Wird général",
+        count: "البرنامج اليومي",
+        desc: "حزبان من القرآن، حزب دلائل الخيرات، Dhikr Wird général، 15 000 لا إله إلا الله، والوظيفة",
         icon: Clock,
       },
     ],
@@ -703,25 +703,162 @@ export function UnifiedKnowledgeHub() {
                 <div className="space-y-6" id="wazifa">
                   <div className="p-4 rounded-xl bg-gradient-to-r from-[#1B4332]/10 to-[#C5A059]/10 border border-[#C5A059]/30">
                     <h4 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
-                      فقه الوظيفة الراتبة في الطريقة البودشيشية
+                      البرنامج الروحي اليومي وأوراد السالك
                     </h4>
                     <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                      التربية اليومية القائمة على عمارة المجالس بالوظيفة الراتبة وتلاوة الحزب القرآني الراتب بالزاوية.
+                      الأوراد اليومية المباركة المقررة في الطريقة: حزبا القرآن الكريم، حزب دلائل الخيرات، Dhikr Wird général، 15 000 لا إله إلا الله، والوظيفة الراتبة بالزاوية.
                     </p>
                   </div>
 
-                  <div className="p-5 sm:p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
-                        <Sparkles className="w-5 h-5 text-[#C5A059]" />
-                        <h5 className="font-amiri text-lg font-bold">الوظيفة الراتبة</h5>
+                  {/* 4 Cards Grid for the Daily Awrad */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* 1. حزبان من القرآن الكريم (صباحاً ومساءً) */}
+                    <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                            <BookOpen className="w-5 h-5 text-[#C5A059]" />
+                            <h5 className="font-amiri text-base font-bold">حِزبان من القرآن الكريم (صباحاً ومساءً)</h5>
+                          </div>
+                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
+                            ختمة شهرية
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
+                          • حزب بعد صلاة الصبح وحزب بعد صلاة العصر أو المغرب.<br />
+                          • المحافظة على قراءة الحزبين ختماً لكتاب الله تعالى شهرياً وتثبيتاً للنور القرآني في قلب السالك.
+                        </p>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
+                        <button
+                          onClick={() => {
+                            const text = `📖 أوراد السالك في الطريقة البودشيشية:\nقراءة حِزبين من القرآن الكريم يومياً (حزب صباحاً وحزب مساءً ختماً لكتاب الله شهرياً).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                        >
+                          <Share2 className="w-3 h-3" />
+                          <span>مشاركة الورد</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 2. حزب دلائل الخيرات */}
+                    <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                            <Sparkles className="w-5 h-5 text-[#C5A059]" />
+                            <h5 className="font-amiri text-base font-bold">حزب دلائل الخيرات</h5>
+                          </div>
+                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
+                            الصلاة على النبي ﷺ
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
+                          • تلاوة الحزب اليومي الراتب من كتاب «دلائل الخيرات وشوارق الأنوار في ذكر الصلاة على النبي المختار ﷺ» للإمام أبي عبد الله محمد بن سليمان الجزولي رضي الله عنه.<br />
+                          • صلاة دائمة على النبي المصطفى ﷺ، بها تُفتح أبواب القبول وتزكو النفوس.
+                        </p>
+                      </div>
+                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
+                        <button
+                          onClick={() => {
+                            const text = `🌹 أوراد السالك في الطريقة البودشيشية:\nتلاوة الحزب اليومي من كتاب «دلائل الخيرات» للإمام الجزولي رضي الله عنه في الصلاة على النبي ﷺ.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                        >
+                          <Share2 className="w-3 h-3" />
+                          <span>مشاركة الورد</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 3. Dhikr Wird général */}
+                    <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                            <Compass className="w-5 h-5 text-[#C5A059]" />
+                            <h5 className="font-amiri text-base font-bold">Dhikr Wird général</h5>
+                          </div>
+                          <span className="px-2 py-0.5 rounded-full bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] text-[10px] font-bold">
+                            صباحاً ومساءً
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
+                          • الورد الأساسي الراتب لمريدي الطريقة (الاستغفار، الصلاة على النبي ﷺ، وكلمة التوحيد: لا إله إلا الله).<br />
+                          • يؤدى مرتين يومياً بخشوع وسكينة، وهو عهد السالك وركيزة صفاء قلبه واستقامته في السير إلى الله.
+                        </p>
+                      </div>
+                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
+                        <button
+                          onClick={() => {
+                            const text = `📿 Dhikr Wird général في الطريقة البودشيشية:\nالورد الأساسي الراتب صباحاً ومساءً (الاستغفار، الصلاة على النبي ﷺ، لا إله إلا الله).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                        >
+                          <Share2 className="w-3 h-3" />
+                          <span>مشاركة الورد</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 4. 15 000 لا إله إلا الله */}
+                    <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                            <Layers className="w-5 h-5 text-[#C5A059]" />
+                            <h5 className="font-amiri text-base font-bold">15 000 لا إله إلا الله</h5>
+                          </div>
+                          <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
+                            عمارة الأوقات
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
+                          • عمارة سائر أوقات اليوم بذكر كلمة التوحيد «لا إله إلا الله» حتى يبلغ السالك 15,000 مرة في اليوم.<br />
+                          • استغراق القلب في شهود التوحيد ومحو الغفلات، وترقية الفؤاد إلى مقام الإحسان وجمعية الجمع.
+                        </p>
+                      </div>
+                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
+                        <button
+                          onClick={() => {
+                            const text = `✨ 15 000 لا إله إلا الله في الطريقة البودشيشية:\nعمارة أوقات اليوم بـ 15,000 مرة من كلمة التوحيد «لا إله إلا الله» لطهارة القلب ورسوخ الإيمان.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                        >
+                          <Share2 className="w-3 h-3" />
+                          <span>مشاركة الورد</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 5. الوظيفة الراتبة اليومية بالزاوية */}
+                  <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#FAF7F2] to-[#FAF7F2]/60 dark:from-[#122820] dark:to-[#0B1914] border border-[#C5A059]/40 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5 text-[#1B4332] dark:text-[#E5C378]">
+                        <div className="w-9 h-9 rounded-xl bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
+                          <Users className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h5 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            الوظيفة الراتبة بالزاوية (مجلس الجماعة)
+                          </h5>
+                          <span className="text-[11px] text-[#52796F] dark:text-[#95B8A8] font-ibm">
+                            بين صلاتي المغرب والعشاء يومياً بمقرات الزاوية
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 self-end sm:self-auto">
                         <a
                           href="https://www.facebook.com/zaouia.mohammedia"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="py-1 px-3 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
+                          className="py-1.5 px-3 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
                           title="صفحة الزاوية على فيسبوك"
                         >
                           <span>فيسبوك</span>
@@ -729,10 +866,10 @@ export function UnifiedKnowledgeHub() {
                         </a>
                         <button
                           onClick={() => {
-                            const text = `✨ الوظيفة الراتبة في الطريقة البودشيشية:\nالوظيفة الراتبة وتلاوة الحزب القرآني الراتب كل يوم بين المغرب والعشاء بالزاوية.\n\nطالع تفاصيل الوظيفة: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            const text = `🕌 الوظيفة الراتبة في الطريقة البودشيشية:\nالوظيفة الراتبة وتلاوة الحزب القرآني كل يوم بين المغرب والعشاء بالزاوية.\n\nطالع تفاصيل الوظيفة: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
                             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
                           }}
-                          className="py-1 px-3 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                          className="py-1.5 px-3 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
                         >
                           <Share2 className="w-3.5 h-3.5" />
                           <span>مشاركة الوظيفة</span>
@@ -740,8 +877,8 @@ export function UnifiedKnowledgeHub() {
                       </div>
                     </div>
                     <p className="text-sm text-[#1D2A24]/90 dark:text-[#D5E2DB] font-ibm leading-relaxed">
-                      • الوظيفة التي تجمع الفقراء في الزاوية كل يوم بين المغرب والعشاء.<br />
-                      • تلاوة الحزب القرآني الراتب.
+                      • الوظيفة الجامعة لقلوب الفقراء في الزاوية كل يوم بين المغرب والعشاء لتجديد العهد وتقوية الرابطة الأخوية.<br />
+                      • تلاوة الحزب القرآني الراتب مع الجماعة، استماعاً وإنصاتاً وتدبراً.
                     </p>
                   </div>
 
