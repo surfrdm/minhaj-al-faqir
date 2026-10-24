@@ -142,9 +142,9 @@ const CATEGORIES: NavCategory[] = [
       {
         id: "wazifa",
         title: "الأوراد والوظيفة اليومية",
-        badge: "Dhikr Wird général",
-        count: "البرنامج اليومي",
-        desc: "حزبان من القرآن، حزب دلائل الخيرات، Dhikr Wird général، 15 000 لا إله إلا الله، والوظيفة",
+        badge: "الأوراد الراتبة",
+        count: "البرنامج الخماسي",
+        desc: "البرنامج الروحي الخماسي لترقية همة السالك وتنوير قلبه بالذكر وتلاوة القرآن",
         icon: Clock,
       },
     ],
@@ -706,7 +706,7 @@ export function UnifiedKnowledgeHub() {
                       البرنامج الروحي اليومي وأوراد السالك
                     </h4>
                     <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                      الأوراد اليومية المباركة المقررة في الطريقة: حزبا القرآن الكريم، حزب دلائل الخيرات، Dhikr Wird général، 15 000 لا إله إلا الله، والوظيفة الراتبة بالزاوية.
+                      الأوراد اليومية المباركة المقررة في الطريقة: حزبا القرآن الكريم، حزب دلائل الخيرات، ذِكْرُ الوِرْدِ العَامِّ، خمس عشرة ألف هيللة، والوظيفة الراتبة بالزاوية.
                     </p>
                   </div>
 
@@ -718,10 +718,10 @@ export function UnifiedKnowledgeHub() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
                             <BookOpen className="w-5 h-5 text-[#C5A059]" />
-                            <h5 className="font-amiri text-base font-bold">حِزبان من القرآن الكريم (صباحاً ومساءً)</h5>
+                            <h5 className="font-amiri text-base font-bold">حِزْبَانِ مِنَ القُرْآنِ الكَرِيمِ</h5>
                           </div>
                           <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
-                            ختمة شهرية
+                            صباحاً ومساءً
                           </span>
                         </div>
                         <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
@@ -749,7 +749,7 @@ export function UnifiedKnowledgeHub() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
                             <Sparkles className="w-5 h-5 text-[#C5A059]" />
-                            <h5 className="font-amiri text-base font-bold">حزب دلائل الخيرات</h5>
+                            <h5 className="font-amiri text-base font-bold">حِزْبُ دَلَائِلِ الخَيْرَاتِ</h5>
                           </div>
                           <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
                             الصلاة على النبي ﷺ
@@ -757,7 +757,7 @@ export function UnifiedKnowledgeHub() {
                         </div>
                         <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
                           • تلاوة الحزب اليومي الراتب من كتاب «دلائل الخيرات وشوارق الأنوار في ذكر الصلاة على النبي المختار ﷺ» للإمام أبي عبد الله محمد بن سليمان الجزولي رضي الله عنه.<br />
-                          • صلاة دائمة على النبي المصطفى ﷺ، بها تُفتح أبواب القبول وتزكو النفوس.
+                          • صلاة دائمة على النبي المصطفى ﷺ، بها تُفتح أبواب القبول وتزكو النفوس وتشرق البصائر.
                         </p>
                       </div>
                       <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
@@ -774,27 +774,27 @@ export function UnifiedKnowledgeHub() {
                       </div>
                     </div>
 
-                    {/* 3. Dhikr Wird général */}
+                    {/* 3. ذِكْرُ الوِرْدِ العَامِّ */}
                     <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition flex flex-col justify-between space-y-3">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
                             <Compass className="w-5 h-5 text-[#C5A059]" />
-                            <h5 className="font-amiri text-base font-bold">Dhikr Wird général</h5>
+                            <h5 className="font-amiri text-base font-bold">ذِكْرُ الوِرْدِ العَامِّ</h5>
                           </div>
                           <span className="px-2 py-0.5 rounded-full bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] text-[10px] font-bold">
                             صباحاً ومساءً
                           </span>
                         </div>
                         <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
-                          • الورد الأساسي الراتب لمريدي الطريقة (الاستغفار، الصلاة على النبي ﷺ، وكلمة التوحيد: لا إله إلا الله).<br />
-                          • يؤدى مرتين يومياً بخشوع وسكينة، وهو عهد السالك وركيزة صفاء قلبه واستقامته في السير إلى الله.
+                          • الورد الأساسي الراتب لمريدي الطريقة: الاستغفار، الصلاة على النبي ﷺ، وكلمة التوحيد (لا إله إلا الله).<br />
+                          • يؤدى مرتين يومياً بالسكينة والخشوع والأدب، وهو عهد السالك وركيزة صفاء قلبه واستقامته في السير إلى الله.
                         </p>
                       </div>
                       <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
                         <button
                           onClick={() => {
-                            const text = `📿 Dhikr Wird général في الطريقة البودشيشية:\nالورد الأساسي الراتب صباحاً ومساءً (الاستغفار، الصلاة على النبي ﷺ، لا إله إلا الله).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            const text = `📿 ذِكْرُ الورد العام في الطريقة البودشيشية:\nالورد الأساسي الراتب صباحاً ومساءً (الاستغفار، الصلاة على النبي ﷺ، لا إله إلا الله).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
                             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
                           }}
                           className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
@@ -805,13 +805,13 @@ export function UnifiedKnowledgeHub() {
                       </div>
                     </div>
 
-                    {/* 4. 15 000 لا إله إلا الله */}
+                    {/* 4. 15,000 هَيْلَلَة (لَا إِلَهَ إِلَّا اللهُ) */}
                     <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition flex flex-col justify-between space-y-3">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
                             <Layers className="w-5 h-5 text-[#C5A059]" />
-                            <h5 className="font-amiri text-base font-bold">15 000 لا إله إلا الله</h5>
+                            <h5 className="font-amiri text-base font-bold">15,000 هَيْلَلَة (لَا إِلَهَ إِلَّا اللهُ)</h5>
                           </div>
                           <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
                             عمارة الأوقات
@@ -819,13 +819,13 @@ export function UnifiedKnowledgeHub() {
                         </div>
                         <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
                           • عمارة سائر أوقات اليوم بذكر كلمة التوحيد «لا إله إلا الله» حتى يبلغ السالك 15,000 مرة في اليوم.<br />
-                          • استغراق القلب في شهود التوحيد ومحو الغفلات، وترقية الفؤاد إلى مقام الإحسان وجمعية الجمع.
+                          • استغراق القلب في شهود الوحدانية، ومحو الغفلات، والترقي إلى مقام الإحسان وجمعية الجمع.
                         </p>
                       </div>
                       <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
                         <button
                           onClick={() => {
-                            const text = `✨ 15 000 لا إله إلا الله في الطريقة البودشيشية:\nعمارة أوقات اليوم بـ 15,000 مرة من كلمة التوحيد «لا إله إلا الله» لطهارة القلب ورسوخ الإيمان.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            const text = `✨ 15,000 هيللة في الطريقة البودشيشية:\nعمارة أوقات اليوم بـ 15,000 مرة من كلمة التوحيد «لا إله إلا الله» لطهارة القلب ورسوخ الإيمان.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
                             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
                           }}
                           className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"

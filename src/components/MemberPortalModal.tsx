@@ -524,14 +524,14 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                     دفتر الورد اليومي والوظيفة
                   </h4>
                   <p className="text-xs text-[#52796F] dark:text-[#95B8A8]">
-                    متابعة يومية للبرنامج الروحي: حزبا القرآن، حزب دلائل الخيرات، Dhikr Wird général، 15 000 لا إله إلا الله، والوظيفة بالزاوية.
+                    متابعة يومية للبرنامج الروحي: حزبا القرآن، حزب دلائل الخيرات، الورد العام، 15,000 هيللة، والوظيفة بالزاوية.
                   </p>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    {/* 1. Dhikr Wird général */}
+                    {/* 1. ذِكْرُ الوِرْدِ العَامِّ */}
                     <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#0B1914] border border-[#C5A059]/30 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
-                          Dhikr Wird général
+                          ذِكْرُ الوِرْدِ العَامِّ
                         </span>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#C5A059] font-bold">
                           صباحاً ومساءً
