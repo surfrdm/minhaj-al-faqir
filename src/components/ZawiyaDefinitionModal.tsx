@@ -32,18 +32,18 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 overflow-y-auto p-2 sm:p-4 md:p-6 bg-black/80 backdrop-blur-md flex items-start sm:items-center justify-center animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[92vh] bg-[#FAF7F2] dark:bg-[#0B1A14] rounded-2xl border border-[#C5A059]/50 shadow-2xl overflow-hidden flex flex-col"
+        className="relative w-full max-w-4xl my-auto bg-[#FAF7F2] dark:bg-[#0B1A14] rounded-2xl border border-[#C5A059]/50 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
         dir="rtl"
       >
         {/* Top Header */}
-        <div className="px-5 sm:px-7 py-4 bg-gradient-to-r from-[#1B4332] via-[#143628] to-[#1B4332] text-[#FAF7F2] flex items-center justify-between border-b border-[#C5A059]/40 shrink-0">
+        <div className="px-5 sm:px-7 py-3.5 sm:py-4 bg-gradient-to-r from-[#1B4332] via-[#143628] to-[#1B4332] text-[#FAF7F2] flex items-center justify-between border-b border-[#C5A059]/40 shrink-0">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-xl bg-white/10 p-1.5 flex items-center justify-center border border-[#C5A059]/40 shadow-inner shrink-0">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 p-1.5 flex items-center justify-center border border-[#C5A059]/40 shadow-inner shrink-0">
               <img
                 src="/images/logo_zawiya_mohammedia_clean.png"
                 alt="شعار زاوية المحمدية"
@@ -54,18 +54,28 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
               <h2 className="font-amiri text-lg sm:text-2xl font-bold tracking-wide text-[#FAF7F2]">
                 الطَّرِيقَةُ القَادِرِيَّةُ البُودْشِيشِيَّةُ
               </h2>
-              <p className="text-xs text-[#E5C378] font-ibm">
+              <p className="text-[11px] sm:text-xs text-[#E5C378] font-ibm">
                 زاوية مدينة المحمدية الشريفة • التعريف بالشيخ والمنهج التربوي
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-            title="إغلاق"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <a
+              href="/shaykh"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#C5A059]/20 hover:bg-[#C5A059]/30 text-[#E5C378] border border-[#C5A059]/40 text-xs font-semibold transition-colors"
+              title="الانتقال إلى الصفحة الكاملة المستقلة لشيخ الطريقة"
+            >
+              <span>فتح في صفحة كاملة</span>
+              <span className="text-[10px]">↗</span>
+            </a>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              title="إغلاق"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Tab Switcher - Sheikh first! */}

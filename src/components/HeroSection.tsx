@@ -1,5 +1,4 @@
-"use client";
-
+import Link from "next/link";
 import {
   GraduationCap,
   Scale,
@@ -14,11 +13,16 @@ export function HeroSection() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[380px] bg-[#C5A059]/10 dark:bg-[#1B4332]/25 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center" dir="rtl">
-        {/* Top Spiritual Pill */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#9E7B35] dark:text-[#E5C378] text-xs sm:text-sm font-semibold mb-6">
+        {/* Top Spiritual Pill linking to Shaykh page */}
+        <Link
+          href="/shaykh"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#9E7B35] dark:text-[#E5C378] text-xs sm:text-sm font-semibold mb-6 hover:bg-[#C5A059]/25 hover:border-[#C5A059] transition-all group"
+          title="التعريف بشيخ الطريقة القادرية البودشيشية"
+        >
           <GraduationCap className="w-4 h-4 text-[#C5A059]" />
           <span>الأكاديمية العلمية والتأصيلية • الطريقة القادرية البودشيشية (مدينة المحمدية)</span>
-        </div>
+          <span className="text-[11px] opacity-70 group-hover:opacity-100 transition-opacity">←</span>
+        </Link>
 
         {/* Main Title with generous vertical room so diacritics breathe */}
         <h1 className="font-amiri text-4xl sm:text-5xl lg:text-6xl font-bold tracking-normal text-[#143628] dark:text-[#FAF7F2] leading-normal mb-3 pt-2">
