@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Moon,
   Sun,
@@ -19,14 +20,12 @@ import {
   Award,
 } from "lucide-react";
 import { MemberPortalModal } from "./MemberPortalModal";
-import { ZawiyaDefinitionModal } from "./ZawiyaDefinitionModal";
 
 export function Navbar() {
   const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [portalOpen, setPortalOpen] = useState(false);
-  const [zawiyaModalOpen, setZawiyaModalOpen] = useState(false);
 
   // Dropdown states
   const [curriculumDropdown, setCurriculumDropdown] = useState(false);
@@ -69,6 +68,10 @@ export function Navbar() {
     setEvidenceDropdown(false);
     setMobileMenuOpen(false);
     if (typeof window !== "undefined") {
+      if (window.location.pathname !== "/") {
+        window.location.href = `/#${tabId}`;
+        return;
+      }
       window.location.hash = tabId;
       window.dispatchEvent(new CustomEvent("switch-knowledge-tab", { detail: tabId }));
       const el = document.getElementById("knowledge-hub");
@@ -89,39 +92,39 @@ export function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Brand Seal / Official Boutchichiyya Mohammedia Logo & Clean Title */}
           <div className="flex items-center gap-3">
-            {/* Clickable Zawiya Logo (Triggers Definition Modal) */}
-            <button
-              onClick={() => setZawiyaModalOpen(true)}
-              title="انقر هنا للتعريف بالطريقة القادرية البودشيشية وشيخها سيدي منير القادري بودشيش"
-              className="flex items-center justify-center p-1 sm:p-1.5 rounded-xl bg-white/80 dark:bg-[#122820] hover:bg-[#C5A059]/15 border border-[#C5A059]/40 hover:border-[#C5A059] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 group relative cursor-pointer"
+            {/* Clickable Zawiya Logo navigating smoothly to Home */}
+            <Link
+              href="/"
+              title="مِنْهَاجُ الفَقِير - الصفحة الرئيسية"
+              className="flex items-center justify-center p-1 sm:p-1.5 rounded-xl bg-white/80 dark:bg-[#122820] hover:bg-[#C5A059]/15 border border-[#C5A059]/40 hover:border-[#C5A059] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 group relative"
             >
               <img
                 src="/images/logo_zawiya_mohammedia_clean.png"
                 alt="شعار زاوية مدينة المحمدية - الطريقة القادرية البودشيشية"
                 className="h-10 sm:h-12 w-auto object-contain filter drop-shadow-sm"
               />
-              <span className="sr-only">التعريف بالطريقة وشيخها</span>
-            </button>
+              <span className="sr-only">الصفحة الرئيسية</span>
+            </Link>
 
-            {/* Title (Only Title, No Subtitle) */}
-            <a href="#" className="flex items-center text-right">
+            {/* Title */}
+            <Link href="/" className="flex items-center text-right">
               <span className="font-amiri text-2xl sm:text-3xl font-bold tracking-wide text-[#143628] dark:text-[#E8F0EC]">
                 مِنْهَاجُ الفَقِير
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation Menus (Grouped & Unified) */}
-          <nav className="hidden lg:flex items-center gap-2">
-            {/* Direct Link to Shaykh Definition */}
-            <button
-              onClick={() => setZawiyaModalOpen(true)}
-              className="px-3 py-2 rounded-lg text-xs font-semibold text-[#9E7B35] dark:text-[#E5C378] hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/15 border border-[#C5A059]/35 transition-all flex items-center gap-1.5"
+          <nav className="hidden lg:flex items-center gap-2.5">
+            {/* Direct Link to Sheikh Dedicated Standalone Page */}
+            <Link
+              href="/shaykh"
+              className="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#143628] dark:text-[#E5C378] bg-[#C5A059]/15 hover:bg-[#C5A059]/25 border border-[#C5A059]/40 transition-all flex items-center gap-1.5 shadow-sm"
               title="ورقة تعريفية بفضيلة الشيخ الدكتور سيدي منير القادري بودشيش"
             >
-              <Award className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>شيخ الطريقة (سيدي منير)</span>
-            </button>
+              <Award className="w-4 h-4 text-[#C5A059]" />
+              <span>شيخ الطريقة القادرية البودشيشية</span>
+            </Link>
 
             {/* Direct Link to Hub */}
             <button
@@ -247,7 +250,7 @@ export function Navbar() {
           <div className="flex items-center gap-2 sm:gap-2.5">
             <button
               onClick={() => setPortalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#1B4332] hover:bg-[#143628] text-[#FAF7F2] text-xs font-semibold shadow-sm hover:shadow-md transition-all duration-200 border border-[#C5A059]/40 hover:-translate-y-0.5"
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#1B4332] hover:bg-[#143628] text-[#FAF7F2] text-xs font-semibold shadow-sm hover:shadow-md transition-all duration-200 border border-[#C5A059]/40 hover:-translate-y-0.5 cursor-pointer"
             >
               <User className="w-3.5 h-3.5 text-[#C5A059]" />
               <span>فضاء الفقير</span>
@@ -256,7 +259,7 @@ export function Navbar() {
             <button
               onClick={toggleTheme}
               aria-label="تبديل الوضع الليلي والنهاري"
-              className="p-2 sm:p-2.5 rounded-full border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#D4AF37] bg-white/70 dark:bg-[#12241D] hover:bg-[#C5A059]/15 hover:border-[#C5A059] transition-all duration-200 shadow-sm"
+              className="p-2 sm:p-2.5 rounded-full border border-[#E7DFD5] dark:border-[#203A2F] text-[#1B4332] dark:text-[#D4AF37] bg-white/70 dark:bg-[#12241D] hover:bg-[#C5A059]/15 hover:border-[#C5A059] transition-all duration-200 shadow-sm cursor-pointer"
             >
               {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
@@ -275,17 +278,16 @@ export function Navbar() {
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-[#E7DFD5] dark:border-[#203A2F] animate-in fade-in slide-in-from-top-2 duration-200">
-            <div className="space-y-1">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setZawiyaModalOpen(true);
-                }}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#9E7B35] dark:text-[#E5C378] bg-[#C5A059]/15 border border-[#C5A059]/30 hover:bg-[#C5A059]/25 text-right mb-2"
+            <div className="space-y-1.5">
+              {/* Standalone Sheikh Page Link in Mobile Drawer */}
+              <Link
+                href="/shaykh"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs sm:text-sm font-semibold text-[#143628] dark:text-[#E5C378] bg-[#C5A059]/15 border border-[#C5A059]/35 hover:bg-[#C5A059]/25 text-right mb-2 shadow-sm"
               >
-                <span>تعريف شيخ الطريقة (سيدي منير القادري)</span>
+                <span>شيخ الطريقة القادرية البودشيشية</span>
                 <Award className="w-4 h-4 text-[#C5A059]" />
-              </button>
+              </Link>
 
               <button
                 onClick={() => navigateToTab("arbaeen")}
@@ -338,12 +340,6 @@ export function Navbar() {
       <MemberPortalModal
         isOpen={portalOpen}
         onClose={() => setPortalOpen(false)}
-      />
-
-      {/* Zawiya & Sheikh Sidi Mounir Definition Modal */}
-      <ZawiyaDefinitionModal
-        isOpen={zawiyaModalOpen}
-        onClose={() => setZawiyaModalOpen(false)}
       />
     </header>
   );
