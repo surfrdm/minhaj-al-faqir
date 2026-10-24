@@ -587,12 +587,12 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                         <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378]">
                           15 000 لا إله إلا الله
                         </span>
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-[#1B4332]/15 text-[#1B4332] dark:text-[#E5C378] font-bold">
-                          عمارة الأوقات
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] font-bold">
+                          جلسة مخصصة (~ساعة ونصف)
                         </span>
                       </div>
                       <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block leading-relaxed">
-                        جلسة واحدة بتوجّه وتغميض العينين واستقبال القبلة (وتُقسّم عند الضرورة)
+                        جلسة واحدة مركزة بتوجّه وتغميض العينين واستقبال القبلة (أو مقسومة على جلستين)
                       </span>
                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-950/60 dark:text-yellow-300 text-xs font-semibold">
                         <AlertCircle className="w-3.5 h-3.5" /> قيد الذكر والمتابعة
