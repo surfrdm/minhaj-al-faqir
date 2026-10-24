@@ -35,6 +35,7 @@ import { HikamArchive } from "./HikamArchive";
 import { HikmaOfTheDay } from "./HikmaOfTheDay";
 import { CurriculumRoadmap } from "./CurriculumRoadmap";
 import { GlossarySection } from "./GlossarySection";
+import { IBN_ASHIR_TOTAL_COUNT } from "@/lib/ibn-ashir";
 
 export type KnowledgeTab =
   | "arbaeen"
@@ -119,7 +120,7 @@ const CATEGORIES: NavCategory[] = [
       {
         id: "ibn-ashir",
         title: "متن ابن عاشر (المرشد المعين)",
-        badge: "317 بيتاً",
+        badge: `${IBN_ASHIR_TOTAL_COUNT} بيتاً`,
         count: "الأبيات والشروح",
         desc: "منظومة الثوابت الثلاث: التوحيد والفقه والتصوف",
         icon: BookOpen,
@@ -371,7 +372,7 @@ export function UnifiedKnowledgeHub() {
           </aside>
 
           {/* LEFT CONTENT AREA: DYNAMIC VIEW (flex-1) */}
-          <main className="flex-1 w-full order-2 lg:order-1 min-w-0">
+          <div role="region" aria-label="خزانة المنهاج المعرفية" className="flex-1 w-full order-2 lg:order-1 min-w-0">
             {/* Active Syllabus Breadcrumb & Info Card */}
             <div className="bg-white dark:bg-[#0E2019] rounded-2xl border border-[#E7DFD5] dark:border-[#203D31] p-4 sm:p-5 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4">
               <div className="space-y-1">
@@ -442,7 +443,7 @@ export function UnifiedKnowledgeHub() {
 
                       <div className="px-3.5 py-2 rounded-xl bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378] text-xs font-bold border border-[#C5A059]/30 shrink-0 flex items-center gap-1.5 shadow-sm">
                         <BookOpen className="w-3.5 h-3.5 text-[#C5A059]" />
-                        <span>311 بيتاً مباركاً • 29 باباً</span>
+                        <span>{IBN_ASHIR_TOTAL_COUNT} بيتاً مباركاً • 29 باباً</span>
                       </div>
                     </div>
 
@@ -517,7 +518,7 @@ export function UnifiedKnowledgeHub() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-1 rounded-lg text-[#1877F2] dark:text-[#5B9DF8] hover:bg-[#1877F2]/15 transition"
-                                title="مشاهدة اللوحة على فيسبوك"
+                                title="زيارة صفحة الزاوية على فيسبوك"
                               >
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </a>
@@ -598,9 +599,9 @@ export function UnifiedKnowledgeHub() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-1.5 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
-                            title="مشاهدة لوحة التأصيل على فيسبوك"
+                            title="زيارة صفحة الزاوية على فيسبوك"
                           >
-                            <span>فيسبوك</span>
+                            <span>زيارة صفحة الزاوية</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                           <button
@@ -634,9 +635,9 @@ export function UnifiedKnowledgeHub() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-1.5 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
-                            title="مشاهدة لوحة التأصيل على فيسبوك"
+                            title="زيارة صفحة الزاوية على فيسبوك"
                           >
-                            <span>فيسبوك</span>
+                            <span>زيارة صفحة الزاوية</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                           <button
@@ -671,9 +672,9 @@ export function UnifiedKnowledgeHub() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-1.5 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
-                            title="مشاهدة لوحة التأصيل على فيسبوك"
+                            title="زيارة صفحة الزاوية على فيسبوك"
                           >
-                            <span>فيسبوك</span>
+                            <span>زيارة صفحة الزاوية</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                           <button
@@ -859,9 +860,9 @@ export function UnifiedKnowledgeHub() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="py-1.5 px-3 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
-                          title="صفحة الزاوية على فيسبوك"
+                          title="زيارة صفحة الزاوية على فيسبوك"
                         >
-                          <span>فيسبوك</span>
+                          <span>زيارة صفحة الزاوية</span>
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                         <button
@@ -904,9 +905,9 @@ export function UnifiedKnowledgeHub() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="py-1.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1.5 transition"
-                          title="صفحة الزاوية على فيسبوك"
+                          title="زيارة صفحة الزاوية على فيسبوك"
                         >
-                          <span>فيسبوك</span>
+                          <span>زيارة صفحة الزاوية</span>
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
 
@@ -1098,7 +1099,7 @@ export function UnifiedKnowledgeHub() {
               {/* 7. GLOSSARY SECTION */}
               {activeTab === "glossary" && <GlossarySection />}
             </div>
-          </main>
+          </div>
         </div>
       </div>
     </section>

@@ -234,9 +234,9 @@ export function ThawabitSection() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="py-1.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center gap-1 transition"
-                        title="صفحة الزاوية على فيسبوك"
+                        title="زيارة صفحة الزاوية على فيسبوك"
                       >
-                        <span>فيسبوك</span>
+                        <span>زيارة صفحة الزاوية</span>
                         <ExternalLink className="w-3 h-3" />
                       </a>
 

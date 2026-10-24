@@ -306,9 +306,9 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-xs font-semibold text-[#1877F2] dark:text-[#5B9DF8] transition group shadow-sm"
-                    title="مشاهدة اللوحة الفنية والتصميم الكامل على فيسبوك"
+                    title="زيارة صفحة الزاوية على فيسبوك"
                   >
-                    <span>مشاهدة التصميم على فيسبوك</span>
+                    <span>زيارة صفحة الزاوية</span>
                     <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-[-2px] transition-transform" />
                   </a>
 

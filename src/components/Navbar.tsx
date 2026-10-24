@@ -21,6 +21,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { MemberPortalModal } from "./MemberPortalModal";
+import { IBN_ASHIR_TOTAL_COUNT } from "@/lib/ibn-ashir";
 
 export function Navbar() {
   const [isDark, setIsDark] = useState(false);
@@ -198,7 +199,7 @@ export function Navbar() {
                         <span>متن ابن عاشر (المرشد المعين)</span>
                       </div>
                       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35]">
-                        311 بيتاً
+                        {IBN_ASHIR_TOTAL_COUNT} بيتاً
                       </span>
                     </button>
 
@@ -342,7 +343,7 @@ export function Navbar() {
                 onClick={() => navigateToTab("ibn-ashir")}
                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>متن ابن عاشر (311 بيتاً محققاً)</span>
+                <span>متن ابن عاشر ({IBN_ASHIR_TOTAL_COUNT} بيتاً)</span>
                 <BookOpen className="w-4 h-4 text-[#C5A059]" />
               </button>
               <button

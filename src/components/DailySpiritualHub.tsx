@@ -19,6 +19,7 @@ import {
   IBN_ASHIR_LESSONS,
   getIbnAshirLessonOfTheDay,
   IbnAshirVerseLesson,
+  IBN_ASHIR_TOTAL_COUNT,
 } from "@/lib/ibn-ashir";
 
 interface DailySpiritualHubProps {
@@ -87,7 +88,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
     const versesText = currentIbnAshir.verses
       .map((v) => `${v.firstHemistich} ... ${v.secondHemistich}`)
       .join("\n");
-    const text = `📜 درة اليوم من متن ابن عاشر (${currentIbnAshir.chapter}):\nالبيت رقم: ${currentIbnAshir.verseNumbers} من 311\n\n${versesText}\n\nالشرح:\n${currentIbnAshir.explanation}\n\nطالع زاد اليوم على منصة منهاج الفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-spiritual`;
+    const text = `📜 درة اليوم من متن ابن عاشر (${currentIbnAshir.chapter}):\nالبيت رقم: ${currentIbnAshir.verseNumbers} من ${IBN_ASHIR_TOTAL_COUNT}\n\n${versesText}\n\nالشرح:\n${currentIbnAshir.explanation}\n\nطالع زاد اليوم على منصة منهاج الفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-spiritual`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -258,9 +259,9 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:flex-1 py-2 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition group"
-                title="مشاهدة اللوحة الفنية والتصميم الكامل على صفحة فيسبوك"
+                title="زيارة صفحة الزاوية على فيسبوك"
               >
-                <span>مشاهدة اللوحة على فيسبوك</span>
+                <span>زيارة صفحة الزاوية</span>
                 <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-[-2px] transition-transform" />
               </a>
 
@@ -348,9 +349,9 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:flex-1 py-2 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition group"
-                title="مشاهدة تصميم الحديث الفني على فيسبوك"
+                title="زيارة صفحة الزاوية على فيسبوك"
               >
-                <span>مشاهدة التصميم على فيسبوك</span>
+                <span>زيارة صفحة الزاوية</span>
                 <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-[-2px] transition-transform" />
               </a>
 
@@ -388,7 +389,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
 
                 <div className="flex items-center gap-1.5">
                   <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 text-[#1B4332] dark:text-[#E5C378]">
-                    البيت #{currentIbnAshir.verseNumbers} من 311
+                    البيت #{currentIbnAshir.verseNumbers} من {IBN_ASHIR_TOTAL_COUNT}
                   </span>
                 </div>
               </div>
@@ -458,9 +459,9 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="py-1.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center gap-1 transition"
-                  title="صفحة الزاوية بمدينة المحمدية على فيسبوك"
+                  title="زيارة صفحة الزاوية على فيسبوك"
                 >
-                  <span>فيسبوك</span>
+                  <span>زيارة صفحة الزاوية</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
 

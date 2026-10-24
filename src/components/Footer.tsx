@@ -52,37 +52,37 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-xs text-[#FAF7F2]/80 font-ibm">
               <li>
-                <a href="#tracks" className="hover:text-[#C5A059] transition">
+                <a href="/#tracks" className="hover:text-[#C5A059] transition">
                   • مدارج الارتقاء الروحي
                 </a>
               </li>
               <li>
-                <a href="#evidence" className="hover:text-[#C5A059] transition">
+                <a href="/#evidence" className="hover:text-[#C5A059] transition">
                   • التأصيل الشرعي (السبحة • الجهر • العمارة)
                 </a>
               </li>
               <li>
-                <a href="#wazifa" className="hover:text-[#C5A059] transition">
+                <a href="/#wazifa" className="hover:text-[#C5A059] transition">
                   • الأوراد والوظيفة ودستور الخدمة
                 </a>
               </li>
               <li>
-                <a href="#academy" className="hover:text-[#C5A059] transition">
+                <a href="/#arbaeen" className="hover:text-[#C5A059] transition">
                   • الأكاديمية والمتون (الأربعين النووية والكتب)
                 </a>
               </li>
               <li>
-                <a href="#hikma-today" className="hover:text-[#C5A059] transition">
+                <a href="/#hikma-today" className="hover:text-[#C5A059] transition">
                   • حكمة اليوم المصورة
                 </a>
               </li>
               <li>
-                <a href="#archive" className="hover:text-[#C5A059] transition">
+                <a href="/#archive" className="hover:text-[#C5A059] transition">
                   • أرشيف الحكم العطائية (264)
                 </a>
               </li>
               <li>
-                <a href="#glossary" className="hover:text-[#C5A059] transition">
+                <a href="/#glossary" className="hover:text-[#C5A059] transition">
                   • معجم مصطلحات الطريق
                 </a>
               </li>

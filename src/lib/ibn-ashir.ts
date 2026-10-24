@@ -7497,6 +7497,7 @@ export const IBN_ASHIR_LESSONS: IbnAshirVerseLesson[] = [
 ];
 
 export const IBN_ASHIR_CHAPTERS = Array.from(new Set(IBN_ASHIR_ALL_VERSES.map((v) => v.bab)));
+export const IBN_ASHIR_TOTAL_COUNT = IBN_ASHIR_ALL_VERSES.length;
 
 export function getIbnAshirLessonOfTheDay(dayIndex?: number): IbnAshirVerseLesson {
   const index =

@@ -208,9 +208,9 @@ export function HikmaOfTheDay() {
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/30 text-xs font-semibold text-[#1877F2] dark:text-[#5B9DF8] transition group shadow-sm"
-              title="مشاهدة اللوحة الفنية والتصميم الكامل على فيسبوك"
+              title="زيارة صفحة الزاوية على فيسبوك"
             >
-              <span>مشاهدة اللوحة الفنية على فيسبوك</span>
+              <span>زيارة صفحة الزاوية</span>
               <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-[-2px] transition-transform" />
             </a>
 
