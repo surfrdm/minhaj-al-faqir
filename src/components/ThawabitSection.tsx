@@ -177,10 +177,10 @@ export function ThawabitSection() {
             return (
               <div
                 key={t.id}
-                className={`rounded-3xl border transition-all duration-300 flex flex-col justify-between overflow-hidden ${
+                className={`rounded-3xl border transition-all duration-300 flex flex-col justify-between overflow-hidden lg:col-span-1 ${
                   isExpanded
-                    ? "lg:col-span-2 bg-white dark:bg-[#0E2019] border-[#C5A059] shadow-xl ring-1 ring-[#C5A059]/40"
-                    : "lg:col-span-1 bg-white/90 dark:bg-[#0E2019]/90 border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] shadow-sm hover:shadow-md"
+                    ? "bg-white dark:bg-[#0E2019] border-[#C5A059] shadow-xl ring-1 ring-[#C5A059]/40"
+                    : "bg-white/90 dark:bg-[#0E2019]/90 border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] shadow-sm hover:shadow-md"
                 }`}
               >
                 {/* Pillar Card Header */}

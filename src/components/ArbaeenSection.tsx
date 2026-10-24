@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import arbaeenData from "@/data/arbaeen.json";
 import {
   Search,
@@ -126,6 +127,30 @@ export function ArbaeenSection({ isEmbedded = false }: ArbaeenSectionProps) {
             <p className="font-ibm text-sm sm:text-base text-[#1D2A24]/80 dark:text-[#C5D5CC] leading-relaxed">
               42 حديثاً شريفاً مكتوبة بكامل المتن والسند والتخريج، مع الترجمات الفرنسية والإنجليزية والمدارسة السلوكية الأصيلة، وروابط مباشرة لمشاهدة التصاميم الفنية على فيسبوك.
             </p>
+          </div>
+        )}
+
+        {/* Embedded Mode Banner linking to dedicated /hadith page */}
+        {isEmbedded && (
+          <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-[#1B4332]/10 via-[#C5A059]/15 to-[#1B4332]/10 border border-[#C5A059]/35 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 text-right">
+              <Scroll className="w-5 h-5 text-[#C5A059] shrink-0" />
+              <div>
+                <span className="text-xs sm:text-sm font-bold text-[#143628] dark:text-[#FAF7F2] block">
+                  الأربعين النووية متاحة أيضاً في صفحة مستقلة كاملة
+                </span>
+                <span className="text-[11px] text-[#52796F] dark:text-[#95B8A8] font-ibm">
+                  لقراءة أهدأ ورابط مباشر لكل حديث مع تكبير الخط وحفظ التقدم
+                </span>
+              </div>
+            </div>
+            <Link
+              href="/hadith"
+              className="px-4 py-2 rounded-xl bg-[#1B4332] text-white hover:bg-[#143628] dark:bg-[#C5A059] dark:text-[#0E2019] text-xs font-bold transition flex items-center gap-1.5 shadow-sm shrink-0"
+            >
+              <span>فتح صفحة الأربعين المستقلة</span>
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </Link>
           </div>
         )}
 

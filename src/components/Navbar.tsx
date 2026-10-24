@@ -8,30 +8,21 @@ import {
   Menu,
   X,
   GraduationCap,
-  Scale,
   Sparkles,
   BookOpen,
-  Layers,
   HelpCircle,
   Clock,
   User,
-  ChevronDown,
-  Scroll,
   Award,
   ShieldCheck,
 } from "lucide-react";
 import { MemberPortalModal } from "./MemberPortalModal";
-import { IBN_ASHIR_TOTAL_COUNT } from "@/lib/ibn-ashir";
 
 export function Navbar() {
   const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [portalOpen, setPortalOpen] = useState(false);
-
-  // Dropdown states
-  const [curriculumDropdown, setCurriculumDropdown] = useState(false);
-  const [evidenceDropdown, setEvidenceDropdown] = useState(false);
 
   useEffect(() => {
     const isDarkStored =
@@ -66,8 +57,6 @@ export function Navbar() {
   };
 
   const navigateToTab = (tabId: string) => {
-    setCurriculumDropdown(false);
-    setEvidenceDropdown(false);
     setMobileMenuOpen(false);
     if (typeof window !== "undefined") {
       if (window.location.pathname !== "/") {
@@ -116,166 +105,62 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation Menus (Grouped & Unified) */}
-          <nav className="hidden lg:flex items-center gap-2.5">
+          {/* Desktop Navigation Menus (Streamlined to 5 Clean Portals + Sheikh) */}
+          <nav className="hidden lg:flex items-center gap-1.5 xl:gap-2">
             {/* Direct Link to Sheikh Dedicated Standalone Page */}
             <Link
               href="/shaykh"
-              className="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#143628] dark:text-[#E5C378] bg-[#C5A059]/15 hover:bg-[#C5A059]/25 border border-[#C5A059]/40 transition-all flex items-center gap-1.5 shadow-sm"
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold text-[#143628] dark:text-[#E5C378] bg-[#C5A059]/15 hover:bg-[#C5A059]/25 border border-[#C5A059]/40 transition-all flex items-center gap-1.5 shadow-sm"
               title="ورقة تعريفية بفضيلة الشيخ الدكتور سيدي منير القادري بودشيش"
             >
-              <Award className="w-4 h-4 text-[#C5A059]" />
+              <Award className="w-3.5 h-3.5 text-[#C5A059]" />
               <span>شيخ الطريقة</span>
             </Link>
 
-            {/* Direct Link to Thawabit */}
-            <a
-              href="/#thawabit"
-              className="px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5"
+            {/* 1. مساري */}
+            <Link
+              href="/masar"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>الثوابت الخمسة</span>
-            </a>
+              <GraduationCap className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>مساري التكويني</span>
+            </Link>
 
-            {/* Direct Link to Hub */}
+            {/* 2. المكتبة */}
             <button
               onClick={() => navigateToTab("arbaeen")}
-              className="px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <BookOpen className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>خزانة المنهاج</span>
+              <span>المكتبة</span>
             </button>
 
-            {/* Menu 1: Curriculum & Texts Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setCurriculumDropdown(true)}
-              onMouseLeave={() => setCurriculumDropdown(false)}
+            {/* 3. الورد والوظيفة */}
+            <button
+              onClick={() => navigateToTab("wazifa")}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <button
-                onClick={() => setCurriculumDropdown(!curriculumDropdown)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all"
-              >
-                <Layers className="w-3.5 h-3.5 text-[#C5A059]" />
-                <span>الدرر والمتون المباركة</span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#84928A]" />
-              </button>
+              <Clock className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>الورد والوظيفة</span>
+            </button>
 
-              {curriculumDropdown && (
-                <div className="absolute right-0 top-full pt-1 w-64 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                  <div className="bg-white dark:bg-[#0E2019] rounded-xl border border-[#C5A059]/40 shadow-xl p-2 space-y-1">
-                    <button
-                      onClick={() => navigateToTab("arbaeen")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center justify-between text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Scroll className="w-4 h-4 text-[#C5A059]" />
-                        <span>الأربعين النووية</span>
-                      </div>
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35]">
-                        42 لوحة
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => navigateToTab("hikam")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center justify-between text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Layers className="w-4 h-4 text-[#C5A059]" />
-                        <span>الحكم العطائية الكبرى</span>
-                      </div>
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35]">
-                        264 حكمة
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => navigateToTab("ibn-ashir")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center justify-between text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="w-4 h-4 text-[#C5A059]" />
-                        <span>متن ابن عاشر (المرشد المعين)</span>
-                      </div>
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35]">
-                        {IBN_ASHIR_TOTAL_COUNT} بيتاً
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => navigateToTab("hikma-day")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <Sparkles className="w-4 h-4 text-[#C5A059]" />
-                      <span>درة اليوم العطائية</span>
-                    </button>
-
-                    <button
-                      onClick={() => navigateToTab("tracks")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <GraduationCap className="w-4 h-4 text-[#C5A059]" />
-                      <span>مَدَارِجُ الارْتِقَاءِ الرُّوحِيِّ</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Menu 2: Evidence & Awrad Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setEvidenceDropdown(true)}
-              onMouseLeave={() => setEvidenceDropdown(false)}
+            {/* 4. زاد اليوم */}
+            <a
+              href="/#daily-spiritual"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5"
             >
-              <button
-                onClick={() => setEvidenceDropdown(!evidenceDropdown)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all"
-              >
-                <Scale className="w-3.5 h-3.5 text-[#C5A059]" />
-                <span>التأصيل والأوراد</span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#84928A]" />
-              </button>
+              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>زاد اليوم</span>
+            </a>
 
-              {evidenceDropdown && (
-                <div className="absolute right-0 top-full pt-1 w-64 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
-                  <div className="bg-white dark:bg-[#0E2019] rounded-xl border border-[#C5A059]/40 shadow-xl p-2 space-y-1">
-                    <button
-                      onClick={() => navigateToTab("evidence")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <Scale className="w-4 h-4 text-[#C5A059]" />
-                      <span>دقائق الطريق (السبحة والجهر)</span>
-                    </button>
-
-                    <button
-                      onClick={() => navigateToTab("wazifa")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <Clock className="w-4 h-4 text-[#C5A059]" />
-                      <span>الأوراد والوظيفة الراتبة</span>
-                    </button>
-
-                    <button
-                      onClick={() => navigateToTab("wazifa")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <Award className="w-4 h-4 text-[#C5A059]" />
-                      <span>فقه الطريق (آداب الذكر)</span>
-                    </button>
-
-                    <button
-                      onClick={() => navigateToTab("glossary")}
-                      className="w-full p-2 rounded-lg text-right hover:bg-[#FAF7F2] dark:hover:bg-[#122820] flex items-center gap-2 text-xs font-semibold text-[#143628] dark:text-[#FAF7F2]"
-                    >
-                      <HelpCircle className="w-4 h-4 text-[#C5A059]" />
-                      <span>معجم مصطلحات السلوك</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* 5. المعجم */}
+            <button
+              onClick={() => navigateToTab("glossary")}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1D2A24]/85 dark:text-[#E8F0EC]/85 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>المعجم</span>
+            </button>
           </nav>
 
           {/* Actions: Member Portal, Theme Toggle & Mobile Menu */}
@@ -322,62 +207,65 @@ export function Navbar() {
                 <Award className="w-4 h-4 text-[#C5A059]" />
               </Link>
 
+              {/* 1. مساري التكويني */}
+              <Link
+                href="/masar"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
+              >
+                <span>مساري التكويني</span>
+                <GraduationCap className="w-4 h-4 text-[#C5A059]" />
+              </Link>
+
+              {/* 2. المكتبة */}
               <button
                 type="button"
                 onClick={() => navigateToTab("arbaeen")}
                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>الأربعين النووية (42 حديثاً)</span>
-                <Scroll className="w-4 h-4 text-[#C5A059]" />
-              </button>
-              <button
-                type="button"
-                onClick={() => navigateToTab("hikam")}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
-              >
-                <span>الحكم العطائية (264 حكمة)</span>
-                <Layers className="w-4 h-4 text-[#C5A059]" />
-              </button>
-              <button
-                type="button"
-                onClick={() => navigateToTab("ibn-ashir")}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
-              >
-                <span>متن ابن عاشر ({IBN_ASHIR_TOTAL_COUNT} بيتاً)</span>
+                <span>المكتبة (الأربعين والحكم وابن عاشر)</span>
                 <BookOpen className="w-4 h-4 text-[#C5A059]" />
               </button>
-              <button
-                type="button"
-                onClick={() => navigateToTab("tracks")}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
-              >
-                <span>مَدَارِجُ الارْتِقَاءِ الرُّوحِيِّ</span>
-                <GraduationCap className="w-4 h-4 text-[#C5A059]" />
-              </button>
-              <button
-                type="button"
-                onClick={() => navigateToTab("evidence")}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
-              >
-                <span>التأصيل الشرعي لدقائق الطريق</span>
-                <Scale className="w-4 h-4 text-[#C5A059]" />
-              </button>
+
+              {/* 3. الورد والوظيفة */}
               <button
                 type="button"
                 onClick={() => navigateToTab("wazifa")}
                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>الأوراد والوظيفة الراتبة</span>
+                <span>الورد والوظيفة الراتبة</span>
                 <Clock className="w-4 h-4 text-[#C5A059]" />
               </button>
+
+              {/* 4. زاد اليوم */}
+              <a
+                href="/#daily-spiritual"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
+              >
+                <span>زاد اليوم</span>
+                <Sparkles className="w-4 h-4 text-[#C5A059]" />
+              </a>
+
+              {/* 5. المعجم */}
               <button
                 type="button"
                 onClick={() => navigateToTab("glossary")}
                 className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
               >
-                <span>معجم مصطلحات الطريق</span>
+                <span>معجم مصطلحات السلوك</span>
                 <HelpCircle className="w-4 h-4 text-[#C5A059]" />
               </button>
+
+              {/* الثوابت الخمسة */}
+              <a
+                href="/#thawabit"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold text-[#1D2A24] dark:text-[#E8F0EC] hover:bg-[#C5A059]/15 active:bg-[#C5A059]/25 text-right touch-manipulation transition"
+              >
+                <span>الثوابت الخمسة في الطريقة</span>
+                <ShieldCheck className="w-4 h-4 text-[#C5A059]" />
+              </a>
             </div>
           </div>
         )}
