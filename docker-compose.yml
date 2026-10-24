@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  minhaj-al-faqir:
+    build: .
+    container_name: minhaj-al-faqir
+    restart: always
+    ports:
+      - "3010:3010"
+    environment:
+      - PORT=3010
+      - HOSTNAME=0.0.0.0
+      - NOTION_API_TOKEN=${NOTION_API_TOKEN}
+      - NOTION_MEMBERS_DB_ID=${NOTION_MEMBERS_DB_ID}
+    env_file:
+      - .env.local
