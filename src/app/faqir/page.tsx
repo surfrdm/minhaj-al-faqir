@@ -408,7 +408,7 @@ export default function FaqirPortalPage() {
               <span>منهاج السلوك والتربية • فضاء المريد الخاص</span>
             </div>
             <h1 className="font-amiri text-2xl sm:text-4xl font-bold tracking-wide text-[#FAF7F2] drop-shadow-sm">
-              فَضَاءُ الفَقِيرِ • رُزْنَامَةُ الأَوْرَادِ وَالمُفَكِّرَةُ
+              فَضَاءُ الفَقِيرِ • تَقْوِيمُ الأَوْرَادِ وَالمَلْزُومَةُ الشَّهْرِيَّةُ
             </h1>
             <p className="text-xs sm:text-sm text-[#FAF7F2]/80 leading-relaxed font-ibm">
               مساحتك الروحية الخاصة للمواظبة على الأوراد الراتبة، تتبع السلوك اليومي، تسجيل فوائد ومذاكرات الشيخ، وضبط الملزومة الشهرية بخصوصية وسهولة تامة.
@@ -430,7 +430,7 @@ export default function FaqirPortalPage() {
               <span className="text-sm font-bold text-white">{currentTasks.filter((t) => t.completed).length}/{currentTasks.length} منجزة</span>
             </div>
             <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-              <span className="text-[11px] text-[#C5A059] block font-ibm">النفقة الشهرية</span>
+              <span className="text-[11px] text-[#C5A059] block font-ibm">الملزومة الشهرية</span>
               <span className="text-sm font-bold text-white">{paidMonths.length * monthlyAmount} درهم ({paidMonths.length}/12)</span>
             </div>
           </div>
@@ -494,7 +494,7 @@ export default function FaqirPortalPage() {
             }`}
           >
             <Coins className="w-4 h-4" />
-            <span>دفتر النفقة والملزومة</span>
+            <span>دفتر الملزومة الشهرية</span>
           </button>
         </div>
 
@@ -507,7 +507,7 @@ export default function FaqirPortalPage() {
                 <div className="flex items-center gap-2 text-[#143628] dark:text-[#E5C378]">
                   <CalendarIcon className="w-4 h-4 text-[#C5A059]" />
                   <h3 className="font-amiri text-base font-bold">
-                    رزنامة الشهر • {MONTH_NAMES_AR[calendarViewMonth.getMonth()]} {calendarViewMonth.getFullYear()}
+                    تقويم الشهر • {MONTH_NAMES_AR[calendarViewMonth.getMonth()]} {calendarViewMonth.getFullYear()}
                   </h3>
                 </div>
                 <div className="flex items-center gap-1">
@@ -608,7 +608,7 @@ export default function FaqirPortalPage() {
                 </span>
               </div>
               <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm">
-                كل تغيير أو تكويش في هذا اليوم يُحفظ تلقائياً في رزنامتك.
+                كل تغيير أو تكويش في هذا اليوم يُحفظ تلقائياً في تقويمك الخاص.
               </p>
             </div>
           </aside>
@@ -972,10 +972,10 @@ export default function FaqirPortalPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                       <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#E8F0EC]">
-                        دفتر النفقة والملزومة السنوية
+                        دفتر الملزومة الشهرية السنوية
                       </h3>
                       <p className="text-xs text-[#52796F] dark:text-[#95B8A8]">
-                        متابعة مساهمة الفقير في نفقات الزاوية وإعانة المحتاجين وعمارة المجالس.
+                        متابعة مساهمة الفقير في ملزومة الزاوية وإعانة المحتاجين وعمارة المجالس بالخدمة والإيثار.
                       </p>
                     </div>
 

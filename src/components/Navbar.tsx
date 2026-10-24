@@ -206,7 +206,7 @@ export function Navbar() {
               >
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4 text-[#C5A059]" />
-                  <span>فضاء الفقير (الرزنامة والمتتبع والمفكرة)</span>
+                  <span>فضاء الفقير (تقويم الأوراد والملزومة والمفكرة)</span>
                 </div>
                 <ChevronLeft className="w-4 h-4 text-[#C5A059]" />
               </Link>
