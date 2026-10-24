@@ -79,9 +79,15 @@ export default function ShaykhPage() {
 
               {/* Title, Subtitle, & Lineage Badge */}
               <div className="flex-1 text-center md:text-right space-y-4">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/35 text-[#9E7B35] dark:text-[#E5C378] text-xs sm:text-sm font-semibold">
-                  <Sparkles className="w-4 h-4 text-[#C5A059]" />
-                  <span>الإرشاد والتربية الروحية • السند القادري المتصل</span>
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/35 text-[#9E7B35] dark:text-[#E5C378] text-xs sm:text-sm font-semibold">
+                    <Sparkles className="w-4 h-4 text-[#C5A059]" />
+                    <span>الإرشاد والتربية الروحية • السند القادري المتصل</span>
+                  </div>
+
+                  <span className="text-[11px] px-3 py-1 rounded-full bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5] dark:border-[#1F3D2F] text-[#84928A] font-medium">
+                    آخر تحيين: ربيع الثاني 1448 هـ / أكتوبر 2026
+                  </span>
                 </div>
 
                 <h1 className="font-amiri text-3xl sm:text-4xl lg:text-5xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-tight pt-1">
@@ -272,6 +278,90 @@ export default function ShaykhPage() {
                   </h3>
                   <p className="text-xs sm:text-sm text-[#6B7D74] dark:text-[#95B8A8]">
                     باريس، 2001
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Academic & Spiritual Chronological Timeline (الجمع بين الأكاديميا والسلوك) */}
+            <div className="mt-10 pt-8 border-t border-[#E7DFD5] dark:border-[#1F3D2F]">
+              <div className="flex items-center gap-2.5 mb-6 text-[#C5A059]">
+                <Compass className="w-5 h-5" />
+                <h3 className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
+                  المسار الزمني: نموذج الجمع بين الرسوخ الشرعي والأكاديمي والذوق السلوكي
+                </h3>
+              </div>
+
+              <div className="relative pr-6 border-r-2 border-[#C5A059]/40 space-y-6">
+                {/* 1994 */}
+                <div className="relative">
+                  <span className="absolute -right-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#1B4332] border-2 border-[#C5A059]" />
+                  <span className="text-xs font-mono font-bold text-[#C5A059] block">1994 م</span>
+                  <h4 className="font-semibold text-sm text-[#143628] dark:text-[#FAF7F2]">
+                    الإجازة في الدراسات الإسلامية (جامعة محمد الأول – وجدة)
+                  </h4>
+                  <p className="text-xs text-[#6B7D74] dark:text-[#95B8A8] mt-0.5">
+                    التأسيس العقدي والفقهي والأصولي المتين في المذهب المالكي والعقيدة الأشعرية.
+                  </p>
+                </div>
+
+                {/* 1995 */}
+                <div className="relative">
+                  <span className="absolute -right-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#1B4332] border-2 border-[#C5A059]" />
+                  <span className="text-xs font-mono font-bold text-[#C5A059] block">1995 م</span>
+                  <h4 className="font-semibold text-sm text-[#143628] dark:text-[#FAF7F2]">
+                    الإجازة في العلوم الاقتصادية (كلية الحقوق والاقتصاد – وجدة)
+                  </h4>
+                  <p className="text-xs text-[#6B7D74] dark:text-[#95B8A8] mt-0.5">
+                    إدراك التحديات التنموية والمعطيات الاقتصادية والمؤسساتية المعاصرة.
+                  </p>
+                </div>
+
+                {/* 1996 */}
+                <div className="relative">
+                  <span className="absolute -right-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#1B4332] border-2 border-[#C5A059]" />
+                  <span className="text-xs font-mono font-bold text-[#C5A059] block">1996 م</span>
+                  <h4 className="font-semibold text-sm text-[#143628] dark:text-[#FAF7F2]">
+                    التخرج من مؤسسة دار الحديث الحسنية للدراسات الإسلامية العليا (الرباط)
+                  </h4>
+                  <p className="text-xs text-[#6B7D74] dark:text-[#95B8A8] mt-0.5">
+                    التعمق في علوم الحديث النبوي الشريف والتخريج ومناهج المحدثين والمحققين.
+                  </p>
+                </div>
+
+                {/* 1999 - 2001 */}
+                <div className="relative">
+                  <span className="absolute -right-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#1B4332] border-2 border-[#C5A059]" />
+                  <span className="text-xs font-mono font-bold text-[#C5A059] block">1999 – 2001 م</span>
+                  <h4 className="font-semibold text-sm text-[#143628] dark:text-[#FAF7F2]">
+                    دبلومات العلوم الاقتصادية والأنثروبولوجيا ومعهد أوروبا-المغارب (فرنسا)
+                  </h4>
+                  <p className="text-xs text-[#6B7D74] dark:text-[#95B8A8] mt-0.5">
+                    تسيير المقاولات بجامعة غرونوبل، أبحاث المجتمعات المغاربية، وماجستير الذكاء الاقتصادي.
+                  </p>
+                </div>
+
+                {/* Doctoral Milestones */}
+                <div className="relative">
+                  <span className="absolute -right-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#C5A059] border-2 border-[#1B4332]" />
+                  <span className="text-xs font-mono font-bold text-[#C5A059] block">المرحلة الأكاديمية العليا (أطروحات الدكتوراه)</span>
+                  <h4 className="font-semibold text-sm text-[#143628] dark:text-[#FAF7F2]">
+                    ثلاث درجات دكتوراه متخصصة (دار الحديث الحسنية بالرباط، والمدرسة التطبيقية EPHE، وجامعة السوربون بباريس)
+                  </h4>
+                  <p className="text-xs text-[#6B7D74] dark:text-[#95B8A8] mt-0.5">
+                    تتويج المسار بأطروحة الدكتوراه في السوربون حول «قوت القلوب» لأبي طالب المكي بإشراف البروفيسور بيير لوري، مسجلةً تجسيداً فريداً للجمع بين أدوات البحث الأكاديمي الدولي والعمق الروحي الصوفي.
+                  </p>
+                </div>
+
+                {/* Leadership & Succession */}
+                <div className="relative">
+                  <span className="absolute -right-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#C5A059] border-2 border-white dark:border-[#0E2019]" />
+                  <span className="text-xs font-mono font-bold text-[#C5A059] block">الوراثة والسند التربوي</span>
+                  <h4 className="font-semibold text-sm text-[#143628] dark:text-[#FAF7F2]">
+                    مشيخة الطريقة القادرية البودشيشية ووراثة التربية الروحية
+                  </h4>
+                  <p className="text-xs text-[#6B7D74] dark:text-[#95B8A8] mt-0.5">
+                    تولي التربية والإرشاد بالوصيتين المباركتين للشيخين سيدي حمزة وسيدي جمال الدين، وقيادة الطريقة برؤية تجسر بين الأصالة والمعاصرة.
                   </p>
                 </div>
               </div>

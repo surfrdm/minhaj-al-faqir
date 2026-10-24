@@ -193,7 +193,7 @@ export function HadithReader({
         <div className="flex items-center gap-2 text-[#C5A059]">
           <Sparkles className="w-4 h-4" />
           <h2 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
-            المَغْزَى وَالبُعْدُ التَّرْبَوِيُّ وَالسُّلُوكِيُّ
+            شَرْحٌ مُبَسَّطٌ مُسْتَفَادٌ مِنْ كُتُبِ التُّرَاثِ
           </h2>
         </div>
         <p className={`text-[#1D2A24]/90 dark:text-[#D5E2DB] font-ibm text-justify ${sharhClasses}`}>
@@ -201,7 +201,7 @@ export function HadithReader({
         </p>
       </div>
 
-      {/* 5. Translations & Source / Takhrij */}
+      {/* 5. Translations & Structured Documentation Metadata */}
       <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
         {lang === "fr" && hadith.text_fr && (
           <div className="space-y-1" dir="ltr">
@@ -225,15 +225,29 @@ export function HadithReader({
           </div>
         )}
 
-        <div className="pt-2 border-t border-[#E7DFD5]/60 dark:border-[#203D31]/60 flex flex-wrap items-center justify-between gap-2 text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm">
-          <span>
-            <strong className="text-[#143628] dark:text-[#FAF7F2]">المصدر والتخريج:</strong> {hadith.source}
-          </span>
-          {hadith.theme && (
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31]">
-              {hadith.theme}
+        {/* Standardized Documentation & Takhrij Metadata Grid */}
+        <div className="pt-3 border-t border-[#E7DFD5]/70 dark:border-[#203D31]/70 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-[#52796F] dark:text-[#95B8A8] font-ibm">
+          <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
+            <span className="text-[10px] text-[#84928A] block">النوع:</span>
+            <span className="font-semibold text-[#143628] dark:text-[#FAF7F2]">حديث نبوي شريف</span>
+          </div>
+
+          <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
+            <span className="text-[10px] text-[#84928A] block">المصدر والتخريج:</span>
+            <span className="font-semibold text-[#143628] dark:text-[#FAF7F2] line-clamp-1" title={hadith.source}>
+              {hadith.source || "قيد المراجعة"}
             </span>
-          )}
+          </div>
+
+          <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
+            <span className="text-[10px] text-[#84928A] block">الطبعة:</span>
+            <span className="text-[#84928A]">قيد المراجعة</span>
+          </div>
+
+          <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
+            <span className="text-[10px] text-[#84928A] block">المترجم / المراجع:</span>
+            <span className="text-[#84928A]">قيد المراجعة</span>
+          </div>
         </div>
       </div>
 

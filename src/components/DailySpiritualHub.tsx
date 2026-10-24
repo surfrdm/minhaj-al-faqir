@@ -112,7 +112,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/15 border border-[#1B4332]/20 dark:border-[#C5A059]/30 text-[#1B4332] dark:text-[#E5C378] text-xs font-semibold mb-3">
             <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span>الغِذَاءُ الرُّوحِيُّ وَالعِلْمِيُّ اليَوْمِيُّ • نُصُوصٌ مُحَقَّقَةٌ</span>
+            <span>الغِذَاءُ الرُّوحِيُّ وَالعِلْمِيُّ اليَوْمِيُّ • مَنَاهِلُ التُّرَاثِ</span>
           </div>
 
           <h2 className="font-amiri text-3xl sm:text-4xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wide mb-3 leading-relaxed">
@@ -120,7 +120,7 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
           </h2>
 
           <p className="font-ibm text-xs sm:text-sm text-[#52796F] dark:text-[#9BB0A5] leading-relaxed max-w-2xl mx-auto">
-            محتوى يومي متجدد مستمد من قواعد البيانات العلمية المحققة: جواهر التربية والسلوك (الحكم العطائية بثلاث لغات مع الشرح الأصيل)، نور الوحي النبوي (الأربعين النووية)، وأصول الفقه والتصوف السني (متن ابن عاشر).
+            محتوى يومي متجدد مستمد من نصوص التراث الأصيلة: جواهر التربية والسلوك (الحكم العطائية بثلاث لغات مع شرح مبسط مستفاد من كتب التراث)، نور الوحي النبوي (الأربعين النووية)، وأصول الفقه والتصوف السني (متن ابن عاشر).
           </p>
         </div>
 
