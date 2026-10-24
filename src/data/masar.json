@@ -1,0 +1,452 @@
+{
+  "meta": {
+    "title": "مسار الفقير التكويني",
+    "version": "0.1-draft",
+    "last_updated": "2026-10-24",
+    "notice": "هذا المحتوى مُعين على ما تتلقاه في الزاوية، لا بديل عنه.",
+    "visibility_rule": "لا يظهر للجمهور إلا ما كانت حالته approved",
+    "status_values": ["pending_committee", "approved", "rejected"],
+    "level_values": {
+      "core": "أساسي لكل فقير",
+      "advanced": "للمتقدم بإذن وإشراف",
+      "committee_defined": "تحدده اللجنة العلمية"
+    },
+    "acceptance_criteria": [
+      "مؤلفه من أهل السنة (أشعري أو ماتريدي) ومعروف بالفقه",
+      "يجمع بين الشريعة والحقيقة",
+      "نسبته لمؤلفه ثابتة وتتوفر طبعة محققة",
+      "التزكية فيه قائمة على الاستقامة لا على الكرامات والأسرار",
+      "أجازته اللجنة العلمية صراحة"
+    ],
+    "excluded_categories": [
+      "كتب الأوفاق والجداول والطلاسم والحروف والجفر",
+      "كتب السحر والكهانة والتنجيم والرمل",
+      "المتون التي فيها ادعاء الحلول والاتحاد أو الإباحية",
+      "الكتب المنسوبة للصالحين بلا سند، أو القائمة على الخوارق دون الاستقامة"
+    ]
+  },
+  "stages": [
+    {
+      "id": 1,
+      "slug": "taarif",
+      "title": "التعريف",
+      "duration": "الأسبوعان الأولان",
+      "goal": "أن يفهم الفقير معنى الطريق والإذن والصحبة وأين دخل.",
+      "practice": [
+        "حضور مجلس الزاوية",
+        "التعرف على المقدَّم",
+        "أداء الورد المأذون به فقط"
+      ],
+      "review_questions": [
+        "ما معنى كل ثابت من الثوابت الخمسة؟",
+        "لماذا نحتاج إلى الإذن في الورد؟"
+      ],
+      "books": [
+        {
+          "id": "mi-raj-al-tashawwuf",
+          "title": "معراج التشوف إلى حقائق التصوف",
+          "author": "أحمد بن عجيبة",
+          "level": "core",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "تعريف موجز بالتصوف وأصله ومعناه",
+          "status": "pending_committee"
+        },
+        {
+          "id": "qawaid-al-tasawwuf",
+          "title": "قواعد التصوف",
+          "author": "أحمد زروق",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "قواعد قصيرة تضبط فهم الطريق بالشرع",
+          "status": "pending_committee"
+        },
+        {
+          "id": "tariqa-intro",
+          "title": null,
+          "author": null,
+          "level": "committee_defined",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "تعريف بالشيخ والسند والطريقة تحدده اللجنة العلمية",
+          "status": "pending_committee"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "slug": "asas",
+      "title": "الأساس العقدي والفقهي",
+      "duration": "من شهر إلى ثلاثة أشهر",
+      "goal": "عبادة صحيحة قبل أي ترقٍّ.",
+      "practice": [
+        "تصحيح الوضوء والصلاة",
+        "المحافظة على الفرائض في وقتها"
+      ],
+      "review_questions": [
+        "أسئلة قصيرة بعد كل باب من المرشد المعين"
+      ],
+      "books": [
+        {
+          "id": "murshid-mu-in",
+          "title": "المرشد المعين على الضروري من علوم الدين",
+          "author": "عبد الواحد بن عاشر",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "يُقرأ قسماً قسماً مع تطبيق عملي",
+          "status": "pending_committee"
+        },
+        {
+          "id": "durr-thamin",
+          "title": "الدر الثمين والمورد المعين (شرح المرشد المعين)",
+          "author": "محمد ميارة",
+          "level": "core",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "شرح لمن يحتاج إليه",
+          "status": "pending_committee"
+        },
+        {
+          "id": "bidayat-al-hidaya",
+          "title": "بداية الهداية",
+          "author": "أبو حامد الغزالي",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "آداب الصباح إلى المساء وبداية الاستقامة",
+          "status": "pending_committee"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "slug": "hadith-akhlaq",
+      "title": "الحديث والأخلاق والمحبة النبوية",
+      "duration": "ثلاثة أشهر",
+      "goal": "ربط السلوك بأصله النبوي وتغذية المحبة.",
+      "practice": [
+        "حديث واحد في الأسبوع يُحفظ ويُطبَّق في سلوك محدد",
+        "صلاة على النبي ﷺ يومية"
+      ],
+      "review_questions": [
+        "ما العمل الذي طبقتُه هذا الأسبوع من الحديث؟"
+      ],
+      "books": [
+        {
+          "id": "arbaoun-nawawiya",
+          "title": "الأربعون النووية",
+          "author": "يحيى بن شرف النووي",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "تُقرأ بترتيب موضوعي",
+          "status": "pending_committee"
+        },
+        {
+          "id": "sharh-ibn-daqiq",
+          "title": "شرح الأربعين النووية",
+          "author": "ابن دقيق العيد",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "الشرح المقترح بدل جامع العلوم والحكم لوحدة المذهب",
+          "status": "pending_committee"
+        },
+        {
+          "id": "riyad-salihin",
+          "title": "رياض الصالحين",
+          "author": "يحيى بن شرف النووي",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "للقراءة اليومية",
+          "status": "pending_committee"
+        },
+        {
+          "id": "shamail-muhammadiya",
+          "title": "الشمائل المحمدية",
+          "author": "أبو عيسى الترمذي",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "المحبة النبوية",
+          "status": "pending_committee"
+        },
+        {
+          "id": "al-shifa",
+          "title": "الشفا بتعريف حقوق المصطفى",
+          "author": "القاضي عياض",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "يُقرأ الأهم منه أو مختصره",
+          "status": "pending_committee"
+        },
+        {
+          "id": "dalail-khayrat",
+          "title": "دلائل الخيرات",
+          "author": "محمد بن سليمان الجزولي",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "للصلاة على النبي ﷺ، ويُعتمد فيه نسخة محققة",
+          "status": "pending_committee"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "slug": "wird-dhikr",
+      "title": "الورد والذكر",
+      "duration": "مستمرة طوال الطريق",
+      "goal": "انتظام وحضور قلب، لا كثرة عدد.",
+      "practice": [
+        "الورد والوظيفة",
+        "الذكر الجماعي",
+        "مجالس العمارة"
+      ],
+      "review_questions": [
+        "هل واظبتُ على الورد هذا الشهر؟",
+        "ما الذي أعانني على الحضور وما الذي شتّتني؟"
+      ],
+      "books": [
+        {
+          "id": "miftah-al-falah",
+          "title": "مفتاح الفلاح ومصباح الأرواح",
+          "author": "ابن عطاء الله السكندري",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "في الذكر وآدابه وثمراته",
+          "status": "pending_committee"
+        },
+        {
+          "id": "al-tanwir",
+          "title": "التنوير في إسقاط التدبير",
+          "author": "ابن عطاء الله السكندري",
+          "level": "core",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "لتخفيف الاعتماد على النفس",
+          "status": "pending_committee"
+        },
+        {
+          "id": "al-ghunya",
+          "title": "الغنية لطالبي طريق الحق",
+          "author": "عبد القادر الجيلاني",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "أصل الطريقة القادرية. يُعتمد فيه طبعة محققة مع التنبيه إلى بعض الأحاديث الضعيفة",
+          "status": "pending_committee"
+        },
+        {
+          "id": "awrad-tariqa",
+          "title": null,
+          "author": null,
+          "level": "committee_defined",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "أوراد الطريقة ووظيفتها وشروحها وآدابها تحددها اللجنة العلمية",
+          "status": "pending_committee"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "slug": "suluk-tazkiya",
+      "title": "السلوك والتزكية",
+      "duration": "من ستة أشهر",
+      "goal": "معرفة أمراض النفس وعلاجها.",
+      "practice": [
+        "محاسبة النفس اليومية",
+        "كتابة خواطر أسبوعية",
+        "مذاكرة شهرية مع الإخوان"
+      ],
+      "review_questions": [
+        "ما الداء الذي ظهر لي هذا الشهر وما علاجه؟"
+      ],
+      "books": [
+        {
+          "id": "al-hikam",
+          "title": "الحكم العطائية",
+          "author": "ابن عطاء الله السكندري",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "تُقرأ حكمةً حكمة مع شرح",
+          "status": "pending_committee"
+        },
+        {
+          "id": "iqaz-al-himam",
+          "title": "إيقاظ الهمم في شرح الحكم",
+          "author": "أحمد بن عجيبة",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "شرح للحكم",
+          "status": "pending_committee"
+        },
+        {
+          "id": "ghayth-mawahib",
+          "title": "غيث المواهب العلية في شرح الحكم العطائية",
+          "author": "ابن عباد الرندي",
+          "level": "core",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "شرح بديل أو مكمل",
+          "status": "pending_committee"
+        },
+        {
+          "id": "lataif-al-minan",
+          "title": "لطائف المنن",
+          "author": "ابن عطاء الله السكندري",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": null,
+          "status": "pending_committee"
+        },
+        {
+          "id": "risala-qushayriya",
+          "title": "الرسالة القشيرية",
+          "author": "أبو القاسم القشيري",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "في المقامات والأحوال والآداب",
+          "status": "pending_committee"
+        },
+        {
+          "id": "futuh-al-ghayb",
+          "title": "فتوح الغيب",
+          "author": "عبد القادر الجيلاني",
+          "level": "core",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "مواعظ قصيرة، يُعتمد فيه طبعة محققة",
+          "status": "pending_committee"
+        },
+        {
+          "id": "al-riaya",
+          "title": "الرعاية لحقوق الله",
+          "author": "الحارث المحاسبي",
+          "level": "advanced",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "في محاسبة النفس، بعد الاستقرار",
+          "status": "pending_committee"
+        },
+        {
+          "id": "ihya-mukhtasar",
+          "title": "مختصر إحياء علوم الدين",
+          "author": "أبو حامد الغزالي (اختصار)",
+          "level": "advanced",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "لا يُقدَّم إلا مختصراً ومحققاً وبإذن اللجنة. للتنبيه: أحاديث ضعيفة في الأصل وخلاف تاريخي حوله",
+          "status": "pending_committee"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "slug": "suhba-khidma",
+      "title": "الصحبة والخدمة والتجربة",
+      "duration": "بعد الاستقرار",
+      "goal": "تحويل العلم إلى حال وخدمة.",
+      "practice": [
+        "خدمة الزاوية",
+        "جبر الخواطر",
+        "الاعتكاف أو الخلوة بإذن وإشراف فقط",
+        "برامج الإنفاق والتكافل"
+      ],
+      "review_questions": [
+        "تقييم من المقدَّم، لا تقييم ذاتي فقط"
+      ],
+      "books": [
+        {
+          "id": "awarif-al-maarif",
+          "title": "عوارف المعارف",
+          "author": "شهاب الدين السهروردي",
+          "level": "advanced",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "فيه أبواب الصحبة والخدمة والآداب",
+          "status": "pending_committee"
+        },
+        {
+          "id": "adab-al-muridin",
+          "title": "آداب المريدين",
+          "author": "أبو النجيب السهروردي",
+          "level": "core",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": null,
+          "status": "pending_committee"
+        },
+        {
+          "id": "qut-al-qulub",
+          "title": "قوت القلوب",
+          "author": "أبو طالب المكي",
+          "level": "advanced",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "فيه أحاديث ضعيفة وحكايات، للمتقدم بإشراف فقط",
+          "status": "pending_committee"
+        },
+        {
+          "id": "salwat-al-anfas",
+          "title": "سلوة الأنفاس ومحادثة الأكياس بمن أُقبر من العلماء والصلحاء بفاس",
+          "author": "محمد بن جعفر الكتاني",
+          "level": "core",
+          "essential": false,
+          "edition": null,
+          "editor": null,
+          "note": "لمعرفة صالحي المغرب",
+          "status": "pending_committee"
+        },
+        {
+          "id": "tariqa-suhba",
+          "title": null,
+          "author": null,
+          "level": "committee_defined",
+          "essential": true,
+          "edition": null,
+          "editor": null,
+          "note": "مؤلفات شيوخ الطريقة في الصحبة والتربية تحددها اللجنة العلمية",
+          "status": "pending_committee"
+        }
+      ]
+    }
+  ]
+}
