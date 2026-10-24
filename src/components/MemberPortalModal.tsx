@@ -591,8 +591,8 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                           عمارة الأوقات
                         </span>
                       </div>
-                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block">
-                        عمارة اليوم بكلمة الإخلاص والتوحيد
+                      <span className="text-xs text-[#52796F] dark:text-[#95B8A8] block leading-relaxed">
+                        جلسة واحدة بتوجّه وتغميض العينين واستقبال القبلة (وتُقسّم عند الضرورة)
                       </span>
                       <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-950/60 dark:text-yellow-300 text-xs font-semibold">
                         <AlertCircle className="w-3.5 h-3.5" /> قيد الذكر والمتابعة

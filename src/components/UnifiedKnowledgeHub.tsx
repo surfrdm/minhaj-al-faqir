@@ -818,18 +818,25 @@ export function UnifiedKnowledgeHub() {
                             عمارة الأوقات
                           </span>
                         </div>
-                        <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
-                          • عمارة سائر أوقات اليوم بذكر كلمة التوحيد «لا إله إلا الله» حتى يبلغ السالك 15,000 مرة في اليوم.<br />
-                          • استغراق القلب في شهود الوحدانية، ومحو الغفلات، والترقي إلى مقام الإحسان وجمعية الجمع.
-                        </p>
+                        <div className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed space-y-1.5">
+                          <p>
+                            • <strong>عمارة الأوقات:</strong> عمارة سائر أوقات اليوم بذكر كلمة التوحيد «لا إله إلا الله» حتى يبلغ السالك 15,000 مرة في اليوم.
+                          </p>
+                          <p>
+                            • <strong>الأصل وآداب الذكر:</strong> الأصل والمطلوب من الفقير في الطريقة أداء 15,000 هيللة في جلسة واحدة بتوجّه قلبي كامل، وإغلاق العينين، واستقبال القبلة التزاماً بالأدب المعتمد دائماً في جميع الأذكار.
+                          </p>
+                          <p>
+                            • <strong>الرخصة والتيسير:</strong> ويجوز تقسيمها وتوزيعها على مدار اليوم عند الحاجة ومراعاة للضرورة.
+                          </p>
+                        </div>
                       </div>
                       <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
                         <button
                           onClick={() => {
-                            const text = `✨ 15,000 هيللة في الطريقة البودشيشية:\nعمارة أوقات اليوم بـ 15,000 مرة من كلمة التوحيد «لا إله إلا الله» لطهارة القلب ورسوخ الإيمان.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                            const text = `✨ 15,000 هيللة في الطريقة البودشيشية:\nعمارة سائر أوقات اليوم بذكر كلمة التوحيد «لا إله إلا الله» حتى يبلغ السالك 15,000 مرة في اليوم.\n\n• الأصل والمطلوب من الفقير في الطريقة أداؤها في جلسة واحدة بتوجّه كامل، وإغلاق العينين، واستقبال القبلة دائماً في جميع الأذكار، ويجوز تقسيمها للضرورة.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
                             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
                           }}
-                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
                         >
                           <Share2 className="w-3 h-3" />
                           <span>مشاركة الورد</span>
