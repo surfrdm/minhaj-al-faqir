@@ -240,9 +240,19 @@ export default function FaqirPortalPage() {
 
   // Delete habit
   const handleDeleteHabit = (id: string) => {
-    if (confirm("هل تريد حذف هذه العادة/الورد من قائمتك؟")) {
-      saveHabits(habits.filter((h) => h.id !== id));
+    saveHabits(habits.filter((h) => h.id !== id));
+  };
+
+  // Clear all habits so the user can customize from scratch
+  const handleClearAllHabits = () => {
+    if (confirm("هل تريد إفراغ جميع العادات والأوراد للبدء بقائمة مخصصة جديدة؟")) {
+      saveHabits([]);
     }
+  };
+
+  // Restore default Tariqa habits
+  const handleRestoreDefaultHabits = () => {
+    saveHabits(DEFAULT_HABITS);
   };
 
   // Planner Task handlers
@@ -653,65 +663,95 @@ export default function FaqirPortalPage() {
                 </div>
 
                 {/* Habits List */}
-                <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] shadow-sm space-y-3">
-                  <h4 className="text-xs font-bold text-[#52796F] dark:text-[#A1B3A9] tracking-wider uppercase">
-                    قائمة الأوراد والعادات لهذا اليوم
-                  </h4>
+                <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] shadow-sm space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pb-1 border-b border-[#E7DFD5]/60 dark:border-[#203D31]/60">
+                    <h4 className="text-xs font-bold text-[#52796F] dark:text-[#A1B3A9] tracking-wider uppercase">
+                      قائمة الأوراد والعادات لهذا اليوم ({habits.length})
+                    </h4>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleRestoreDefaultHabits}
+                        className="px-2.5 py-1 rounded-lg border border-[#C5A059]/40 text-[#826122] dark:text-[#E5C378] text-[11px] font-bold hover:bg-[#C5A059]/15 transition cursor-pointer"
+                        title="استرجاع أوراد الطريقة البودشيشية الافتراضية"
+                      >
+                        🔄 استرجاع أوراد الطريقة
+                      </button>
+
+                      <button
+                        onClick={handleClearAllHabits}
+                        className="px-2.5 py-1 rounded-lg border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-[11px] font-bold hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
+                        title="إفراغ القائمة بالكامل لبدء قائمة مخصصة جديدة"
+                      >
+                        🗑️ إفراغ القائمة بالكامل
+                      </button>
+                    </div>
+                  </div>
 
                   <div className="space-y-2">
-                    {habits.map((habit) => {
-                      const isChecked = !!currentDayChecks[habit.id];
-                      return (
-                        <div
-                          key={habit.id}
-                          onClick={() => toggleHabit(habit.id)}
-                          className={`p-3.5 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer ${
-                            isChecked
-                              ? "bg-[#FAF7F2] dark:bg-[#0B1914] border-[#C5A059] shadow-sm"
-                              : "bg-white dark:bg-[#122820] border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059]/60"
-                          }`}
+                    {habits.length === 0 ? (
+                      <div className="py-8 text-center text-xs text-[#52796F] dark:text-[#95B8A8] space-y-3">
+                        <p>القائمة فارغة حالياً. يمكنك إضافة عاداتك وأورادك الخاصة بالأسفل، أو استرجاع أوراد الطريقة بضغطة واحدة.</p>
+                        <button
+                          onClick={handleRestoreDefaultHabits}
+                          className="px-4 py-2 rounded-xl bg-[#1B4332] text-white text-xs font-bold hover:bg-[#143628] transition cursor-pointer shadow-sm"
                         >
-                          <div className="flex items-center gap-3">
-                            <button
-                              type="button"
-                              className={`w-6 h-6 rounded-lg flex items-center justify-center transition ${
-                                isChecked
-                                  ? "bg-emerald-600 text-white"
-                                  : "border-2 border-gray-300 dark:border-gray-600"
-                              }`}
-                            >
-                              {isChecked && <CheckCircle2 className="w-4 h-4" />}
-                            </button>
-                            <span
-                              className={`text-xs sm:text-sm font-semibold ${
-                                isChecked
-                                  ? "text-[#143628] dark:text-[#E5C378] line-through opacity-80"
-                                  : "text-[#1D2A24] dark:text-[#E8F0EC]"
-                              }`}
-                            >
-                              {habit.name}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                            {habit.isDefault && (
-                              <span className="px-2 py-0.5 rounded-md bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
-                                راتب الطريقة
+                          🔄 استرجاع أوراد الطريقة الستة
+                        </button>
+                      </div>
+                    ) : (
+                      habits.map((habit) => {
+                        const isChecked = !!currentDayChecks[habit.id];
+                        return (
+                          <div
+                            key={habit.id}
+                            onClick={() => toggleHabit(habit.id)}
+                            className={`p-3.5 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer ${
+                              isChecked
+                                ? "bg-[#FAF7F2] dark:bg-[#0B1914] border-[#C5A059] shadow-sm"
+                                : "bg-white dark:bg-[#122820] border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059]/60"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <button
+                                type="button"
+                                className={`w-6 h-6 rounded-lg flex items-center justify-center transition ${
+                                  isChecked
+                                    ? "bg-emerald-600 text-white"
+                                    : "border-2 border-gray-300 dark:border-gray-600"
+                                }`}
+                              >
+                                {isChecked && <CheckCircle2 className="w-4 h-4" />}
+                              </button>
+                              <span
+                                className={`text-xs sm:text-sm font-semibold ${
+                                  isChecked
+                                    ? "text-[#143628] dark:text-[#E5C378] line-through opacity-80"
+                                    : "text-[#1D2A24] dark:text-[#E8F0EC]"
+                                }`}
+                              >
+                                {habit.name}
                               </span>
-                            )}
-                            {!habit.isDefault && (
+                            </div>
+
+                            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                              {habit.isDefault && (
+                                <span className="px-2 py-0.5 rounded-md bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
+                                  راتب الطريقة
+                                </span>
+                              )}
                               <button
                                 onClick={() => handleDeleteHabit(habit.id)}
-                                className="p-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
-                                title="حذف العادة"
+                                className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
+                                title="حذف هذه العادة / الورد"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
-                            )}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })
+                    )}
                   </div>
 
                   {/* Add Custom Habit Form */}
@@ -985,7 +1025,7 @@ export default function FaqirPortalPage() {
                     </div>
                   </div>
 
-                  {/* 12 Months Grid */}
+                  {/* 12 Months Grid (Read-Only) */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2">
                     {MONTH_NAMES_AR.map((monthName, idx) => {
                       const monthNum = idx + 1;
@@ -993,11 +1033,10 @@ export default function FaqirPortalPage() {
                       return (
                         <div
                           key={monthNum}
-                          onClick={() => toggleMonthPayment(monthNum)}
-                          className={`p-3.5 rounded-xl border transition flex flex-col justify-between space-y-2 cursor-pointer ${
+                          className={`p-3.5 rounded-xl border transition flex flex-col justify-between space-y-2 select-none ${
                             isPaid
                               ? "bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800"
-                              : "bg-[#FAF7F2] dark:bg-[#0B1914] border-[#E7DFD5] dark:border-[#203D31] opacity-75 hover:opacity-100"
+                              : "bg-[#FAF7F2] dark:bg-[#0B1914] border-[#E7DFD5] dark:border-[#203D31] opacity-75"
                           }`}
                         >
                           <div className="flex items-center justify-between">
@@ -1022,13 +1061,33 @@ export default function FaqirPortalPage() {
                     })}
                   </div>
 
+                  {/* Read-Only Official Treasurer Notice */}
+                  <div className="p-3.5 rounded-xl bg-[#C5A059]/10 border border-[#C5A059]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#826122] dark:text-[#E5C378]">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-[#C5A059] shrink-0" />
+                      <span>
+                        هذا الدفتر مخصص للمتابعة والشفافية. تُسجل وتُعتمد الشهور المؤداة حصرياً من قِبل أمين صندوق الزاوية عبر نظام الأتمتة المركزي.
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const msg = `السلام عليكم ورحمة الله، أنا الفقير بخصوص الملزومة الشهرية (زاوية المحمدية) أود الاستفسار أو إرسال وصل الأداء. جزاكم الله خيراً.`;
+                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, "_blank");
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#20BA5A] text-white text-[11px] font-bold flex items-center gap-1.5 shrink-0 transition cursor-pointer"
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                      <span>إرسال وصل لأمين الصندوق</span>
+                    </button>
+                  </div>
+
                   {/* Summary Bar */}
                   <div className="pt-4 border-t border-[#E7DFD5] dark:border-[#203D31] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                     <span className="text-[#52796F] dark:text-[#A1B3A9]">
                       مجموع ما تم أداؤه لهذا العام: <strong className="text-[#143628] dark:text-[#E5C378]">{paidMonths.length * monthlyAmount} درهم</strong> ({paidMonths.length} من 12 شهراً)
                     </span>
                     <span className="text-[11px] text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 px-3 py-1 rounded-lg">
-                      🔒 مسجل ومحفوظ تلقائياً على جهازك
+                      🔒 مسجل وموثق مركزياً لدى أمين صندوق الزاوية
                     </span>
                   </div>
                 </div>
