@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import samaaList from "@/data/samaa_sequence.json";
+import diwaneData from "@/data/diwane_master.json";
 
 function normalizeArabic(text: string): string {
   return text
@@ -31,14 +31,27 @@ export async function POST(req: Request) {
       previousPoemId = (formData.get("previousPoemId") as string) || "";
     }
 
-    // 1. Direct poem selection
+    const poems = diwaneData.poems;
+    const silsilas = diwaneData.silsilas;
+
+    // Helper: get upcoming chain of poems in the current Silsila
+    const getUpcomingChain = (poem: any) => {
+      if (!poem || !poem.silsilaId) return [];
+      const silsila = silsilas.find((s) => s.id === poem.silsilaId);
+      if (!silsila) return [];
+      return silsila.poems.filter((p) => p.order > (poem.orderInSilsila || 0));
+    };
+
+    // 1. Direct poem selection by ID
     if (selectedId) {
-      const found = samaaList.find((p) => p.id === selectedId);
+      const found = poems.find((p) => p.id === selectedId);
       if (found) {
         return NextResponse.json({
           success: true,
           poem: found,
           currentVerseIndex: 0,
+          upcomingChain: getUpcomingChain(found),
+          silsila: silsilas.find((s) => s.id === found.silsilaId) || null,
         });
       }
     }
@@ -52,7 +65,7 @@ export async function POST(req: Request) {
       let bestScore = 0;
       let bestVerseIdx = 0;
 
-      for (const poem of samaaList) {
+      for (const poem of poems) {
         let score = 0;
         let matchedVerseIdx = 0;
 
@@ -61,7 +74,7 @@ export async function POST(req: Request) {
           for (const kw of poem.keywords) {
             const nKw = normalizeArabic(kw);
             if (normalizedQuery.includes(nKw) || nKw.includes(normalizedQuery)) {
-              score += 10;
+              score += 12;
             }
           }
         }
@@ -70,7 +83,7 @@ export async function POST(req: Request) {
         const nTitle = normalizeArabic(poem.title);
         const nPoet = normalizeArabic(poem.poet);
         if (normalizedQuery.includes(nTitle) || nTitle.includes(normalizedQuery)) {
-          score += 15;
+          score += 18;
         }
         if (normalizedQuery.includes(nPoet) || nPoet.includes(normalizedQuery)) {
           score += 8;
@@ -79,12 +92,10 @@ export async function POST(req: Request) {
         // Check each verse
         poem.allVerses.forEach((verse, vIdx) => {
           const nVerse = normalizeArabic(verse);
-          // Check full query in verse
           if (nVerse.includes(normalizedQuery)) {
             score += 25;
             matchedVerseIdx = vIdx;
           } else {
-            // Check matching words
             let wordHits = 0;
             queryWords.forEach((qw) => {
               if (nVerse.includes(qw)) {
@@ -92,7 +103,7 @@ export async function POST(req: Request) {
               }
             });
             if (wordHits > 0) {
-              const verseScore = wordHits * 5;
+              const verseScore = wordHits * 6;
               if (verseScore > score) {
                 score = verseScore;
                 matchedVerseIdx = vIdx;
@@ -116,17 +127,21 @@ export async function POST(req: Request) {
           currentVerseIndex: bestVerseIdx,
           isTransition: Boolean(isNewPoem),
           confidence: `${bestScore > 20 ? "مطابقة دقيقة جداً" : "مطابقة معتبرة"} (${bestScore} نقطة)`,
-          message: isNewPoem ? "تم رصد انتقال المنشدين إلى قصيدة جديدة في النوبة!" : "جاري متابعة القصيدة الحالية",
+          message: isNewPoem
+            ? `✨ انتقل الإنشاد إلى: «${bestPoem.title}» (${bestPoem.silsilaName || "السماع"})`
+            : "متابعة الإنشاد الجاري في السلسلة",
+          upcomingChain: getUpcomingChain(bestPoem),
+          silsila: silsilas.find((s) => s.id === bestPoem.silsilaId) || null,
         });
       }
     }
 
     // 3. Fallback: cycle or return next in sequence if previousPoemId is provided
-    let fallbackPoem = samaaList[0];
+    let fallbackPoem = poems[0];
     if (previousPoemId) {
-      const curIdx = samaaList.findIndex((p) => p.id === previousPoemId);
-      if (curIdx !== -1 && curIdx + 1 < samaaList.length) {
-        fallbackPoem = samaaList[curIdx + 1];
+      const curIdx = poems.findIndex((p) => p.id === previousPoemId);
+      if (curIdx !== -1 && curIdx + 1 < poems.length) {
+        fallbackPoem = poems[curIdx + 1];
       }
     }
 
@@ -136,6 +151,8 @@ export async function POST(req: Request) {
       currentVerseIndex: 0,
       confidence: "نوبة السماع الجارية",
       message: "تم توجيه السماع وفق الترتيب الصوفي المعتمد",
+      upcomingChain: getUpcomingChain(fallbackPoem),
+      silsila: silsilas.find((s) => s.id === fallbackPoem.silsilaId) || null,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

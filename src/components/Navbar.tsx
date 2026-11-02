@@ -22,6 +22,7 @@ import {
   FolderOpen,
   Compass,
   Music,
+  Radio,
 } from "lucide-react";
 
 export function Navbar() {
@@ -135,7 +136,7 @@ export function Navbar() {
               </Link>
             </div>
 
-            {/* 2. Épuré : Les 3 raccourcis essentiels uniquement */}
+            {/* 2. Épuré : Les raccourcis essentiels */}
             <nav className="hidden md:flex items-center gap-2 xl:gap-3">
               {/* Raccourci 1: زاد اليوم (3) */}
               <a
@@ -146,7 +147,16 @@ export function Navbar() {
                 <span>زاد اليوم (3)</span>
               </a>
 
-              {/* Raccourci 2: مساري التكويني */}
+              {/* Raccourci 2: ديوان السماع الصوفي (32 سلسلة) */}
+              <Link
+                href="/diwan"
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-[#143628] dark:text-[#E5C378] hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5 border border-transparent hover:border-[#C5A059]/30"
+              >
+                <Music className="w-4 h-4 text-[#C5A059]" />
+                <span>ديوان السماع (32)</span>
+              </Link>
+
+              {/* Raccourci 3: مساري التكويني */}
               <Link
                 href="/masar"
                 className="px-3.5 py-2 rounded-xl text-xs font-bold text-[#1D2A24]/90 dark:text-[#E8F0EC]/90 hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5 border border-transparent hover:border-[#C5A059]/30"
@@ -155,7 +165,7 @@ export function Navbar() {
                 <span>مساري التكويني</span>
               </Link>
 
-              {/* Raccourci 3: فضاء الفقير */}
+              {/* Raccourci 4: فضاء الفقير */}
               <Link
                 href="/faqir"
                 className="px-3.5 py-2 rounded-xl bg-[#1B4332] hover:bg-[#143628] text-[#FAF7F2] text-xs font-bold shadow-sm hover:shadow-md transition-all duration-200 border border-[#C5A059]/40 hover:-translate-y-0.5 flex items-center gap-1.5"
@@ -315,15 +325,27 @@ export function Navbar() {
                   </Link>
 
                   <Link
-                    href="/samaa"
+                    href="/diwan"
                     onClick={() => setDrawerOpen(false)}
                     className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#143628] to-[#1B4332] text-white border border-[#C5A059] text-xs font-bold transition group shadow-sm hover:scale-[1.01]"
                   >
                     <div className="flex items-center gap-2.5">
                       <Music className="w-4 h-4 text-[#C5A059]" />
-                      <span className="font-amiri text-sm text-[#FAF7F2]">السَّمَاعُ الصُّوفِيُّ (الاسْتِمَاعُ الحَيُّ وَالدَّوَاوِينُ)</span>
+                      <span className="font-amiri text-sm text-[#FAF7F2]">دِيوَانُ السَّمَاعِ الصُّوفِيِّ (32 سِلْسِلَة مُسَلْسَلَة)</span>
                     </div>
-                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#C5A059]/30 text-[#E5C378] font-bold">جديد</span>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#C5A059]/30 text-[#E5C378] font-bold">معتمد</span>
+                  </Link>
+
+                  <Link
+                    href="/samaa"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] text-xs font-bold text-[#143628] dark:text-[#E8F0EC] transition group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Radio className="w-4 h-4 text-[#C5A059]" />
+                      <span>مُسْتَمِعُ الحَضْرَةِ الذَّكِيُّ (شَازَامُ السَّمَاعِ)</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold">مباشر</span>
                   </Link>
                 </div>
 

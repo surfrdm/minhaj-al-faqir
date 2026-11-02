@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'MaghribiKhouaja';
+  src: url('/fonts/Samir.Khouaja.Maghribi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Shorooq';
+  src: url('/fonts/Shorooq_N1.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
@@ -37,6 +53,8 @@
 @theme {
   --font-amiri: var(--font-amiri), serif;
   --font-sans: var(--font-ibm-arabic), system-ui, sans-serif;
+  --font-maghribi: 'MaghribiKhouaja', serif;
+  --font-shorooq: 'Shorooq', sans-serif;
   --font-cormorant: var(--font-cormorant), serif;
   --font-jakarta: var(--font-jakarta), sans-serif;
 

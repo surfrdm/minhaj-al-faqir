@@ -39,6 +39,7 @@ export function SamaaListener() {
   const [activeVerseIndex, setActiveVerseIndex] = useState<number>(0);
   const [explanationOpen, setExplanationOpen] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
+  const [upcomingChain, setUpcomingChain] = useState<any[]>([]);
 
   const recognitionRef = useRef<any>(null);
   const timerRef = useRef<any>(null);
@@ -156,11 +157,14 @@ export function SamaaListener() {
 
       if (res.ok) {
         const data = await res.json();
+        if (data.upcomingChain) {
+          setUpcomingChain(data.upcomingChain);
+        }
         if (data.poem) {
           if (data.poem.id !== activePoemIdRef.current) {
             setRecognizedPoem(data.poem);
             setActiveVerseIndex(data.currentVerseIndex || 0);
-            setStatusMessage(`✨ تم رصد انتقال المنشدين إلى: «${data.poem.title}»`);
+            setStatusMessage(`✨ تم رصد إنشاد: «${data.poem.title}» (${data.poem.silsilaName || "السلسلة"})`);
           } else {
             if (typeof data.currentVerseIndex === "number") {
               setActiveVerseIndex(data.currentVerseIndex);
@@ -385,8 +389,31 @@ export function SamaaListener() {
                     </div>
                   )}
 
-                  {/* Next suggested poems in sequence */}
-                  {recognizedPoem.nextSuggestedPoems && recognizedPoem.nextSuggestedPoems.length > 0 && (
+                  {/* Upcoming sequence chain in the Silsila */}
+                  {upcomingChain.length > 0 && (
+                    <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2">
+                      <span className="text-[11px] font-bold text-[#826122] dark:text-[#E5C378] flex items-center justify-between">
+                        <span>القصائد المتوقع إنشادها تالياً في هذه السلسلة:</span>
+                        <span className="text-[10px] text-gray-400">تتابع السلسلة</span>
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {upcomingChain.slice(0, 4).map((up) => (
+                          <div
+                            key={up.id}
+                            className="p-2 rounded-xl border border-[#E7DFD5] dark:border-[#203D31] bg-white dark:bg-[#0E2019] text-right text-xs"
+                          >
+                            <span className="font-amiri font-bold text-xs text-[#143628] dark:text-[#FAF7F2] block truncate">
+                              {up.order}. {up.title}
+                            </span>
+                            <span className="text-[10px] text-gray-400 block truncate">{up.poet}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Next suggested poems fallback */}
+                  {(!upcomingChain || upcomingChain.length === 0) && recognizedPoem.nextSuggestedPoems && recognizedPoem.nextSuggestedPoems.length > 0 && (
                     <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2">
                       <span className="text-[11px] font-bold text-[#826122] dark:text-[#E5C378] block">
                         القصيدة التالية في نوبة الحضرة:
@@ -414,17 +441,17 @@ export function SamaaListener() {
               )}
             </div>
 
-            {/* Footer Bar with Link to Full Hub */}
+            {/* Footer Bar with Link to Full Diwan Hub */}
             <div className="p-3.5 bg-gradient-to-r from-[#FAF7F2] to-[#F4EFE6] dark:from-[#0E2019] dark:to-[#07130E] border-t border-[#E7DFD5] dark:border-[#203D31] flex items-center justify-between text-xs">
               <span className="text-gray-500 font-ibm text-[11px]">
-                💡 للمكتبة الكاملة لجميع القصائد والدواوين مع البحث الفوري:
+                💡 للمكتبة الكاملة لجميع القصائد والـ 32 سلسلة مسلسلة:
               </span>
               <Link
-                href="/samaa"
+                href="/diwan"
                 onClick={() => setIsOpen(false)}
                 className="font-bold text-[#143628] dark:text-[#E5C378] hover:underline flex items-center gap-1 text-[11px]"
               >
-                <span>فتح ديوان السماع الصوفي</span>
+                <span>فتح ديوان السماع الكامل</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
