@@ -110,7 +110,7 @@ export function Navbar() {
               {/* DEDICATED STANDALONE SHEIKH BUTTON (Toujours visible, mobile et desktop, jamais masqué) */}
               <Link
                 href="/shaykh"
-                title="مقام الشيخ المربي • فضيلة الدكتور سيدي منير القادري بودشيش"
+                title="شيخ الطريقة القادرية البودشيشية • فضيلة الدكتور سيدي منير القادري بودشيش"
                 className="flex items-center gap-2 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-2xl bg-gradient-to-r from-[#143628] via-[#1B4332] to-[#143628] text-[#FAF7F2] border-2 border-[#C5A059] shadow-md hover:shadow-xl hover:border-[#E5C378] hover:scale-105 active:scale-95 transition-all duration-300 group cursor-pointer relative"
               >
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border-2 border-[#C5A059] bg-[#FAF7F2]/20 flex-shrink-0 shadow-sm ring-2 ring-[#C5A059]/30">
@@ -123,12 +123,12 @@ export function Navbar() {
                 <div className="flex flex-col text-right">
                   <div className="flex items-center gap-1">
                     <span className="font-amiri text-xs sm:text-sm font-bold text-[#E5C378] group-hover:text-white transition leading-none">
-                      مَقَامُ الشَّيْخِ
+                      شَيْخُ الطَّرِيقَةِ
                     </span>
                     <Sparkles className="w-2.5 h-2.5 text-[#C5A059] animate-pulse" />
                   </div>
                   <span className="text-[9px] sm:text-[10px] text-white/80 font-medium hidden sm:inline leading-tight">
-                    سيدي منير القادري
+                    القادرية البودشيشية
                   </span>
                 </div>
               </Link>
