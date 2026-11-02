@@ -21,6 +21,7 @@ import {
   Scroll,
   FolderOpen,
   Compass,
+  Music,
 } from "lucide-react";
 
 export function Navbar() {
@@ -311,6 +312,18 @@ export function Navbar() {
                       <span>استوديو تصميم الملصقات الرسمية (5 صيغ HD)</span>
                     </div>
                     <ChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-[#C5A059]" />
+                  </Link>
+
+                  <Link
+                    href="/samaa"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#143628] to-[#1B4332] text-white border border-[#C5A059] text-xs font-bold transition group shadow-sm hover:scale-[1.01]"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Music className="w-4 h-4 text-[#C5A059]" />
+                      <span className="font-amiri text-sm text-[#FAF7F2]">السَّمَاعُ الصُّوفِيُّ (الاسْتِمَاعُ الحَيُّ وَالدَّوَاوِينُ)</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#C5A059]/30 text-[#E5C378] font-bold">جديد</span>
                   </Link>
                 </div>
 
