@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Amiri, IBM_Plex_Sans_Arabic, Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
 import { WixDirectEditor } from "@/components/WixDirectEditor";
+import { AiChatWidget } from "@/components/AiChatWidget";
+import { SamaaListener } from "@/components/SamaaListener";
 import "./globals.css";
 
 const amiri = Amiri({
@@ -66,6 +68,8 @@ export default function RootLayout({
         className="min-h-screen bg-[#FAF7F2] text-[#1D2A24] dark:bg-[#0B1914] dark:text-[#E8F0EC] font-sans antialiased selection:bg-[#C5A059]/25 selection:text-[#1B4332] dark:selection:text-[#E5C378]"
       >
         {children}
+        <AiChatWidget />
+        <SamaaListener />
         <WixDirectEditor />
       </body>
     </html>
