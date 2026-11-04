@@ -1,5 +1,15 @@
 import rawArbaeen from "@/data/arbaeen.json";
 
+export interface HadithVocabulary {
+  word: string;
+  meaning: string;
+}
+
+export interface HadithSharhSection {
+  title: string;
+  content: string;
+}
+
 export interface HadithItem {
   id: number;
   title: string;
@@ -12,6 +22,15 @@ export interface HadithItem {
   text_fr: string;
   text_en: string;
   suluk_lesson: string;
+  // Official Habous Curriculum / Ibn Daqiq Al-'Id Content:
+  narrator_bio?: string;
+  vocabulary?: HadithVocabulary[];
+  ibn_daqiq_sharh?: {
+    introduction?: string;
+    sections: HadithSharhSection[];
+    conclusion?: string;
+  };
+  benefits?: string[];
 }
 
 export const ARBAEEN_LIST: HadithItem[] = rawArbaeen as HadithItem[];

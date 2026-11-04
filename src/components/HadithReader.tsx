@@ -11,8 +11,11 @@ import {
   ExternalLink,
   BookOpen,
   Sparkles,
-  Bookmark,
   Languages,
+  Award,
+  UserCheck,
+  GraduationCap,
+  Scroll,
 } from "lucide-react";
 import { HadithItem, TOTAL_HADITH } from "@/lib/arbaeen";
 
@@ -26,6 +29,8 @@ interface HadithReaderProps {
   onNavigate?: (id: number) => void;
 }
 
+type TabKey = "sharh" | "vocab" | "benefits" | "narrator";
+
 export function HadithReader({
   hadith,
   prevHadithId,
@@ -36,6 +41,12 @@ export function HadithReader({
   const [fontSize, setFontSize] = useState<"md" | "lg" | "xl">("lg");
   const [copied, setCopied] = useState(false);
   const [lang, setLang] = useState<"ar" | "fr" | "en">("ar");
+  const [activeTab, setActiveTab] = useState<TabKey>("sharh");
+
+  // Reset tab to sharh when navigating hadiths
+  useEffect(() => {
+    setActiveTab("sharh");
+  }, [hadith?.id]);
 
   // Save last read position to localStorage
   useEffect(() => {
@@ -60,7 +71,7 @@ export function HadithReader({
   const handleWhatsAppShare = () => {
     if (typeof window === "undefined") return;
     const url = `${window.location.origin}/hadith/${hadith.id}`;
-    const text = `📜 الحديث الشريف #${hadith.id} من الأربعين النووية:\n«${hadith.title}»\n\n${hadith.text_ar}\n\nالمغزى والبعد السلوكي:\n${hadith.suluk_lesson}\n\nالمصدر: ${hadith.source}\n\nطالع الحديث على منصة منهاج الفقير:\n${url}`;
+    const text = `📜 الحديث الشريف #${hadith.id} من الأربعين النووية:\n«${hadith.title}»\n\n${hadith.text_ar}\n\nالمغزى والبعد السلوكي:\n${hadith.suluk_lesson}\n\nالمصدر: ${hadith.source}\n\nطالع الشرح الكامل على منصة منهاج الفقير:\n${url}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -75,6 +86,11 @@ export function HadithReader({
     lg: "text-sm sm:text-base leading-relaxed",
     xl: "text-base sm:text-lg leading-relaxed",
   }[fontSize];
+
+  const hasSharh = Boolean(hadith.ibn_daqiq_sharh);
+  const hasVocab = Boolean(hadith.vocabulary && hadith.vocabulary.length > 0);
+  const hasBenefits = Boolean(hadith.benefits && hadith.benefits.length > 0);
+  const hasNarratorBio = Boolean(hadith.narrator_bio);
 
   return (
     <article className="w-full flex flex-col space-y-6">
@@ -166,7 +182,7 @@ export function HadithReader({
         </div>
       </div>
 
-      {/* 2. Small Title & Heading */}
+      {/* 2. Title & Narrator Header */}
       <div>
         <span className="text-xs text-[#C5A059] font-bold block mb-1">
           عُنْوَانُ الحَدِيثِ
@@ -188,70 +204,293 @@ export function HadithReader({
         </p>
       </div>
 
-      {/* 4. Spiritual Sharh (سلوك وتزكية) */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] space-y-2">
+      {/* 4. Translations (if active) */}
+      {lang === "fr" && hadith.text_fr && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-1" dir="ltr">
+          <span className="text-xs font-bold text-[#C5A059] uppercase tracking-wider block">
+            Traduction Française:
+          </span>
+          <p className="font-serif italic text-sm text-[#143628] dark:text-[#FAF7F2] leading-relaxed">
+            «{hadith.text_fr}»
+          </p>
+        </div>
+      )}
+
+      {lang === "en" && hadith.text_en && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-1" dir="ltr">
+          <span className="text-xs font-bold text-[#C5A059] uppercase tracking-wider block">
+            English Translation:
+          </span>
+          <p className="font-serif italic text-sm text-[#143628] dark:text-[#FAF7F2] leading-relaxed">
+            "{hadith.text_en}"
+          </p>
+        </div>
+      )}
+
+      {/* 5. Interactive Official Curriculum Tabs (Option 1) */}
+      <section className="space-y-4">
+        {/* Tab Headers */}
+        <div className="flex items-center justify-between pb-1 border-b border-[#E7DFD5] dark:border-[#203D31]">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+            <button
+              onClick={() => setActiveTab("sharh")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold font-ibm transition whitespace-nowrap ${
+                activeTab === "sharh"
+                  ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019] shadow-sm"
+                  : "bg-white dark:bg-[#0E2019] text-[#52796F] dark:text-[#A1B3A9] hover:bg-[#FAF7F2] dark:hover:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31]"
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>شرح ابن دقيق العيد</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("vocab")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold font-ibm transition whitespace-nowrap ${
+                activeTab === "vocab"
+                  ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019] shadow-sm"
+                  : "bg-white dark:bg-[#0E2019] text-[#52796F] dark:text-[#A1B3A9] hover:bg-[#FAF7F2] dark:hover:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31]"
+              }`}
+            >
+              <Languages className="w-3.5 h-3.5" />
+              <span>المفردات والتراكيب</span>
+              {hasVocab && (
+                <span className="w-4 h-4 rounded-full bg-[#C5A059]/25 text-[#1B4332] dark:text-[#E5C378] text-[10px] flex items-center justify-center font-mono">
+                  {hadith.vocabulary?.length}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => setActiveTab("benefits")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold font-ibm transition whitespace-nowrap ${
+                activeTab === "benefits"
+                  ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019] shadow-sm"
+                  : "bg-white dark:bg-[#0E2019] text-[#52796F] dark:text-[#A1B3A9] hover:bg-[#FAF7F2] dark:hover:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31]"
+              }`}
+            >
+              <Award className="w-3.5 h-3.5" />
+              <span>ما يستفاد من الحديث</span>
+              {hasBenefits && (
+                <span className="w-4 h-4 rounded-full bg-[#C5A059]/25 text-[#1B4332] dark:text-[#E5C378] text-[10px] flex items-center justify-center font-mono">
+                  {hadith.benefits?.length}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => setActiveTab("narrator")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold font-ibm transition whitespace-nowrap ${
+                activeTab === "narrator"
+                  ? "bg-[#1B4332] text-white dark:bg-[#C5A059] dark:text-[#0E2019] shadow-sm"
+                  : "bg-white dark:bg-[#0E2019] text-[#52796F] dark:text-[#A1B3A9] hover:bg-[#FAF7F2] dark:hover:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31]"
+              }`}
+            >
+              <UserCheck className="w-3.5 h-3.5" />
+              <span>راوي الحديث</span>
+            </button>
+          </div>
+
+          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-[#C5A059] font-medium font-ibm">
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span>المقرر العتيق</span>
+          </span>
+        </div>
+
+        {/* Tab 1: Sharh Ibn Daqiq Al-'Id */}
+        {activeTab === "sharh" && (
+          <div className="space-y-4">
+            {hasSharh ? (
+              <div className="space-y-4">
+                {/* Introduction Callout */}
+                {hadith.ibn_daqiq_sharh?.introduction && (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#1B4332]/5 to-[#C5A059]/10 dark:from-[#1B4332]/20 dark:to-[#C5A059]/15 border border-[#C5A059]/30 space-y-2">
+                    <div className="flex items-center gap-2 text-[#C5A059]">
+                      <Scroll className="w-4 h-4" />
+                      <h3 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                        مَقَامُ الْحَدِيثِ وَمَنْزِلَتُهُ فِي التَّشْرِيعِ
+                      </h3>
+                    </div>
+                    <p className={`text-[#1D2A24]/90 dark:text-[#D5E2DB] font-ibm text-justify ${sharhClasses}`}>
+                      {hadith.ibn_daqiq_sharh.introduction}
+                    </p>
+                  </div>
+                )}
+
+                {/* Thematic Sections */}
+                {hadith.ibn_daqiq_sharh?.sections.map((sec, idx) => (
+                  <div
+                    key={idx}
+                    className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] space-y-3 shadow-sm hover:border-[#C5A059]/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 pb-2 border-b border-[#E7DFD5]/70 dark:border-[#203D31]/70">
+                      <span className="w-2 h-2 rounded-full bg-[#C5A059]" />
+                      <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                        {sec.title}
+                      </h3>
+                    </div>
+                    <div className={`text-[#1D2A24]/90 dark:text-[#D5E2DB] font-ibm text-justify space-y-2 whitespace-pre-line ${sharhClasses}`}>
+                      {sec.content}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Conclusion Callout */}
+                {hadith.ibn_daqiq_sharh?.conclusion && (
+                  <div className="p-4 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31]">
+                    <p className={`text-[#52796F] dark:text-[#95B8A8] font-ibm text-justify ${sharhClasses}`}>
+                      {hadith.ibn_daqiq_sharh.conclusion}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Fallback if sharh not fully ingested yet */
+              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] space-y-2">
+                <div className="flex items-center gap-2 text-[#C5A059]">
+                  <Sparkles className="w-4 h-4" />
+                  <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                    شَرْحٌ مُبَسَّطٌ مُسْتَفَادٌ مِنْ كُتُبِ التُّرَاثِ
+                  </h3>
+                </div>
+                <p className={`text-[#1D2A24]/90 dark:text-[#D5E2DB] font-ibm text-justify ${sharhClasses}`}>
+                  {hadith.suluk_lesson}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab 2: Vocabulary & Terms */}
+        {activeTab === "vocab" && (
+          <div className="space-y-3">
+            {hasVocab ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {hadith.vocabulary?.map((v, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] flex flex-col justify-between space-y-1.5 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-amiri font-bold text-base sm:text-lg text-[#1B4332] dark:text-[#E5C378]">
+                        «{v.word}»
+                      </span>
+                      <span className="text-[10px] text-[#C5A059] font-mono px-1.5 py-0.5 rounded bg-[#C5A059]/10">
+                        مفردة #{idx + 1}
+                      </span>
+                    </div>
+                    <p className="font-ibm text-xs sm:text-sm text-[#1D2A24]/85 dark:text-[#D5E2DB] leading-relaxed">
+                      {v.meaning}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 rounded-2xl bg-white dark:bg-[#0E2019] border border-dashed border-[#E7DFD5] dark:border-[#203D31] text-center text-xs text-[#52796F]">
+                جاري إدراج جدول معاني المفردات لهذا الحديث وفق المنهاج المعتمد.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab 3: Benefits & Educational Lessons */}
+        {activeTab === "benefits" && (
+          <div className="space-y-2.5">
+            {hasBenefits ? (
+              <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
+                <div className="flex items-center gap-2 pb-2 border-b border-[#E7DFD5]/70 dark:border-[#203D31]/70 text-[#C5A059]">
+                  <Award className="w-4 h-4" />
+                  <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                    مِمَّا يُسْتَفَادُ مِنَ الْحَدِيثِ الشَّرِيفِ
+                  </h3>
+                </div>
+                <ul className="space-y-2.5">
+                  {hadith.benefits?.map((benefit, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <span className="w-6 h-6 rounded-full bg-[#1B4332]/10 dark:bg-[#C5A059]/20 text-[#1B4332] dark:text-[#E5C378] text-xs font-bold font-mono flex items-center justify-center shrink-0 mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <p className={`font-ibm text-[#1D2A24]/90 dark:text-[#D5E2DB] leading-relaxed ${sharhClasses}`}>
+                        {benefit}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className="p-6 rounded-2xl bg-white dark:bg-[#0E2019] border border-dashed border-[#E7DFD5] dark:border-[#203D31] text-center text-xs text-[#52796F]">
+                جاري إدراج الفوائد التربوية والأحكام المستنبطة لهذا الحديث.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab 4: Narrator Biography */}
+        {activeTab === "narrator" && (
+          <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-[#E7DFD5]/70 dark:border-[#203D31]/70 text-[#C5A059]">
+              <UserCheck className="w-4 h-4" />
+              <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                تَرْجَمَةُ الصَّحَابِيِّ رَاوِي الْحَدِيثِ
+              </h3>
+            </div>
+            {hasNarratorBio ? (
+              <p className={`font-ibm text-[#1D2A24]/90 dark:text-[#D5E2DB] text-justify leading-relaxed ${sharhClasses}`}>
+                {hadith.narrator_bio}
+              </p>
+            ) : (
+              <div className="space-y-1">
+                <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">راوي الحديث:</span>
+                <p className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                  {hadith.narrator}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* 6. Distinct Spiritual Insight Card: البُعْدُ الإِحْسَانِيُّ وَالسُّلُوكِيُّ */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#FCF9F2] to-[#F5ECE0] dark:from-[#11231B] dark:to-[#0B1A14] border border-[#C5A059]/50 shadow-sm space-y-2">
         <div className="flex items-center gap-2 text-[#C5A059]">
           <Sparkles className="w-4 h-4" />
           <h2 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
-            شَرْحٌ مُبَسَّطٌ مُسْتَفَادٌ مِنْ كُتُبِ التُّرَاثِ
+            البُعْدُ الإِحْسَانِيُّ وَالسُّلُوكِيُّ (مِنْهَاجُ الْفَقِيرِ)
           </h2>
         </div>
-        <p className={`text-[#1D2A24]/90 dark:text-[#D5E2DB] font-ibm text-justify ${sharhClasses}`}>
+        <p className={`text-[#1D2A24]/95 dark:text-[#E8F0EC] font-ibm text-justify ${sharhClasses}`}>
           {hadith.suluk_lesson}
         </p>
       </div>
 
-      {/* 5. Translations & Structured Documentation Metadata */}
+      {/* 7. Standardized Documentation & Takhrij Metadata Grid */}
       <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
-        {lang === "fr" && hadith.text_fr && (
-          <div className="space-y-1" dir="ltr">
-            <span className="text-xs font-bold text-[#C5A059] uppercase tracking-wider block">
-              Traduction Française:
-            </span>
-            <p className="font-serif italic text-sm text-[#143628] dark:text-[#FAF7F2] leading-relaxed">
-              «{hadith.text_fr}»
-            </p>
-          </div>
-        )}
-
-        {lang === "en" && hadith.text_en && (
-          <div className="space-y-1" dir="ltr">
-            <span className="text-xs font-bold text-[#C5A059] uppercase tracking-wider block">
-              English Translation:
-            </span>
-            <p className="font-serif italic text-sm text-[#143628] dark:text-[#FAF7F2] leading-relaxed">
-              "{hadith.text_en}"
-            </p>
-          </div>
-        )}
-
-        {/* Standardized Documentation & Takhrij Metadata Grid */}
-        <div className="pt-3 border-t border-[#E7DFD5]/70 dark:border-[#203D31]/70 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm">
           <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
-            <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">النوع:</span>
+            <span className="text-[11px] text-[#52796F] dark:text-[#A1B3A9] block">النوع:</span>
             <span className="font-semibold text-[#143628] dark:text-[#FAF7F2]">حديث نبوي شريف</span>
           </div>
 
           <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
-            <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">المصدر والتخريج:</span>
+            <span className="text-[11px] text-[#52796F] dark:text-[#A1B3A9] block">المصدر والتخريج:</span>
             <span className="font-semibold text-[#143628] dark:text-[#FAF7F2] line-clamp-1" title={hadith.source}>
-              {hadith.source || "قيد المراجعة"}
+              {hadith.source || "متفق عليه"}
             </span>
           </div>
 
           <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
-            <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">الطبعة:</span>
-            <span className="text-[#52796F] dark:text-[#A1B3A9]">قيد المراجعة</span>
+            <span className="text-[11px] text-[#52796F] dark:text-[#A1B3A9] block">المرجع والشرح:</span>
+            <span className="font-semibold text-[#143628] dark:text-[#FAF7F2]">شرح ابن دقيق العيد</span>
           </div>
 
           <div className="p-2 rounded-lg bg-white/70 dark:bg-[#0E2019]/70 border border-[#E7DFD5]/60 dark:border-[#203D31]/60">
-            <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">المترجم / المراجع:</span>
-            <span className="text-[#52796F] dark:text-[#A1B3A9]">قيد المراجعة</span>
+            <span className="text-[11px] text-[#52796F] dark:text-[#A1B3A9] block">الاعتماد:</span>
+            <span className="font-semibold text-[#143628] dark:text-[#FAF7F2]">الأوقاف المغربية</span>
           </div>
         </div>
       </div>
 
-      {/* 6. Action & Share Buttons */}
+      {/* 8. Action & Share Buttons */}
       <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {/* WhatsApp */}
@@ -299,7 +538,7 @@ export function HadithReader({
         )}
       </div>
 
-      {/* 7. Clear Navigation: Previous & Next Hadith */}
+      {/* 9. Clear Navigation: Previous & Next Hadith */}
       <nav aria-label="تصفح الأحاديث" className="pt-6 border-t border-[#E7DFD5] dark:border-[#203D31] grid grid-cols-2 gap-3">
         {prevHadithId ? (
           onNavigate ? (
