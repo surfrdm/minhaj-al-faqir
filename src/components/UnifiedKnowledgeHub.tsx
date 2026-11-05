@@ -27,7 +27,7 @@ import {
   Compass,
   Droplets,
   HeartHandshake,
-  VolumeX,
+  DropletOff,
   Radio,
 } from "lucide-react";
 import { ArbaeenSection } from "./ArbaeenSection";
@@ -1013,7 +1013,7 @@ export function UnifiedKnowledgeHub() {
                       <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
                         <div className="flex items-center gap-2">
                           <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <VolumeX className="w-4 h-4" />
+                            <DropletOff className="w-4 h-4" />
                           </div>
                           <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
                             6. الِامْتِنَاعُ عَنْ شُرْبِ المَاءِ

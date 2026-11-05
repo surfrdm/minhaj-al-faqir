@@ -8,7 +8,7 @@ import {
   PhoneOff,
   EyeOff,
   Volume2,
-  VolumeX,
+  DropletOff,
   Users,
   ShieldCheck,
   Clock,
@@ -55,7 +55,7 @@ export const ADAB_DHIKR_DATA = [
   {
     num: 6,
     title: "الِامْتِنَاعُ عَنْ شُرْبِ المَاءِ",
-    icon: VolumeX,
+    icon: DropletOff,
     description: "الامتناع عن شرب الماء أثناء الذكر.",
   },
   {
