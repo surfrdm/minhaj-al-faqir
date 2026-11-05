@@ -69,19 +69,48 @@ export function WixDirectEditor() {
     const applyEditsMap = (edits: Record<string, string>) => {
       const currentPath = window.location.pathname;
       let appliedCount = 0;
+
+      // 1. Text-based replacements first (Rock solid against hydration/structure shifts)
+      const allTextCandidates = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          "h1, h2, h3, h4, h5, h6, p, span, a, label, li, blockquote"
+        )
+      ).filter(
+        (el) => !el.closest("#wix-editor-bar") && !el.closest("#wix-editor-trigger")
+      );
+
       for (const [key, html] of Object.entries(edits)) {
-        if (!key.startsWith(`${currentPath}::`)) continue;
-        const selectorPath = key.replace(`${currentPath}::`, "");
-        const el = resolveElementFromPath(selectorPath);
-        if (el && el.innerHTML !== html) {
-          el.innerHTML = html;
-          appliedCount++;
+        if (key.startsWith(`text::${currentPath}::`)) {
+          const targetOrigText = key.replace(`text::${currentPath}::`, "").trim();
+          for (const el of allTextCandidates) {
+            const currentText = el.innerText.trim();
+            const origAttr = el.getAttribute("data-orig-text") || "";
+            if (
+              (targetOrigText && currentText === targetOrigText) ||
+              (origAttr && origAttr === targetOrigText)
+            ) {
+              if (el.innerHTML !== html) {
+                el.innerHTML = html;
+                el.setAttribute("data-wix-applied", "true");
+                appliedCount++;
+              }
+            }
+          }
+        } else if (key.startsWith(`${currentPath}::`)) {
+          // 2. DOM-path based replacements fallback
+          const selectorPath = key.replace(`${currentPath}::`, "");
+          const el = resolveElementFromPath(selectorPath);
+          if (el && el.innerHTML !== html) {
+            el.innerHTML = html;
+            el.setAttribute("data-wix-applied", "true");
+            appliedCount++;
+          }
         }
       }
       return appliedCount;
     };
 
-    // 1. First from localStorage (instant)
+    // 1. First from localStorage (instantaneous)
     try {
       const local = localStorage.getItem("minhaj_direct_edits");
       if (local) {
@@ -89,7 +118,7 @@ export function WixDirectEditor() {
       }
     } catch (e) {}
 
-    // 2. Then sync with server
+    // 2. Then sync with server backend
     fetch("/api/wix-direct-save")
       .then((res) => res.json())
       .then((serverEdits) => {
@@ -102,21 +131,39 @@ export function WixDirectEditor() {
 
   useEffect(() => {
     applySavedEdits();
-    // Re-apply on popstate/navigation
+    // Re-apply after Next.js hydration passes
+    const t1 = setTimeout(applySavedEdits, 120);
+    const t2 = setTimeout(applySavedEdits, 400);
+    const t3 = setTimeout(applySavedEdits, 1200);
+
     window.addEventListener("popstate", applySavedEdits);
-    return () => window.removeEventListener("popstate", applySavedEdits);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      window.removeEventListener("popstate", applySavedEdits);
+    };
   }, []);
 
-  // Listen to edits during designMode
+  // Listen to edits during active editing mode
   useEffect(() => {
     if (!isEditing) return;
 
     const handleInput = (e: Event) => {
-      const target = e.target as HTMLElement;
+      let target = e.target as HTMLElement;
+      if (!target) return;
+
+      // If event bubbled to body or container, resolve the selected node
+      if (target.tagName === "BODY" || target.tagName === "HTML") {
+        const sel = window.getSelection();
+        const node = sel?.anchorNode;
+        if (node) {
+          target = (node instanceof HTMLElement ? node : node.parentElement) as HTMLElement;
+        }
+      }
+
       if (
         !target ||
-        target.tagName === "BODY" ||
-        target.tagName === "HTML" ||
         target.closest("#wix-editor-bar") ||
         target.closest("#wix-editor-trigger") ||
         target.closest(".SL_Balloon_options") ||
@@ -124,17 +171,26 @@ export function WixDirectEditor() {
       ) {
         return;
       }
+
       const key = getElementKey(target);
       if (key.endsWith("::") || key.endsWith("::div[0]")) return;
 
-      pendingEditsRef.current[key] = target.innerHTML;
+      const html = target.innerHTML;
+      pendingEditsRef.current[key] = html;
+
+      // Text-based key
+      const origText = target.getAttribute("data-orig-text") || target.innerText.trim();
+      if (origText) {
+        pendingEditsRef.current[`text::${window.location.pathname}::${origText}`] = html;
+      }
+
       setUnsavedCount(Object.keys(pendingEditsRef.current).length);
     };
 
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       // Prevent navigation while editing links
-      if (target.tagName.toLowerCase() === "a" || target.closest("a")) {
+      if (target && (target.tagName.toLowerCase() === "a" || target.closest("a"))) {
         e.preventDefault();
       }
     };
@@ -155,12 +211,31 @@ export function WixDirectEditor() {
     setIsEditing(nextState);
 
     if (nextState) {
-      document.designMode = "on";
       document.body.classList.add("wix-edit-active");
+
+      // Enable contentEditable directly on text elements
+      const textEls = document.querySelectorAll<HTMLElement>(
+        "h1, h2, h3, h4, h5, h6, p, span, a, label, li, blockquote, dt, dd"
+      );
+      textEls.forEach((el) => {
+        if (el.closest("#wix-editor-bar") || el.closest("#wix-editor-trigger")) return;
+        // Don't make empty containers or SVG wrappers editable
+        if (el.children.length > 0 && !el.innerText.trim()) return;
+
+        el.contentEditable = "true";
+        el.setAttribute("data-wix-editable", "true");
+        if (!el.getAttribute("data-orig-text")) {
+          el.setAttribute("data-orig-text", el.innerText.trim());
+        }
+      });
+
       showToast("✏️ وضع Wix نشط! انقر على أي نص على الشاشة واكتب لتعديله مباشرة.");
     } else {
-      document.designMode = "off";
       document.body.classList.remove("wix-edit-active");
+      document.querySelectorAll('[data-wix-editable="true"]').forEach((el) => {
+        (el as HTMLElement).contentEditable = "false";
+        el.removeAttribute("data-wix-editable");
+      });
       showToast("✓ تم إيقاف وضع التعديل.");
     }
   };
@@ -181,19 +256,22 @@ export function WixDirectEditor() {
       localStorage.setItem("minhaj_direct_edits", JSON.stringify(merged));
 
       // 2. Save and publish to server API (Supabase cloud & serverless backend)
-      const res = await fetch("/api/wix-direct-save", {
+      await fetch("/api/wix-direct-save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pendingEditsRef.current),
       });
 
-      const data = await res.json().catch(() => ({}));
-
       pendingEditsRef.current = {};
       setUnsavedCount(0);
       setIsEditing(false);
-      document.designMode = "off";
+
+      // Disable editable
       document.body.classList.remove("wix-edit-active");
+      document.querySelectorAll('[data-wix-editable="true"]').forEach((el) => {
+        (el as HTMLElement).contentEditable = "false";
+        el.removeAttribute("data-wix-editable");
+      });
 
       showToast("✓ تم حفظ ونشر التعديلات بنجاح في السيرفر والموقع!");
     } catch (e) {
@@ -211,7 +289,7 @@ export function WixDirectEditor() {
       try {
         const edits = JSON.parse(local);
         const keys = Object.keys(edits).filter((k) =>
-          k.startsWith(`${window.location.pathname}::`)
+          k.startsWith(`${window.location.pathname}::`) && !k.startsWith("text::")
         );
         if (keys.length > 0) {
           msg += `عدد التعديلات التي قمت بها في هذه الصفحة: ${keys.length}\n`;
@@ -237,7 +315,7 @@ export function WixDirectEditor() {
           const edits = JSON.parse(local);
           const currentPath = window.location.pathname;
           for (const key of Object.keys(edits)) {
-            if (key.startsWith(`${currentPath}::`)) {
+            if (key.includes(currentPath)) {
               delete edits[key];
             }
           }
@@ -252,12 +330,17 @@ export function WixDirectEditor() {
     <>
       {/* Dynamic Style for Hover Effect during Wix Edit Mode */}
       <style jsx global>{`
-        body.wix-edit-active *:hover:not(#wix-editor-bar *):not(#wix-editor-trigger *):not(button):not(svg):not(path) {
+        body.wix-edit-active [data-wix-editable="true"]:hover {
           outline: 2px dashed #C5A059 !important;
           outline-offset: 3px !important;
           cursor: text !important;
           background-color: rgba(197, 160, 89, 0.08) !important;
           transition: background-color 0.15s ease;
+        }
+        body.wix-edit-active [data-wix-editable="true"]:focus {
+          outline: 2px solid #C5A059 !important;
+          outline-offset: 3px !important;
+          background-color: rgba(197, 160, 89, 0.12) !important;
         }
       `}</style>
 

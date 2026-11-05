@@ -310,7 +310,7 @@ export default function DiwanMasterPage() {
           <div className="relative z-10 space-y-4 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C5A059]/20 border border-[#C5A059]/50 text-xs font-bold text-[#E5C378]">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>المجموع الصوفي الكامل • الزاوية القادرية البودشيشية</span>
+              <span>✦ الزاوية القادرية البودشيشية ✦</span>
             </div>
 
             <h1 className="font-amiri text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FAF7F2] leading-tight">
