@@ -65,18 +65,18 @@ export function Navbar() {
   const navigateToTab = (tabId: string) => {
     setDrawerOpen(false);
     if (typeof window !== "undefined") {
-      if (window.location.pathname !== "/") {
-        window.location.href = `/#${tabId}`;
-        return;
+      if (window.location.pathname === "/maktaba") {
+        window.location.hash = tabId;
+        window.dispatchEvent(new CustomEvent("switch-knowledge-tab", { detail: tabId }));
+        setTimeout(() => {
+          const el = document.getElementById("knowledge-hub");
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 60);
+      } else {
+        window.location.href = `/maktaba#${tabId}`;
       }
-      window.location.hash = tabId;
-      window.dispatchEvent(new CustomEvent("switch-knowledge-tab", { detail: tabId }));
-      setTimeout(() => {
-        const el = document.getElementById("knowledge-hub");
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 60);
     }
   };
 
@@ -356,6 +356,18 @@ export function Navbar() {
                   <span className="text-[11px] font-bold text-[#C5A059] block uppercase tracking-wider font-ibm">
                     المكتبة والمتون والتأصيل الشرعي
                   </span>
+
+                  <Link
+                    href="/maktaba"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#143628] to-[#1B4332] text-white border border-[#C5A059] text-xs font-bold transition group shadow-sm hover:scale-[1.01]"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <BookOpen className="w-4 h-4 text-[#C5A059]" />
+                      <span className="font-amiri text-sm text-[#FAF7F2]">فِهْرِسُ المَكْتَبَةِ وَالمُتُونِ الشَّامِلَةِ</span>
+                    </div>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#C5A059]/30 text-[#E5C378] font-bold">تصفح الكل</span>
+                  </Link>
 
                   <button
                     onClick={() => navigateToTab("arbaeen")}

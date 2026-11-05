@@ -3,8 +3,6 @@ import { SpiritualHeaderBar } from "@/components/SpiritualHeaderBar";
 import { ZaouiaSchedule } from "@/components/ZaouiaSchedule";
 import { DailyTrio } from "@/components/DailyTrio";
 import { AnnouncementsVideoSection } from "@/components/AnnouncementsVideoSection";
-import { UnifiedKnowledgeHub } from "@/components/UnifiedKnowledgeHub";
-import { ThawabitSection } from "@/components/ThawabitSection";
 import { Footer } from "@/components/Footer";
 
 export default function Home() {
@@ -25,15 +23,9 @@ export default function Home() {
 
         {/* 5. المساحة المخصصة للإعلانات الرسمية والفيديوهات المعتمدة للزاوية */}
         <AnnouncementsVideoSection />
-
-        {/* 6. المكتبة والمتون والتأصيل الشرعي (الأربعون النووية، الحكم العطائية، متن ابن عاشر، أدلة الطريق، معجم المصطلحات) */}
-        <UnifiedKnowledgeHub />
-
-        {/* 7. أركان الطريق وثوابتها الخمسة */}
-        <ThawabitSection />
       </main>
 
-      {/* 8. التذييل الخفيف والموجز */}
+      {/* 6. التذييل الخفيف والموجز */}
       <Footer />
     </div>
   );
