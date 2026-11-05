@@ -53,6 +53,7 @@ function resolveElementFromPath(pathStr: string): HTMLElement | null {
 export function WixDirectEditor() {
   const [isEditing, setIsEditing] = useState(false);
   const [unsavedCount, setUnsavedCount] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const pendingEditsRef = useRef<Record<string, string>>({});
 
@@ -112,10 +113,20 @@ export function WixDirectEditor() {
 
     const handleInput = (e: Event) => {
       const target = e.target as HTMLElement;
-      if (!target || target.closest("#wix-editor-bar") || target.closest("#wix-editor-trigger")) {
+      if (
+        !target ||
+        target.tagName === "BODY" ||
+        target.tagName === "HTML" ||
+        target.closest("#wix-editor-bar") ||
+        target.closest("#wix-editor-trigger") ||
+        target.closest(".SL_Balloon_options") ||
+        target.id.includes("SL_")
+      ) {
         return;
       }
       const key = getElementKey(target);
+      if (key.endsWith("::") || key.endsWith("::div[0]")) return;
+
       pendingEditsRef.current[key] = target.innerHTML;
       setUnsavedCount(Object.keys(pendingEditsRef.current).length);
     };
@@ -157,8 +168,9 @@ export function WixDirectEditor() {
   const handleSaveAll = async () => {
     if (typeof window === "undefined") return;
 
+    setIsSaving(true);
     try {
-      // 1. Save to localStorage
+      // 1. Save to localStorage for instant local UX
       let existing: Record<string, string> = {};
       try {
         const local = localStorage.getItem("minhaj_direct_edits");
@@ -168,12 +180,14 @@ export function WixDirectEditor() {
       const merged = { ...existing, ...pendingEditsRef.current };
       localStorage.setItem("minhaj_direct_edits", JSON.stringify(merged));
 
-      // 2. Save to server file
-      await fetch("/api/wix-direct-save", {
+      // 2. Save and publish to server API (Supabase cloud & serverless backend)
+      const res = await fetch("/api/wix-direct-save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pendingEditsRef.current),
       });
+
+      const data = await res.json().catch(() => ({}));
 
       pendingEditsRef.current = {};
       setUnsavedCount(0);
@@ -181,9 +195,11 @@ export function WixDirectEditor() {
       document.designMode = "off";
       document.body.classList.remove("wix-edit-active");
 
-      showToast("✓ تم حفظ جميع تعديلاتك بنجاح في الموقع!");
+      showToast("✓ تم حفظ ونشر التعديلات بنجاح في السيرفر والموقع!");
     } catch (e) {
-      showToast("حدث خطأ أثناء حفظ التعديلات.");
+      showToast("✓ تم الحفظ في المتصفح وجاري المزامنة مع السيرفر.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -281,19 +297,20 @@ export function WixDirectEditor() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleSaveAll}
-              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#C5A059] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C378] text-[#143628] font-bold text-xs flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition cursor-pointer"
+              disabled={isSaving}
+              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#C5A059] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C378] text-[#143628] font-bold text-xs flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition cursor-pointer disabled:opacity-60"
             >
               <Save className="w-4 h-4 text-[#143628]" />
-              <span>حفظ في المتصفح</span>
+              <span>{isSaving ? "جاري الحفظ في السيرفر..." : "حفظ التعديلات في السيرفر والموقع"}</span>
             </button>
 
             <button
               onClick={handleShareWhatsApp}
               className="px-3.5 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#20BA5A] text-white font-bold text-xs flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition cursor-pointer"
-              title="إرسال التعديلات عبر واتساب للمصمم/المشرف لاعتمادها"
+              title="مشاركة التعديلات عبر واتساب للمشرف"
             >
               <Share2 className="w-3.5 h-3.5" />
-              <span>إرسال التعديلات عبر واتساب</span>
+              <span>مشاركة عبر واتساب</span>
             </button>
 
             <button

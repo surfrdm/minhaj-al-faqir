@@ -132,7 +132,7 @@ export default function DiwanMasterPage() {
   // Handle Speech Recognition for Shazam of Samaa
   const startLiveListening = () => {
     setIsLiveListening(true);
-    setRecognitionStatus("الميكروفون يستمع بشكل مستمر في الحضرة...");
+    setRecognitionStatus("الميكروفون يستمع بشكل مستمر في مجلس السماع والذكر...");
     setLiveTranscript("");
 
     const SpeechRecognition =
@@ -299,7 +299,7 @@ export default function DiwanMasterPage() {
               className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#143628] via-[#1B4332] to-[#143628] text-white border border-[#C5A059] text-xs font-bold flex items-center gap-2 shadow-sm hover:scale-105 active:scale-95 transition cursor-pointer"
             >
               <Radio className="w-3.5 h-3.5 text-[#C5A059] animate-pulse" />
-              <span>مستمع السماع الذكي (شازام الحضرة)</span>
+              <span>مستمع السماع الصوفي الذكي</span>
             </button>
           </div>
         </div>
@@ -318,7 +318,7 @@ export default function DiwanMasterPage() {
             </h1>
 
             <p className="font-amiri text-sm sm:text-base text-gray-200 leading-relaxed max-w-2xl">
-              فهرس السلاسل الصوفية الـ 32 المشهودة ونوبات الذكر والحضرة؛ مرتبة نسقاً مسلسلاً «واحدة تلو الأخرى» مع الشكل الكامل والضبط العروضي الذوقي ونظام التعرف الصوتي الذكي.
+              فهرس السلاسل الصوفية الـ 32 المشهودة ومجالس الذكر والسماع؛ مرتبة نسقاً مسلسلاً «واحدة تلو الأخرى» مع الضبط والشكل لبعض القصائد والأبيات المختارة، ونظام التعرف الصوتي الذكي.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
@@ -328,7 +328,7 @@ export default function DiwanMasterPage() {
               </span>
               <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 font-bold flex items-center gap-1.5">
                 <BookOpen className="w-3.5 h-3.5 text-[#C5A059]" />
-                <span>155 قصيدة مشكولة بالكامل</span>
+                <span>155 قصيدة منتقاة ومضبوطة</span>
               </span>
               <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 font-bold flex items-center gap-1.5">
                 <Radio className="w-3.5 h-3.5 text-[#C5A059]" />
@@ -450,7 +450,7 @@ export default function DiwanMasterPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-base sm:text-lg font-bold text-[#143628] dark:text-[#E5C378] flex items-center gap-2">
                 <ListOrdered className="w-5 h-5 text-[#C5A059]" />
-                <span>فهرس السلاسل الصوفية المشهودة في الحضرة (32 سلسلة):</span>
+                <span>فهرس السلاسل الصوفية في مجالس الذكر والسماع (32 سلسلة):</span>
               </h2>
               <span className="text-xs text-gray-500">
                 مرتبة بالتتابع كما تنشد في الزوايا
@@ -612,10 +612,10 @@ export default function DiwanMasterPage() {
 
               <div className="space-y-2">
                 <h3 className="font-amiri text-xl font-bold text-[#143628] dark:text-[#E5C378]">
-                  مستمع السماع الصوفي الذكي (شازام الحضرة)
+                  مستمع السماع الصوفي الذكي (شازام السماع)
                 </h3>
                 <p className="text-xs text-gray-500 max-w-md mx-auto">
-                  ضع الهاتف بالقرب من المنشدين في الحضرة أو حلقة الذكر؛ وسيتعرف النظام فورياً على القصيدة المنشدة حالياً ويعرض لك تلقائياً السلاسل والقصائد التي ستأتي بعدها في النسق.
+                  ضع الهاتف بالقرب من المنشدين في مجلس السماع أو حلقة الذكر؛ وسيتعرف النظام فورياً على القصيدة المنشدة حالياً ويعرض لك تلقائياً السلاسل والقصائد التي ستأتي بعدها في النسق.
                 </p>
                 <div className="inline-block px-3 py-1 rounded-full bg-[#FAF7F2] dark:bg-[#07130E] border border-[#C5A059]/40 text-xs font-mono font-bold text-[#C5A059]">
                   {recognitionStatus}
@@ -637,7 +637,7 @@ export default function DiwanMasterPage() {
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="text-xs font-bold text-emerald-800 dark:text-emerald-400">
-                      القصيدة المنشدة حالياً في الحضرة:
+                      القصيدة المنشدة حالياً في المجلس:
                     </span>
                   </div>
                   <span className="px-2.5 py-1 rounded-lg bg-[#C5A059]/15 text-[#826122] dark:text-[#E5C378] text-xs font-bold">
@@ -707,7 +707,7 @@ export default function DiwanMasterPage() {
                     </div>
                   ) : (
                     <p className="text-xs text-gray-500 italic text-center py-2">
-                      وصلت الحضرة لآخر قصيدة في هذه السلسلة المباركة.
+                      وصل المجلس لآخر قصيدة في هذه السلسلة المباركة.
                     </p>
                   )}
                 </div>

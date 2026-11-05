@@ -69,3 +69,32 @@ CREATE POLICY "Allow public read and write on suivi_wird" ON public.suivi_wird
 
 CREATE POLICY "Allow public read and write on suivi_masar" ON public.suivi_masar
     FOR ALL USING (true);
+
+-- 6. Table des Modifications Visuelles Directes du Site (Wix In-Page Direct Edits)
+CREATE TABLE IF NOT EXISTS public.site_page_edits (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    element_key TEXT NOT NULL UNIQUE,
+    html_content TEXT NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 7. Table des Notes et Carnet Spirituel (فضاء الفقير - المذكرات والخواطر)
+CREATE TABLE IF NOT EXISTS public.faqir_notes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    disciple_id TEXT NOT NULL DEFAULT 'default_faqir',
+    note_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT,
+    category TEXT NOT NULL DEFAULT 'dhikr',
+    note_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE public.site_page_edits ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.faqir_notes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read and write on site_page_edits" ON public.site_page_edits
+    FOR ALL USING (true);
+
+CREATE POLICY "Allow public read and write on faqir_notes" ON public.faqir_notes
+    FOR ALL USING (true);

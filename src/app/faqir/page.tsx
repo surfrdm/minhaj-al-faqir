@@ -122,6 +122,34 @@ export default function FaqirPortalPage() {
   // Nafaqa / Cotisation State
   const [monthlyAmount, setMonthlyAmount] = useState<number>(200);
   const [paidMonths, setPaidMonths] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const [serverSyncStatus, setServerSyncStatus] = useState<"synced" | "saving" | "offline">("synced");
+
+  const syncWithServer = async (data: {
+    habits?: Habit[];
+    checks?: Record<string, Record<string, boolean>>;
+    planner?: Record<string, PlannerTask[]>;
+    notes?: Note[];
+    paidMonths?: number[];
+  }) => {
+    setServerSyncStatus("saving");
+    try {
+      await fetch("/api/faqir/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          discipleId: "faqir_user",
+          habits: data.habits || habits,
+          checks: data.checks || habitChecks,
+          planner: data.planner || plannerTasks,
+          notes: data.notes || notes,
+          paidMonths: data.paidMonths || paidMonths,
+        }),
+      });
+      setServerSyncStatus("synced");
+    } catch {
+      setServerSyncStatus("offline");
+    }
+  };
 
   // Load from localStorage & client date on mount
   useEffect(() => {
@@ -159,16 +187,28 @@ export default function FaqirPortalPage() {
 
       const savedPaidMonths = localStorage.getItem("minhaj_faqir_paid_months");
       if (savedPaidMonths) setPaidMonths(JSON.parse(savedPaidMonths));
+
+      // Fetch from server database
+      fetch("/api/faqir/sync?discipleId=faqir_user")
+        .then((res) => res.json())
+        .then((serverData) => {
+          if (serverData && serverData.notes && Array.isArray(serverData.notes) && serverData.notes.length > 0) {
+            setNotes(serverData.notes);
+            localStorage.setItem("minhaj_faqir_notes", JSON.stringify(serverData.notes));
+          }
+        })
+        .catch(() => {});
     } catch (e) {
       console.error("Error reading faqir data from storage", e);
     }
   }, []);
 
-  // Sync to localStorage
+  // Sync to localStorage & Server Cloud
   const saveHabits = (updated: Habit[]) => {
     setHabits(updated);
     if (typeof window !== "undefined") {
       localStorage.setItem("minhaj_faqir_habits", JSON.stringify(updated));
+      syncWithServer({ habits: updated });
     }
   };
 
@@ -176,6 +216,7 @@ export default function FaqirPortalPage() {
     setHabitChecks(updated);
     if (typeof window !== "undefined") {
       localStorage.setItem("minhaj_faqir_checks", JSON.stringify(updated));
+      syncWithServer({ checks: updated });
     }
   };
 
@@ -183,6 +224,7 @@ export default function FaqirPortalPage() {
     setPlannerTasks(updated);
     if (typeof window !== "undefined") {
       localStorage.setItem("minhaj_faqir_planner", JSON.stringify(updated));
+      syncWithServer({ planner: updated });
     }
   };
 
@@ -190,6 +232,7 @@ export default function FaqirPortalPage() {
     setNotes(updated);
     if (typeof window !== "undefined") {
       localStorage.setItem("minhaj_faqir_notes", JSON.stringify(updated));
+      syncWithServer({ notes: updated });
     }
   };
 
@@ -197,6 +240,7 @@ export default function FaqirPortalPage() {
     setPaidMonths(updated);
     if (typeof window !== "undefined") {
       localStorage.setItem("minhaj_faqir_paid_months", JSON.stringify(updated));
+      syncWithServer({ paidMonths: updated });
     }
   };
 
@@ -396,6 +440,27 @@ export default function FaqirPortalPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
+                serverSyncStatus === "saving"
+                  ? "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-300/40"
+                  : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-300/40"
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  serverSyncStatus === "saving"
+                    ? "bg-amber-500 animate-ping"
+                    : "bg-emerald-500"
+                }`}
+              />
+              <span>
+                {serverSyncStatus === "saving"
+                  ? "جاري الحفظ في السيرفر..."
+                  : "محفوظ في السيرفر"}
+              </span>
+            </span>
+
             <button
               onClick={() => {
                 const text = `🌟 إنجاز الورد الروحي ليوم ${dateKey}:\n• نسبة الأوراد المنجزة: ${habitPercentage}% (${completedHabitsCount} من ${totalHabitsCount})\n• منصة منهاج الفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/faqir`;

@@ -79,7 +79,7 @@ export function SamaaListener() {
 
   const startContinuousListening = () => {
     setIsContinuousListening(true);
-    setStatusMessage("الميكروفون يستمع بشكل مستمر في الحضرة...");
+    setStatusMessage("الميكروفون يستمع بشكل مستمر في مجلس السماع والذكر...");
 
     // Speech Recognition
     const SpeechRecognition =
@@ -212,7 +212,7 @@ export function SamaaListener() {
               }
             }}
             className="group flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-[#C5A059] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C378] text-[#143628] font-bold text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 border-2 border-white/60 cursor-pointer"
-            title="شازام السماع الصوفي - الاستماع الحي المستمر في الحضرة"
+            title="شازام السماع الصوفي - الاستماع الحي المستمر في مجلس السماع"
           >
             <Music className="w-4 h-4 fill-current" />
             <span className="font-amiri text-sm tracking-wide">السماع الصوفي الحي</span>
@@ -235,7 +235,7 @@ export function SamaaListener() {
                     السَّمَاعُ الصُّوفِيُّ • الاسْتِمَاعُ الحَيُّ المُسْتَمِرُّ
                   </h3>
                   <p className="text-[11px] text-[#E5C378]">
-                    يستمع باستمرار في الحضرة، يعرض الأبيات مشكولة، وينتقل آلياً عند تحول المنشدين
+                    يستمع باستمرار في حلقة السماع، يعرض الأبيات، وينتقل آلياً عند تحول المنشدين
                   </p>
                 </div>
               </div>
@@ -285,7 +285,7 @@ export function SamaaListener() {
 
               {/* Status Note */}
               <div className="text-[11px] text-[#52796F] dark:text-[#A1B3A9] font-medium text-center sm:text-left truncate max-w-sm">
-                {statusMessage || "جاهز للاستماع في الحضرة"}
+                {statusMessage || "جاهز للاستماع في مجلس السماع والذكر"}
               </div>
             </div>
 
@@ -321,7 +321,7 @@ export function SamaaListener() {
                   {/* Vocalized Verses List */}
                   <div className="space-y-2.5">
                     <span className="text-xs font-bold text-[#143628] dark:text-[#E5C378] block">
-                      الكلمات كاملة مشكولة (للإنشاد في الحضرة):
+                      الكلمات المشكولة المختارة (للإنشاد في السماع):
                     </span>
 
                     <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
@@ -416,7 +416,7 @@ export function SamaaListener() {
                   {(!upcomingChain || upcomingChain.length === 0) && recognizedPoem.nextSuggestedPoems && recognizedPoem.nextSuggestedPoems.length > 0 && (
                     <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2">
                       <span className="text-[11px] font-bold text-[#826122] dark:text-[#E5C378] block">
-                        القصيدة التالية في نوبة الحضرة:
+                        القصيدة التالية في نسق السلسلة:
                       </span>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {recognizedPoem.nextSuggestedPoems.map((nextP) => (
