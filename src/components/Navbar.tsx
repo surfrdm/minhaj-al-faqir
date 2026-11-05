@@ -71,10 +71,12 @@ export function Navbar() {
       }
       window.location.hash = tabId;
       window.dispatchEvent(new CustomEvent("switch-knowledge-tab", { detail: tabId }));
-      const el = document.getElementById("knowledge-hub");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      setTimeout(() => {
+        const el = document.getElementById("knowledge-hub");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 60);
     }
   };
 
