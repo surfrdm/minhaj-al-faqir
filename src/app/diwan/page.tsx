@@ -31,6 +31,8 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import diwaneData from "@/data/diwane_master.json";
+import grandQasaidData from "@/data/grand_qasaid_master.json";
+import { GrandQasaidModal, GrandQasidaItem } from "@/components/GrandQasaidModal";
 
 interface DiwanPoem {
   id: string;
@@ -73,6 +75,11 @@ export default function DiwanMasterPage() {
   const [activePoem, setActivePoem] = useState<DiwanPoem | null>(null);
   const [verseFontSize, setVerseFontSize] = useState<number>(1.25); // in rem
   const [copied, setCopied] = useState(false);
+
+  // Grand Qasaid State (Option 3 Dual-Mode Reader)
+  const grandQasaidList = useMemo(() => grandQasaidData as GrandQasidaItem[], []);
+  const [activeGrandQasida, setActiveGrandQasida] = useState<GrandQasidaItem | null>(null);
+  const [grandInitialTab, setGrandInitialTab] = useState<"matn" | "explanation">("matn");
 
   // Live Samaa Shazam Recognition State
   const [isLiveListening, setIsLiveListening] = useState(false);
@@ -335,6 +342,70 @@ export default function DiwanMasterPage() {
                 <span>رصد تلقائي للقصيدة وما يليها</span>
               </span>
             </div>
+          </div>
+        </section>
+
+        {/* VIP Showcase: أُمَّهَاتُ القَصَائِدِ وَالمَدَائِحِ الكُبْرَى (المتون الكاملة والشروح التراثية) */}
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-[#C5A059]/40 pb-3">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-[#C5A059] animate-pulse" />
+              <h2 className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
+                أُمَّهَاتُ القَصَائِدِ وَالمَدَائِحِ الكُبْرَى (المتون الكاملة والشروح التراثية)
+              </h2>
+            </div>
+            <span className="text-xs text-[#826122] dark:text-[#E5C378] font-bold font-ibm bg-[#C5A059]/15 px-3 py-1 rounded-full border border-[#C5A059]/35 self-start sm:self-auto">
+              5 روائع كبرى مشكولة مع شروح ابن عجيبة وزروق وبنيس
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+            {grandQasaidList.map((gq) => (
+              <div
+                key={gq.id}
+                className="p-4 rounded-2xl bg-white dark:bg-[#0E2019] border-2 border-[#C5A059]/40 hover:border-[#C5A059] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between group space-y-3"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#143628] text-[#E5C378] font-ibm">
+                      {gq.badge}
+                    </span>
+                    <span className="text-[10px] font-sans font-bold text-gray-400">
+                      {gq.versesCount} {gq.id === "dalail_khatm" ? "فقرات" : "بيتاً"}
+                    </span>
+                  </div>
+
+                  <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] group-hover:text-[#C5A059] transition-colors line-clamp-1">
+                    {gq.title}
+                  </h3>
+                  <p className="text-[11px] text-[#52796F] dark:text-[#9BB0A5] font-ibm line-clamp-1">
+                    {gq.poet}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-gray-100 dark:border-gray-800 text-[11px]">
+                  <button
+                    onClick={() => {
+                      setActiveGrandQasida(gq);
+                      setGrandInitialTab("matn");
+                    }}
+                    className="py-1.5 px-2 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] font-bold text-center transition cursor-pointer"
+                  >
+                    المتن المشكول
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setActiveGrandQasida(gq);
+                      setGrandInitialTab("explanation");
+                    }}
+                    className="py-1.5 px-2 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] hover:bg-[#C5A059]/20 text-[#143628] dark:text-[#FAF7F2] border border-[#C5A059]/40 font-bold text-center transition cursor-pointer"
+                  >
+                    الشرح الصوفي
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -867,6 +938,14 @@ export default function DiwanMasterPage() {
           </div>
         </div>
       )}
+
+      {/* Grand Qasaid Dual-Mode Modal Reader */}
+      <GrandQasaidModal
+        qasida={activeGrandQasida}
+        isOpen={!!activeGrandQasida}
+        onClose={() => setActiveGrandQasida(null)}
+        initialTab={grandInitialTab}
+      />
 
       <Footer />
     </div>
