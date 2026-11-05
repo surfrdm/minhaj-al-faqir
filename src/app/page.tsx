@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/Navbar";
+import { SpiritualHeaderBar } from "@/components/SpiritualHeaderBar";
 import { DailyTrio } from "@/components/DailyTrio";
 import { HeroSection } from "@/components/HeroSection";
 import { DailySpiritualHub } from "@/components/DailySpiritualHub";
@@ -13,6 +14,9 @@ export default function Home() {
       <Navbar />
 
       <main className="flex-1">
+        {/* شريط المواقيت الروحية: التاريخ الهجري والميلادي • حزبا الراتب اليومي • أوقات الصلاة بالمغرب */}
+        <SpiritualHeaderBar />
+
         {/* 2. الثلاثية اليومية (Hikma + Hadith + Ibn Ashir) للفقير المستعجل في الصدارة */}
         <DailyTrio />
 
