@@ -8,7 +8,6 @@ import {
   PhoneOff,
   EyeOff,
   Volume2,
-  DropletOff,
   Users,
   ShieldCheck,
   Clock,
@@ -19,6 +18,28 @@ import {
   Check,
   Copy,
 } from "lucide-react";
+
+/**
+ * أيقونة الامتناع عن شرب الماء: كأس ماء مشطوب بخط مائل دال على الامتناع والنهي
+ */
+export function GlassWaterOff({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M5.116 4.104A1 1 0 0 1 6.11 3h11.78a1 1 0 0 1 .994 1.105L17.19 20.21A2 2 0 0 1 15.2 22H8.8a2 2 0 0 1-2-1.79z" />
+      <path d="M6 12a5 5 0 0 1 6 0 5 5 0 0 0 6 0" />
+      <line x1="2" y1="2" x2="22" y2="22" />
+    </svg>
+  );
+}
 
 export const ADAB_DHIKR_DATA = [
   {
@@ -55,7 +76,7 @@ export const ADAB_DHIKR_DATA = [
   {
     num: 6,
     title: "الِامْتِنَاعُ عَنْ شُرْبِ المَاءِ",
-    icon: DropletOff,
+    icon: GlassWaterOff,
     description: "الامتناع عن شرب الماء أثناء الذكر.",
   },
   {
