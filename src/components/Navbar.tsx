@@ -343,7 +343,7 @@ export function Navbar() {
                   >
                     <div className="flex items-center gap-2.5">
                       <Radio className="w-4 h-4 text-[#C5A059]" />
-                      <span>مُسْتَمِعُ الحَضْرَةِ الذَّكِيُّ (شَازَامُ السَّمَاعِ)</span>
+                      <span>شَازَامُ السَّمَاعِ • التَّعَرُّفُ الصَّوْتِيُّ الحَيُّ</span>
                     </div>
                     <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-bold">مباشر</span>
                   </Link>

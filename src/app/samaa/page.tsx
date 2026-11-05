@@ -290,15 +290,15 @@ export default function SamaaHubPage() {
           <div className="relative z-10 max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C5A059]/20 border border-[#C5A059]/40 text-[#E5C378] text-xs font-bold">
               <Music className="w-3.5 h-3.5 fill-current" />
-              <span>مِشْكَاةُ الإِنْشَادِ الصُّوفِيِّ • الحَضْرَةُ وَالنَّوْبَةُ</span>
+              <span>مِشْكَاةُ الإِنْشَادِ الصُّوفِيِّ • السَّمَاعُ وَالنَّوْبَةُ</span>
             </div>
 
             <h1 className="font-amiri text-2xl sm:text-4xl lg:text-5xl font-bold tracking-wide text-[#FAF7F2] leading-tight">
-              دِيوَانُ السَّمَاعِ الصُّوفِيِّ وَالتَّعَرُّفِ الحَيِّ
+              شَازَامُ السَّمَاعِ • التَّعَرُّفُ الصَّوْتِيُّ الحَيُّ
             </h1>
 
             <p className="text-xs sm:text-sm text-[#FAF7F2]/85 leading-relaxed font-ibm max-w-2xl">
-              المحرّك الذكي للتعرف الحي والمستمر على قصائد السماع أثناء مجالس الحضرة والعمارة؛ يستمع إلى الإنشاد طوال مدة المجلس، يعرض الكلمات مشكولة بخط عريض، وينتقل تلقائياً بين القصائد وفق ترتيب النوبة الصوفية البودشيشية.
+              المحرّك الذكي للتعرف الحي والمستمر على قصائد السماع أثناء مجالس الذكر والسماع؛ يستمع إلى الإنشاد طوال مدة المجلس، يعرض الكلمات مشكولة بخط عريض، وينتقل تلقائياً بين القصائد وفق ترتيب النوبة الصوفية البودشيشية.
             </p>
           </div>
         </section>
@@ -326,7 +326,7 @@ export default function SamaaHubPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#E8F0EC]">
-                    وَضْعُ الاسْتِمَاعِ الحَيِّ المُسْتَمِرِّ فِي الحَضْرَةِ
+                    وَضْعُ الاسْتِمَاعِ الحَيِّ المُسْتَمِرِّ فِي مَجْلِسِ السَّمَاعِ
                   </h2>
                   {isLiveListening && (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold animate-pulse">

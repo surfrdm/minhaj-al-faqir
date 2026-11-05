@@ -211,9 +211,34 @@ export function WixDirectEditor() {
     document.addEventListener("input", handleInput, true);
     document.addEventListener("click", handleClick, true);
 
+    // Dynamic MutationObserver to make newly opened drawers, modals and dropdowns editable
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof HTMLElement) {
+            if (node.closest("#wix-editor-bar") || node.closest("#wix-editor-trigger")) return;
+            const newTextEls = node.querySelectorAll<HTMLElement>(
+              "h1, h2, h3, h4, h5, h6, p, span, a, label, li, blockquote, dt, dd"
+            );
+            newTextEls.forEach((el) => {
+              if (el.children.length > 0 && !el.innerText.trim()) return;
+              el.contentEditable = "true";
+              el.setAttribute("data-wix-editable", "true");
+              if (!el.getAttribute("data-orig-text")) {
+                el.setAttribute("data-orig-text", el.innerText.trim());
+              }
+            });
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
     return () => {
       document.removeEventListener("input", handleInput, true);
       document.removeEventListener("click", handleClick, true);
+      observer.disconnect();
     };
   }, [isEditing]);
 
