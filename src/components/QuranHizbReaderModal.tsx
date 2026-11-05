@@ -29,54 +29,97 @@ import {
   cleanQuranWordText,
 } from "@/lib/quran";
 
-interface PageSection {
-  type: "surah_title" | "text_block";
+interface BalancedLine {
+  type: "line" | "banner";
   title?: string;
   words?: QuranWord[];
   isEndOfSurah?: boolean;
 }
 
 /**
- * تقسيم أسطر الصفحة إلى أقسام: عناوين السور، وفقرات نصية قرآنية متصلة تتدفق تلقائياً
+ * يوزع كلمات الصفحة الشريفة على 15 سطراً متناسقاً تماماً،
+ * بمعدل 7 إلى 10 كلمات في كل سطر مع ملء تام للسطر الأخير حتى نهاية الإطار.
  */
-function getPageSections(page: QuranPage): PageSection[] {
-  const sections: PageSection[] = [];
+function getPageBalancedLines(page: QuranPage): {
+  isOpening: boolean;
+  lines: BalancedLine[];
+  openingLines?: typeof page.lines;
+} {
+  // الصفحات الأولى التصديرية (2 الفاتحة، 3 أول البقرة حتى المفلحون)
+  if (page.page_number === 2 || page.page_number === 3) {
+    return { isOpening: true, lines: [], openingLines: page.lines };
+  }
+
+  // عدد عناوين السور في الصفحة
+  const surahTitles = page.lines.filter((l) => l.is_surah_title === "1");
+  const availableLines = Math.max(1, 15 - surahTitles.length);
+
+  // تجميع الكلمات واللافتات
+  const blocks: Array<{
+    type: "words" | "banner";
+    title?: string;
+    words?: QuranWord[];
+  }> = [];
   let currentWords: QuranWord[] = [];
 
   for (const line of page.lines) {
     if (line.is_surah_title === "1") {
       if (currentWords.length > 0) {
-        const lastWord = currentWords[currentWords.length - 1];
-        const isEnd =
-          lastWord?.is_last_word === "1" && lastWord?.verse?.is_last_verse === "1";
-        sections.push({
-          type: "text_block",
-          words: currentWords,
-          isEndOfSurah: isEnd,
-        });
+        blocks.push({ type: "words", words: currentWords });
         currentWords = [];
       }
-      sections.push({
-        type: "surah_title",
+      blocks.push({
+        type: "banner",
         title: line.surah_title_ar || line.surah_title,
       });
     } else if (line.words && line.words.length > 0) {
       currentWords.push(...line.words);
     }
   }
-
   if (currentWords.length > 0) {
-    const lastWord = currentWords[currentWords.length - 1];
-    const isEnd =
-      lastWord?.is_last_word === "1" && lastWord?.verse?.is_last_verse === "1";
-    sections.push({
-      type: "text_block",
-      words: currentWords,
-      isEndOfSurah: isEnd,
-    });
+    blocks.push({ type: "words", words: currentWords });
   }
 
-  return sections;
+  const totalWords = blocks
+    .filter((b) => b.type === "words")
+    .reduce((sum, b) => sum + (b.words?.length || 0), 0);
+
+  const result: BalancedLine[] = [];
+
+  for (const block of blocks) {
+    if (block.type === "banner") {
+      result.push({ type: "banner", title: block.title });
+    } else if (block.words && block.words.length > 0) {
+      const wordsCount = block.words.length;
+      const allocatedLines = Math.max(
+        1,
+        Math.round((wordsCount / totalWords) * availableLines)
+      );
+      const base = Math.floor(wordsCount / allocatedLines);
+      const remainder = wordsCount % allocatedLines;
+
+      let currentIdx = 0;
+      for (let i = 0; i < allocatedLines; i++) {
+        const count = base + (i < remainder ? 1 : 0);
+        const lineWords = block.words.slice(currentIdx, currentIdx + count);
+        currentIdx += count;
+
+        if (lineWords.length > 0) {
+          const lastWord = lineWords[lineWords.length - 1];
+          const isEnd =
+            lastWord?.is_last_word === "1" &&
+            lastWord?.verse?.is_last_verse === "1";
+          result.push({
+            type: "line",
+            words: lineWords,
+            isEndOfSurah: isEnd,
+          });
+        }
+      }
+    }
+  }
+
+  return { isOpening: false, lines: result };
 }
 
 interface QuranHizbReaderModalProps {
@@ -285,16 +328,16 @@ export function QuranHizbReaderModal({
   };
 
   const renderQuranPageBody = (page: QuranPage) => {
-    // الفاتحة وأول البقرة حتى المفلحون: توسيط متناسق في قلب الصفحة دون تمطيط
-    const isOpeningPage = page.page_number === 2 || page.page_number === 3;
+    const pageData = getPageBalancedLines(page);
 
-    if (isOpeningPage) {
+    if (pageData.isOpening && pageData.openingLines) {
+      // الفاتحة وأول البقرة حتى المفلحون: توسيط متناسق في قلب الصفحة دون تمطيط
       return (
         <div
           className="space-y-3.5 sm:space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 text-center py-2"
           style={{ fontSize: `${fontSize}px` }}
         >
-          {page.lines.map((line) => {
+          {pageData.openingLines.map((line) => {
             if (line.is_surah_title === "1") {
               return (
                 <div
@@ -326,41 +369,42 @@ export function QuranHizbReaderModal({
       );
     }
 
-    // صفحات المصحف الشريف من ص 4 وما بعدها:
-    // ملء الأسطر تلقائياً وبمحاذاة كاملة (Justify) تملأ السطور دون فراغات شاذة
-    const sections = getPageSections(page);
-
+    // صفحات المصحف الشريف 15 سطراً كاملة من البداية إلى النهاية:
+    // كل سطر يحتوي على 7 إلى 10 كلمات، والسطر الأخير يملأ السطر إلى آخره دون أي فراغ شاذ
     return (
       <div
-        className="space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 py-1"
+        className="space-y-2 sm:space-y-2.5 font-maghribi-quran selection:bg-[#C5A059]/30 py-1"
         style={{ fontSize: `${fontSize}px` }}
       >
-        {sections.map((section, sIdx) => {
-          if (section.type === "surah_title") {
+        {pageData.lines.map((lineItem, lIdx) => {
+          if (lineItem.type === "banner") {
             return (
               <div
-                key={`st-${sIdx}`}
-                className="my-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
+                key={`bn-${lIdx}`}
+                className="my-3 py-2 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
               >
                 <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
-                  سُورَةُ {section.title}
+                  سُورَةُ {lineItem.title}
                 </div>
               </div>
             );
           }
 
+          const isLastLineOfSurah = lineItem.isEndOfSurah;
+
           return (
             <div
-              key={`tb-${sIdx}`}
-              className="w-full text-justify text-[#143628] dark:text-[#EAF2ED] select-text"
+              key={`line-${lIdx}`}
+              className={`w-full ${
+                isLastLineOfSurah ? "text-center" : "text-justify"
+              } text-[#143628] dark:text-[#EAF2ED] select-text transition-colors`}
               style={{
-                textAlign: "justify",
+                textAlignLast: isLastLineOfSurah ? "center" : "justify",
                 textJustify: "inter-word",
-                textAlignLast: section.isEndOfSurah ? "center" : "auto",
-                lineHeight: 2.3,
+                lineHeight: 2.2,
               }}
             >
-              {section.words?.map((w, wIdx) => renderQuranWord(w, wIdx))}
+              {lineItem.words?.map((w, wIdx) => renderQuranWord(w, wIdx))}
             </div>
           );
         })}
