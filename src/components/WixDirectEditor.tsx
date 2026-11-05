@@ -12,6 +12,8 @@ import {
   Share2,
 } from "lucide-react";
 
+const EDITOR_VERSION = "v1.2-20261105";
+
 function getElementKey(el: HTMLElement): string {
   if (el.id) return `${window.location.pathname}::#${el.id}`;
   const path: string[] = [];
@@ -79,7 +81,12 @@ export function WixDirectEditor() {
         (el) => !el.closest("#wix-editor-bar") && !el.closest("#wix-editor-trigger")
       );
 
-      for (const [key, html] of Object.entries(edits)) {
+      for (const [key, rawHtml] of Object.entries(edits)) {
+        // Strip out any obsolete test phrases from old sessions
+        if (typeof rawHtml === "string" && rawHtml.includes("المجموع الصوفي الكامل")) {
+          continue;
+        }
+        const html = rawHtml;
         if (key.startsWith(`text::${currentPath}::`)) {
           const targetOrigText = key.replace(`text::${currentPath}::`, "").trim();
           for (const el of allTextCandidates) {
@@ -110,11 +117,17 @@ export function WixDirectEditor() {
       return appliedCount;
     };
 
-    // 1. First from localStorage (instantaneous)
+    // 1. First from localStorage (instantaneous with version protection)
     try {
-      const local = localStorage.getItem("minhaj_direct_edits");
-      if (local) {
-        applyEditsMap(JSON.parse(local));
+      const storedVersion = localStorage.getItem("minhaj_editor_version");
+      if (storedVersion !== EDITOR_VERSION) {
+        localStorage.removeItem("minhaj_direct_edits");
+        localStorage.setItem("minhaj_editor_version", EDITOR_VERSION);
+      } else {
+        const local = localStorage.getItem("minhaj_direct_edits");
+        if (local) {
+          applyEditsMap(JSON.parse(local));
+        }
       }
     } catch (e) {}
 

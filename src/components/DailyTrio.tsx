@@ -54,12 +54,12 @@ export function DailyTrio() {
   };
 
   const shareHadith = () => {
-    const text = `📖 حديث اليوم النبوي السلوكي (${todayHadith.id}/42 من الأربعين):\n«${todayHadith.title}»\n\n${todayHadith.text_ar}\n\nالراوي: ${todayHadith.narrator}\nالمصدر: ${todayHadith.source}\n\nطالع الثلاثية اليومية: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-trio`;
+    const text = `📖 حديث اليوم النبوي السلوكي (${todayHadith.id}/42 من الأربعين):\n«${todayHadith.title}»\n\n${todayHadith.text_ar}\n\nالراوي: ${todayHadith.narrator}\nالمصدر: ${todayHadith.source}\n\nطالع التكوين اليومي للفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-trio`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const shareHikma = () => {
-    const text = `✨ حكمة اليوم العطائية (#${activeHikma.number}):\n«${activeHikma.text_ar}»\n\nالشرح المختصر:\n${activeHikma.explanation_ar}\n\nطالع الثلاثية اليومية: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-trio`;
+    const text = `✨ حكمة اليوم العطائية (#${activeHikma.number}):\n«${activeHikma.text_ar}»\n\nالشرح المختصر:\n${activeHikma.explanation_ar}\n\nطالع التكوين اليومي للفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-trio`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -67,7 +67,7 @@ export function DailyTrio() {
     const versesText = currentIbnAshir.verses
       .map((v) => `${v.firstHemistich} ... ${v.secondHemistich}`)
       .join("\n");
-    const text = `📜 فقه اليوم من متن ابن عاشر (${currentIbnAshir.chapter}):\nالأبيات (${currentIbnAshir.verseNumbers}/${IBN_ASHIR_TOTAL_COUNT}):\n${versesText}\n\nالشرح:\n${currentIbnAshir.explanation}\n\nطالع الثلاثية اليومية: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-trio`;
+    const text = `📜 فقه اليوم من متن ابن عاشر (${currentIbnAshir.chapter}):\nالأبيات (${currentIbnAshir.verseNumbers}/${IBN_ASHIR_TOTAL_COUNT}):\n${versesText}\n\nالشرح:\n${currentIbnAshir.explanation}\n\nطالع التكوين اليومي للفقير: ${typeof window !== "undefined" ? window.location.origin : ""}/#daily-trio`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -82,14 +82,14 @@ export function DailyTrio() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#E8F0EC]">
-                الثُّلاَثِيَّةُ اليَوْمِيَّةُ • زَادُ الفَقِيرِ السَّرِيعُ
+                التَّكْوِينُ اليَوْمِيُّ لِلفَقِيرِ
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378] text-[11px] font-bold">
                 تحديث يومي
               </span>
             </div>
             <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm">
-              زاد معرفي وروحي مكثف في 3 دقائق: حكمة عطائية • حديث نبوي سلوكي • بيت فقهي من ابن عاشر
+              زاد معرفي وروحي جامع: حكمة عطائية • حديث نبوي في السلوك • فقه العبادات من ابن عاشر
             </p>
           </div>
         </div>
