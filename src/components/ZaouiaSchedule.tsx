@@ -97,7 +97,11 @@ export function ZaouiaSchedule() {
   const activeSchedule = SCHEDULE_DATA[selectedDay] || SCHEDULE_DATA[1];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3" dir="rtl">
+    <section
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3"
+      dir="rtl"
+      data-no-wix-override="true"
+    >
       <div className="rounded-2xl bg-white dark:bg-[#0A1C14] border border-[#C5A059]/35 dark:border-[#C5A059]/25 p-4 sm:p-5 shadow-sm">
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#E7DFD5] dark:border-[#1E3A2F] pb-3">

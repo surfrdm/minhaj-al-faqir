@@ -12,7 +12,7 @@ import {
   Share2,
 } from "lucide-react";
 
-const EDITOR_VERSION = "v1.2-20261105";
+const EDITOR_VERSION = "v1.4-20261105";
 
 function getElementKey(el: HTMLElement): string {
   if (el.id) return `${window.location.pathname}::#${el.id}`;
@@ -78,12 +78,18 @@ export function WixDirectEditor() {
           "h1, h2, h3, h4, h5, h6, p, span, a, label, li, blockquote"
         )
       ).filter(
-        (el) => !el.closest("#wix-editor-bar") && !el.closest("#wix-editor-trigger")
+        (el) =>
+          !el.closest("#wix-editor-bar") &&
+          !el.closest("#wix-editor-trigger") &&
+          !el.closest("[data-no-wix-override]")
       );
 
       for (const [key, rawHtml] of Object.entries(edits)) {
         // Strip out any obsolete test phrases from old sessions
-        if (typeof rawHtml === "string" && rawHtml.includes("المجموع الصوفي الكامل")) {
+        if (
+          typeof rawHtml === "string" &&
+          (rawHtml.includes("المجموع الصوفي الكامل") || rawHtml.includes("ذكر المخلصين"))
+        ) {
           continue;
         }
         const html = rawHtml;
@@ -107,7 +113,7 @@ export function WixDirectEditor() {
           // 2. DOM-path based replacements fallback
           const selectorPath = key.replace(`${currentPath}::`, "");
           const el = resolveElementFromPath(selectorPath);
-          if (el && el.innerHTML !== html) {
+          if (el && !el.closest("[data-no-wix-override]") && el.innerHTML !== html) {
             el.innerHTML = html;
             el.setAttribute("data-wix-applied", "true");
             appliedCount++;
@@ -120,14 +126,16 @@ export function WixDirectEditor() {
     // 1. First from localStorage (instantaneous with version protection)
     try {
       const storedVersion = localStorage.getItem("minhaj_editor_version");
-      if (storedVersion !== EDITOR_VERSION) {
+      const local = localStorage.getItem("minhaj_direct_edits");
+
+      if (
+        storedVersion !== EDITOR_VERSION ||
+        (local && (local.includes("ذكر المخلصين") || local.includes("المجموع الصوفي")))
+      ) {
         localStorage.removeItem("minhaj_direct_edits");
         localStorage.setItem("minhaj_editor_version", EDITOR_VERSION);
-      } else {
-        const local = localStorage.getItem("minhaj_direct_edits");
-        if (local) {
-          applyEditsMap(JSON.parse(local));
-        }
+      } else if (local) {
+        applyEditsMap(JSON.parse(local));
       }
     } catch (e) {}
 
@@ -256,7 +264,12 @@ export function WixDirectEditor() {
         "h1, h2, h3, h4, h5, h6, p, span, a, label, li, blockquote, dt, dd"
       );
       textEls.forEach((el) => {
-        if (el.closest("#wix-editor-bar") || el.closest("#wix-editor-trigger")) return;
+        if (
+          el.closest("#wix-editor-bar") ||
+          el.closest("#wix-editor-trigger") ||
+          el.closest("[data-no-wix-override]")
+        )
+          return;
         // Don't make empty containers or SVG wrappers editable
         if (el.children.length > 0 && !el.innerText.trim()) return;
 
