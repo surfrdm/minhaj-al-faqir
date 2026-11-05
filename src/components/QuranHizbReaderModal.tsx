@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   X,
   ChevronLeft,
@@ -29,97 +29,121 @@ import {
   cleanQuranWordText,
 } from "@/lib/quran";
 
-interface BalancedLine {
-  type: "line" | "banner";
+interface DynamicPageItem {
+  type: "banner" | "word";
   title?: string;
-  words?: QuranWord[];
-  isEndOfSurah?: boolean;
+  word?: QuranWord;
+  surahTitle?: string;
+}
+
+interface DynamicQuranPage {
+  pageNumber: number;
+  isOpening: boolean;
+  surahTitle?: string;
+  openingLines?: QuranPage["lines"];
+  items?: DynamicPageItem[];
+  wordCount?: number;
 }
 
 /**
- * يوزع كلمات الصفحة الشريفة على 15 سطراً متناسقاً تماماً،
- * بمعدل 7 إلى 10 كلمات في كل سطر مع ملء تام للسطر الأخير حتى نهاية الإطار.
+ * الخيار 2 (التقسيم الديناميكي الكامل):
+ * ملء كل صفحة شاشة بالكامل حتى نهايتها (دون التقيد بـ 7-9 كلمات في السطر)
+ * بحيث ينزل السطر تلقائياً عند نفاذ المساحة، وتتصل الآيات حتى امتلاء الصفحة
+ * مع الختم عند نهاية آية كريمة تامة، مما يقلل عدد الصفحات الإجمالي ويزيل أي فراغ شاذ.
  */
-function getPageBalancedLines(page: QuranPage): {
-  isOpening: boolean;
-  lines: BalancedLine[];
-  openingLines?: typeof page.lines;
-} {
-  // الصفحات الأولى التصديرية (2 الفاتحة، 3 أول البقرة حتى المفلحون)
-  if (page.page_number === 2 || page.page_number === 3) {
-    return { isOpening: true, lines: [], openingLines: page.lines };
+function partitionHizbWords(
+  hizbData: QuranHizbData,
+  targetWordsPerPage: number = 175
+): DynamicQuranPage[] {
+  const isHizb1 = hizbData.hizb_number === 1;
+  const pages: DynamicQuranPage[] = [];
+
+  if (isHizb1 && hizbData.pages.length >= 2) {
+    // 1. الفاتحة (صفحة تصديرية مركزة)
+    pages.push({
+      pageNumber: 1,
+      isOpening: true,
+      surahTitle: hizbData.pages[0].page_surah_title || "الفاتحة",
+      openingLines: hizbData.pages[0].lines,
+    });
+    // 2. أول البقرة حتى المفلحون (صفحة تصديرية مركزة)
+    pages.push({
+      pageNumber: 2,
+      isOpening: true,
+      surahTitle: hizbData.pages[1].page_surah_title || "البقرة",
+      openingLines: hizbData.pages[1].lines,
+    });
   }
 
-  // عدد عناوين السور في الصفحة
-  const surahTitles = page.lines.filter((l) => l.is_surah_title === "1");
-  const availableLines = Math.max(1, 15 - surahTitles.length);
+  // تجميع كل العناصر (اللافتات والكلمات) من باقي صفحات الحزب
+  const startP = isHizb1 ? 2 : 0;
+  const items: DynamicPageItem[] = [];
 
-  // تجميع الكلمات واللافتات
-  const blocks: Array<{
-    type: "words" | "banner";
-    title?: string;
-    words?: QuranWord[];
-  }> = [];
-  let currentWords: QuranWord[] = [];
-
-  for (const line of page.lines) {
-    if (line.is_surah_title === "1") {
-      if (currentWords.length > 0) {
-        blocks.push({ type: "words", words: currentWords });
-        currentWords = [];
-      }
-      blocks.push({
-        type: "banner",
-        title: line.surah_title_ar || line.surah_title,
-      });
-    } else if (line.words && line.words.length > 0) {
-      currentWords.push(...line.words);
-    }
-  }
-  if (currentWords.length > 0) {
-    blocks.push({ type: "words", words: currentWords });
-  }
-
-  const totalWords = blocks
-    .filter((b) => b.type === "words")
-    .reduce((sum, b) => sum + (b.words?.length || 0), 0);
-
-  const result: BalancedLine[] = [];
-
-  for (const block of blocks) {
-    if (block.type === "banner") {
-      result.push({ type: "banner", title: block.title });
-    } else if (block.words && block.words.length > 0) {
-      const wordsCount = block.words.length;
-      const allocatedLines = Math.max(
-        1,
-        Math.round((wordsCount / totalWords) * availableLines)
-      );
-      const base = Math.floor(wordsCount / allocatedLines);
-      const remainder = wordsCount % allocatedLines;
-
-      let currentIdx = 0;
-      for (let i = 0; i < allocatedLines; i++) {
-        const count = base + (i < remainder ? 1 : 0);
-        const lineWords = block.words.slice(currentIdx, currentIdx + count);
-        currentIdx += count;
-
-        if (lineWords.length > 0) {
-          const lastWord = lineWords[lineWords.length - 1];
-          const isEnd =
-            lastWord?.is_last_word === "1" &&
-            lastWord?.verse?.is_last_verse === "1";
-          result.push({
-            type: "line",
-            words: lineWords,
-            isEndOfSurah: isEnd,
+  for (let p = startP; p < hizbData.pages.length; p++) {
+    const page = hizbData.pages[p];
+    const pageSurah = page.page_surah_title || "";
+    for (const l of page.lines) {
+      if (l.is_surah_title === "1") {
+        items.push({
+          type: "banner",
+          title: l.surah_title_ar || l.surah_title,
+          surahTitle: l.surah_title_ar || l.surah_title,
+        });
+      } else if (l.words) {
+        for (const w of l.words) {
+          items.push({
+            type: "word",
+            word: w,
+            surahTitle: pageSurah,
           });
         }
       }
     }
   }
 
-  return { isOpening: false, lines: result };
+  let currentPageItems: DynamicPageItem[] = [];
+  let currentWordCount = 0;
+  let pageNum = pages.length + 1;
+  let currentSurahTitle = items[0]?.surahTitle || "";
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    currentPageItems.push(item);
+
+    if (item.surahTitle) {
+      currentSurahTitle = item.surahTitle;
+    }
+    if (item.type === "word" && item.word) {
+      currentWordCount++;
+    }
+
+    const isVerseEnd = item.type === "word" && item.word?.is_last_word === "1";
+
+    // تكتمل الصفحة إذا بلغت عدد الكلمات المستهدف وكانت عند نهاية آية كريمة تامة
+    if (currentWordCount >= targetWordsPerPage && isVerseEnd) {
+      pages.push({
+        pageNumber: pageNum++,
+        isOpening: false,
+        surahTitle: currentSurahTitle,
+        items: currentPageItems,
+        wordCount: currentWordCount,
+      });
+      currentPageItems = [];
+      currentWordCount = 0;
+    }
+  }
+
+  if (currentPageItems.length > 0) {
+    pages.push({
+      pageNumber: pageNum++,
+      isOpening: false,
+      surahTitle: currentSurahTitle,
+      items: currentPageItems,
+      wordCount: currentWordCount,
+    });
+  }
+
+  return pages;
 }
 
 interface QuranHizbReaderModalProps {
@@ -265,22 +289,26 @@ export function QuranHizbReaderModal({
   if (!isOpen) return null;
 
   const meta = getHizbMeta(currentHizb);
-  const totalPages = data?.pages?.length || 0;
-  const currentPage: QuranPage | null =
-    data && data.pages && data.pages[currentPageIndex]
-      ? data.pages[currentPageIndex]
-      : null;
+  const targetWordsPerPage = Math.max(120, Math.round(175 * (24 / fontSize)));
+  const dynamicPages = useMemo(() => {
+    if (!data) return [];
+    return partitionHizbWords(data, targetWordsPerPage);
+  }, [data, targetWordsPerPage]);
+
+  const totalPages = dynamicPages.length;
+  const safePageIndex = Math.min(currentPageIndex, Math.max(0, totalPages - 1));
+  const currentPage: DynamicQuranPage | null = dynamicPages[safePageIndex] || null;
 
   const handlePrevPage = () => {
-    if (currentPageIndex > 0) {
-      setCurrentPageIndex((prev) => prev - 1);
+    if (safePageIndex > 0) {
+      setCurrentPageIndex(safePageIndex - 1);
       if (contentRef.current) contentRef.current.scrollTop = 0;
     }
   };
 
   const handleNextPage = () => {
-    if (currentPageIndex < totalPages - 1) {
-      setCurrentPageIndex((prev) => prev + 1);
+    if (safePageIndex < totalPages - 1) {
+      setCurrentPageIndex(safePageIndex + 1);
       if (contentRef.current) contentRef.current.scrollTop = 0;
     }
   };
@@ -327,17 +355,15 @@ export function QuranHizbReaderModal({
     );
   };
 
-  const renderQuranPageBody = (page: QuranPage) => {
-    const pageData = getPageBalancedLines(page);
-
-    if (pageData.isOpening && pageData.openingLines) {
-      // الفاتحة وأول البقرة حتى المفلحون: توسيط متناسق في قلب الصفحة دون تمطيط
+  const renderDynamicQuranPage = (page: DynamicQuranPage) => {
+    // 1. الفاتحة وأول البقرة (صفحات تصديرية مركزة في الوسط)
+    if (page.isOpening && page.openingLines) {
       return (
         <div
           className="space-y-3.5 sm:space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 text-center py-2"
           style={{ fontSize: `${fontSize}px` }}
         >
-          {pageData.openingLines.map((line) => {
+          {page.openingLines.map((line) => {
             if (line.is_surah_title === "1") {
               return (
                 <div
@@ -369,42 +395,75 @@ export function QuranHizbReaderModal({
       );
     }
 
-    // صفحات المصحف الشريف 15 سطراً كاملة من البداية إلى النهاية:
-    // كل سطر يحتوي على 7 إلى 10 كلمات، والسطر الأخير يملأ السطر إلى آخره دون أي فراغ شاذ
+    if (!page.items) return null;
+
+    // 2. تقسيم عناصر الصفحة الديناميكية الكاملة إلى لافتات وفقرات نصية متصلة
+    const sections: Array<{
+      type: "banner" | "text";
+      title?: string;
+      words?: QuranWord[];
+      isEndOfSurah?: boolean;
+    }> = [];
+    let curWords: QuranWord[] = [];
+
+    for (const it of page.items) {
+      if (it.type === "banner") {
+        if (curWords.length > 0) {
+          const lastW = curWords[curWords.length - 1];
+          sections.push({
+            type: "text",
+            words: curWords,
+            isEndOfSurah:
+              lastW.is_last_word === "1" && lastW.verse?.is_last_verse === "1",
+          });
+          curWords = [];
+        }
+        sections.push({ type: "banner", title: it.title });
+      } else if (it.type === "word" && it.word) {
+        curWords.push(it.word);
+      }
+    }
+    if (curWords.length > 0) {
+      const lastW = curWords[curWords.length - 1];
+      sections.push({
+        type: "text",
+        words: curWords,
+        isEndOfSurah:
+          lastW.is_last_word === "1" && lastW.verse?.is_last_verse === "1",
+      });
+    }
+
     return (
       <div
-        className="space-y-2 sm:space-y-2.5 font-maghribi-quran selection:bg-[#C5A059]/30 py-1"
+        className="space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 py-1"
         style={{ fontSize: `${fontSize}px` }}
       >
-        {pageData.lines.map((lineItem, lIdx) => {
-          if (lineItem.type === "banner") {
+        {sections.map((sec, sIdx) => {
+          if (sec.type === "banner") {
             return (
               <div
-                key={`bn-${lIdx}`}
-                className="my-3 py-2 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
+                key={`bn-${sIdx}`}
+                className="my-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
               >
                 <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
-                  سُورَةُ {lineItem.title}
+                  سُورَةُ {sec.title}
                 </div>
               </div>
             );
           }
 
-          const isLastLineOfSurah = lineItem.isEndOfSurah;
-
           return (
             <div
-              key={`line-${lIdx}`}
-              className={`w-full ${
-                isLastLineOfSurah ? "text-center" : "text-justify"
-              } text-[#143628] dark:text-[#EAF2ED] select-text transition-colors`}
+              key={`txt-${sIdx}`}
+              className="w-full text-justify text-[#143628] dark:text-[#EAF2ED] select-text"
               style={{
-                textAlignLast: isLastLineOfSurah ? "center" : "justify",
+                textAlign: "justify",
                 textJustify: "inter-word",
-                lineHeight: 2.2,
+                textAlignLast: sec.isEndOfSurah ? "center" : "auto",
+                lineHeight: 2.25,
               }}
             >
-              {lineItem.words?.map((w, wIdx) => renderQuranWord(w, wIdx))}
+              {sec.words?.map((w, wIdx) => renderQuranWord(w, wIdx))}
             </div>
           );
         })}
@@ -522,46 +581,46 @@ export function QuranHizbReaderModal({
               </p>
             </div>
           ) : viewMode === "page" ? (
-            // SINGLE PAGE MUSHAF VIEW (15 Lines Moroccan Layout)
+            // SINGLE PAGE MUSHAF VIEW (Dynamic Full Pages - Option 2)
             currentPage && (
               <div className="max-w-2xl mx-auto bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-4 border-[#C5A059]/70 p-4 sm:p-6 shadow-xl relative transition-all duration-300">
                 {/* Decorative Top Moroccan Border Line */}
                 <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-[#C5A059]/40 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
-                  <span>سُورَةُ {currentPage.page_surah_title || meta.surahs[0]}</span>
+                  <span>سُورَةُ {currentPage.surahTitle || meta.surahs[0]}</span>
                   <span className="px-3 py-0.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30">
                     الحِزْبُ {toArabicDigits(currentHizb)}
                   </span>
-                  <span>الصَّفْحَةُ {toArabicDigits(currentPage.page_number)}</span>
+                  <span>الصَّفْحَةُ {toArabicDigits(currentPage.pageNumber)}</span>
                 </div>
 
-                {/* Quran Page Body (Opening Pages Centered / Flow Pages Justified) */}
-                {renderQuranPageBody(currentPage)}
+                {/* Quran Page Body (Option 2 Dynamic Flow) */}
+                {renderDynamicQuranPage(currentPage)}
 
                 {/* Decorative Bottom Line */}
                 <div className="flex items-center justify-between pt-3 mt-4 border-t-2 border-[#C5A059]/40 text-xs font-ibm text-[#52796F] dark:text-[#9BB0A5]">
                   <span>مصحف محمد السادس بالخط المغربي</span>
                   <span className="font-bold text-[#C5A059]">
-                    {currentPageIndex + 1} / {totalPages}
+                    {safePageIndex + 1} / {totalPages}
                   </span>
                   <span>رواية ورش عن نافع</span>
                 </div>
               </div>
             )
           ) : (
-            // CONTINUOUS SCROLL VIEW (All Pages of the Hizb)
+            // CONTINUOUS SCROLL VIEW (All Dynamic Pages of the Hizb)
             <div className="max-w-2xl mx-auto space-y-6">
-              {data.pages.map((page, pIdx) => (
+              {dynamicPages.map((page) => (
                 <div
-                  key={page.page_number}
+                  key={page.pageNumber}
                   className="bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-2 border-[#C5A059]/50 p-4 sm:p-6 shadow-md"
                 >
                   <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#C5A059]/30 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
-                    <span>سورة {page.page_surah_title || meta.surahs[0]}</span>
-                    <span>صفحة {page.page_number}</span>
+                    <span>سورة {page.surahTitle || meta.surahs[0]}</span>
+                    <span>صفحة {toArabicDigits(page.pageNumber)}</span>
                   </div>
 
-                  {/* Quran Page Body (Opening Pages Centered / Flow Pages Justified) */}
-                  {renderQuranPageBody(page)}
+                  {/* Quran Page Body (Option 2 Dynamic Flow) */}
+                  {renderDynamicQuranPage(page)}
                 </div>
               ))}
             </div>
@@ -575,7 +634,7 @@ export function QuranHizbReaderModal({
             <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
               <button
                 onClick={handlePrevPage}
-                disabled={currentPageIndex === 0}
+                disabled={safePageIndex === 0}
                 className="px-3.5 py-2 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#C5A059]/40 text-[#143628] dark:text-[#FAF7F2] text-xs font-bold flex items-center gap-1 hover:bg-[#C5A059]/15 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -583,12 +642,12 @@ export function QuranHizbReaderModal({
               </button>
 
               <span className="text-xs font-ibm font-bold text-[#826122] dark:text-[#E5C378] px-2">
-                {toArabicDigits(currentPageIndex + 1)} / {toArabicDigits(totalPages)}
+                {toArabicDigits(safePageIndex + 1)} / {toArabicDigits(totalPages)}
               </span>
 
               <button
                 onClick={handleNextPage}
-                disabled={currentPageIndex >= totalPages - 1}
+                disabled={safePageIndex >= totalPages - 1}
                 className="px-3.5 py-2 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#C5A059]/40 text-[#143628] dark:text-[#FAF7F2] text-xs font-bold flex items-center gap-1 hover:bg-[#C5A059]/15 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
               >
                 <span>الصفحة التالية</span>
