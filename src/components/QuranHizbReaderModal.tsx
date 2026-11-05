@@ -46,27 +46,29 @@ interface DynamicQuranPage {
 }
 
 /**
- * الخيار 2 (التقسيم الديناميكي الكامل):
- * ملء كل صفحة شاشة بالكامل حتى نهايتها (دون التقيد بـ 7-9 كلمات في السطر)
- * بحيث ينزل السطر تلقائياً عند نفاذ المساحة، وتتصل الآيات حتى امتلاء الصفحة
- * مع الختم عند نهاية آية كريمة تامة، مما يقلل عدد الصفحات الإجمالي ويزيل أي فراغ شاذ.
+ * الخيار 2 (التقسيم الديناميكي الكامل والمتوازن):
+ * ملء كل صفحة شاشة بالكامل حتى نهايتها بتدفق طبيعي مريح (دون التقيد بـ 7-9 كلمات في السطر)
+ * بحيث ينزل السطر تلقائياً عند نفاذ المساحة، وتتصل الآيات حتى امتلاء الصفحة (14-16 سطراً)
+ * مع الموازنة الذكية لتجنب أي سطر أخير يتيم أو مقطوع (Orphan prevention)،
+ * مما يقلل عدد الصفحات الإجمالي ويزيل أي فراغ شاذ.
  */
 function partitionHizbWords(
   hizbData: QuranHizbData,
-  targetWordsPerPage: number = 175
+  baseTargetWords: number = 180,
+  estWordsPerLine: number = 13
 ): DynamicQuranPage[] {
   const isHizb1 = hizbData.hizb_number === 1;
   const pages: DynamicQuranPage[] = [];
 
   if (isHizb1 && hizbData.pages.length >= 2) {
-    // 1. الفاتحة (صفحة تصديرية مركزة)
+    // 1. الفاتحة (صفحة تصديرية مركزة في الوسط)
     pages.push({
       pageNumber: 1,
       isOpening: true,
       surahTitle: hizbData.pages[0].page_surah_title || "الفاتحة",
       openingLines: hizbData.pages[0].lines,
     });
-    // 2. أول البقرة حتى المفلحون (صفحة تصديرية مركزة)
+    // 2. أول البقرة حتى المفلحون (صفحة تصديرية مركزة في الوسط)
     pages.push({
       pageNumber: 2,
       isOpening: true,
@@ -101,6 +103,11 @@ function partitionHizbWords(
     }
   }
 
+  const wordItems = items.filter((x) => x.type === "word");
+  // حساب عدد الصفحات الديناميكية المثالي لملء كل صفحة بالكامل دون ترك صفحات شبه فارغة
+  const numDynamicPages = Math.max(1, Math.round(wordItems.length / baseTargetWords));
+  const targetPerP = Math.round(wordItems.length / numDynamicPages);
+
   let currentPageItems: DynamicPageItem[] = [];
   let currentWordCount = 0;
   let pageNum = pages.length + 1;
@@ -118,18 +125,26 @@ function partitionHizbWords(
     }
 
     const isVerseEnd = item.type === "word" && item.word?.is_last_word === "1";
+    const remainingDynamicPages = numDynamicPages - (pageNum - (isHizb1 ? 3 : 1));
 
-    // تكتمل الصفحة إذا بلغت عدد الكلمات المستهدف وكانت عند نهاية آية كريمة تامة
-    if (currentWordCount >= targetWordsPerPage && isVerseEnd) {
-      pages.push({
-        pageNumber: pageNum++,
-        isOpening: false,
-        surahTitle: currentSurahTitle,
-        items: currentPageItems,
-        wordCount: currentWordCount,
-      });
-      currentPageItems = [];
-      currentWordCount = 0;
+    // قطع الصفحة بذكاء عند نهاية آية، مع التأكد من أن السطر الأخير ممتلئ بشكل جميل
+    if (
+      remainingDynamicPages > 1 &&
+      isVerseEnd &&
+      currentWordCount >= targetPerP - 18
+    ) {
+      const lastLineWords = currentWordCount % estWordsPerLine || estWordsPerLine;
+      if (lastLineWords >= 5 || currentWordCount >= targetPerP + 22) {
+        pages.push({
+          pageNumber: pageNum++,
+          isOpening: false,
+          surahTitle: currentSurahTitle,
+          items: currentPageItems,
+          wordCount: currentWordCount,
+        });
+        currentPageItems = [];
+        currentWordCount = 0;
+      }
     }
   }
 
@@ -356,11 +371,11 @@ export function QuranHizbReaderModal({
   };
 
   const renderDynamicQuranPage = (page: DynamicQuranPage) => {
-    // 1. الفاتحة وأول البقرة (صفحات تصديرية مركزة في الوسط)
+    // 1. الفاتحة وأول البقرة (صفحات تصديرية مركزة في الوسط بهيبة ووقار)
     if (page.isOpening && page.openingLines) {
       return (
         <div
-          className="space-y-3.5 sm:space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 text-center py-2"
+          className="space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 text-center py-6 sm:py-8 max-w-xl mx-auto"
           style={{ fontSize: `${fontSize}px` }}
         >
           {page.openingLines.map((line) => {
@@ -368,7 +383,7 @@ export function QuranHizbReaderModal({
               return (
                 <div
                   key={line.line_id}
-                  className="my-3 py-2 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs max-w-md mx-auto"
+                  className="my-4 py-2 px-6 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs max-w-sm mx-auto"
                 >
                   <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
                     سُورَةُ {line.surah_title_ar || line.surah_title}
@@ -380,7 +395,7 @@ export function QuranHizbReaderModal({
             return (
               <div
                 key={line.line_id}
-                className="w-full text-center text-[#143628] dark:text-[#EAF2ED] select-text py-0.5"
+                className="w-full text-center text-[#143628] dark:text-[#EAF2ED] select-text py-1"
                 style={{
                   textAlign: "center",
                   textAlignLast: "center",
@@ -487,7 +502,7 @@ export function QuranHizbReaderModal({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-amiri text-lg sm:text-2xl font-bold text-[#FAF7F2]">
-                  الحِزْبُ {toArabicDigits(currentHizb)}
+                  الحِزْبُ {currentHizb}
                 </h3>
                 {hizbPeriod === "subh" && (
                   <span className="px-2 py-0.5 rounded-full bg-amber-500/25 border border-amber-400/50 text-amber-200 text-xs font-bold">
@@ -515,7 +530,7 @@ export function QuranHizbReaderModal({
             >
               {ALL_AHZAB_INDEX.map((h) => (
                 <option key={h.hizb_number} value={h.hizb_number} className="text-black">
-                  الحزب {toArabicDigits(h.hizb_number)} ({h.surahs.slice(0, 2).join("، ")})
+                  الحزب {h.hizb_number} ({h.surahs.slice(0, 2).join("، ")})
                 </option>
               ))}
             </select>
@@ -588,9 +603,9 @@ export function QuranHizbReaderModal({
                 <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-[#C5A059]/40 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
                   <span>سُورَةُ {currentPage.surahTitle || meta.surahs[0]}</span>
                   <span className="px-3 py-0.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30">
-                    الحِزْبُ {toArabicDigits(currentHizb)}
+                    الحِزْبُ {currentHizb}
                   </span>
-                  <span>الصَّفْحَةُ {toArabicDigits(currentPage.pageNumber)}</span>
+                  <span>الصَّفْحَةُ {currentPage.pageNumber}</span>
                 </div>
 
                 {/* Quran Page Body (Option 2 Dynamic Flow) */}
@@ -616,7 +631,7 @@ export function QuranHizbReaderModal({
                 >
                   <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#C5A059]/30 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
                     <span>سورة {page.surahTitle || meta.surahs[0]}</span>
-                    <span>صفحة {toArabicDigits(page.pageNumber)}</span>
+                    <span>صفحة {page.pageNumber}</span>
                   </div>
 
                   {/* Quran Page Body (Option 2 Dynamic Flow) */}
@@ -642,7 +657,7 @@ export function QuranHizbReaderModal({
               </button>
 
               <span className="text-xs font-ibm font-bold text-[#826122] dark:text-[#E5C378] px-2">
-                {toArabicDigits(safePageIndex + 1)} / {toArabicDigits(totalPages)}
+                {safePageIndex + 1} / {totalPages}
               </span>
 
               <button
@@ -656,7 +671,7 @@ export function QuranHizbReaderModal({
             </div>
           ) : (
             <div className="text-xs text-[#52796F] dark:text-[#9BB0A5] font-ibm">
-              وضع التمرير المتصل: {toArabicDigits(totalPages)} صفحات للحزب المبارك
+              وضع التمرير المتصل: {totalPages} صفحات للحزب المبارك
             </div>
           )}
 

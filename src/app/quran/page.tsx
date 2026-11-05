@@ -21,14 +21,15 @@ import {
   ALL_AHZAB_INDEX,
   HizbIndexItem,
   getTodayAhzabNumbers,
-  toArabicDigits,
 } from "@/lib/quran";
 import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
+import { QuranThematicExplorer } from "@/components/QuranThematicExplorer";
 
 // Fixed date for deterministic SSR / SSG prerender
 const INITIAL_DATE = new Date("2026-11-05T12:00:00Z");
 
 export default function QuranIndexPage() {
+  const [mainView, setMainView] = useState<"ahzab" | "thematic">("ahzab");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<
     "all" | "today" | "first_half" | "second_half" | "mufassal"
@@ -133,7 +134,7 @@ export default function QuranIndexPage() {
                 className="text-sm font-bold text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Sun className="w-3.5 h-3.5" />
-                <span>الحزب {toArabicDigits(todayAhzab.morningHizb)}</span>
+                <span>الحزب {todayAhzab.morningHizb}</span>
               </button>
             </div>
             <div className="p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
@@ -143,153 +144,186 @@ export default function QuranIndexPage() {
                 className="text-sm font-bold text-orange-300 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <Sunset className="w-3.5 h-3.5" />
-                <span>الحزب {toArabicDigits(todayAhzab.eveningHizb)}</span>
+                <span>الحزب {todayAhzab.eveningHizb}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Search & Filter Toolbar */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-          {/* Search Box */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ابحث برقم الحزب (مثلاً: 1)، اسم السورة (البقرة)، أو مطلع الآية..."
-              className="w-full pr-10 pl-4 py-2 rounded-xl bg-[#FAF7F2] dark:bg-[#07130E] border border-[#E7DFD5] dark:border-[#203D31] text-xs text-[#1D2A24] dark:text-[#FAF7F2] focus:outline-none focus:border-[#C5A059]"
-            />
-          </div>
+        {/* Main View Switcher: Ahzab vs Thematic Explorer */}
+        <div className="flex items-center justify-center p-1.5 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] max-w-lg mx-auto shadow-xs">
+          <button
+            onClick={() => setMainView("ahzab")}
+            className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
+              mainView === "ahzab"
+                ? "bg-[#143628] text-[#E5C378] shadow-sm"
+                : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#143628] dark:hover:text-white"
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            <span>الأحزاب الستون (المصحف)</span>
+          </button>
 
-          {/* Filter Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none shrink-0">
-            {[
-              { key: "all", label: "جميع الأحزاب (60)" },
-              { key: "today", label: "حزبا اليوم الراتب" },
-              { key: "first_half", label: "النصف الأول (1-30)" },
-              { key: "second_half", label: "النصف الثاني (31-60)" },
-              { key: "mufassal", label: "المُفَصَّل (51-60)" },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setSelectedFilter(tab.key as any)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
-                  selectedFilter === tab.key
-                    ? "bg-[#143628] text-white dark:bg-[#C5A059] dark:text-[#143628] shadow-xs"
-                    : "bg-[#FAF7F2] dark:bg-[#122820] text-[#52796F] dark:text-[#A1B3A9] hover:bg-[#C5A059]/15"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+          <button
+            onClick={() => setMainView("thematic")}
+            className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
+              mainView === "thematic"
+                ? "bg-[#143628] text-[#E5C378] shadow-sm"
+                : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#143628] dark:hover:text-white"
+            }`}
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>الكشاف القرآني لمقامات السلوك</span>
+          </button>
         </div>
 
-        {/* 60 Ahzab Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAhzab.map((hizb) => {
-            const isMorning = hizb.hizb_number === todayAhzab.morningHizb;
-            const isEvening = hizb.hizb_number === todayAhzab.eveningHizb;
-
-            return (
-              <div
-                key={hizb.hizb_number}
-                className={`p-5 rounded-2xl bg-white dark:bg-[#0E2019] border transition-all duration-200 space-y-3 shadow-xs hover:shadow-md ${
-                  isMorning || isEvening
-                    ? "border-2 border-[#C5A059] ring-2 ring-[#C5A059]/20"
-                    : "border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059]/60"
-                }`}
-              >
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-[#143628] dark:bg-[#1B4332] text-[#C5A059] flex items-center justify-center font-amiri font-bold text-sm">
-                      {toArabicDigits(hizb.hizb_number)}
-                    </div>
-                    <div>
-                      <h3 className="font-amiri text-base sm:text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
-                        الحِزْبُ {toArabicDigits(hizb.hizb_number)}
-                      </h3>
-                    </div>
-                  </div>
-
-                  {/* Badges */}
-                  <div className="flex items-center gap-1.5">
-                    {isMorning && (
-                      <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[10px] font-bold">
-                        🌅 ورد الصباح
-                      </span>
-                    )}
-                    {isEvening && (
-                      <span className="px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-700 dark:text-orange-300 text-[10px] font-bold">
-                        🌇 ورد المساء
-                      </span>
-                    )}
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#826122] dark:text-[#E5C378] font-bold">
-                      {toArabicDigits(hizb.page_count)} صفحة
-                    </span>
-                  </div>
-                </div>
-
-                {/* Surahs contained */}
-                <div className="flex flex-wrap gap-1 text-[11px]">
-                  {hizb.surahs.map((surah) => (
-                    <span
-                      key={surah}
-                      className="px-2 py-0.5 rounded-md bg-[#FAF7F2] dark:bg-[#122820] text-[#52796F] dark:text-[#A1B3A9] border border-[#E7DFD5]/80 dark:border-[#203D31]/80 font-ibm"
-                    >
-                      سورة {surah}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Opening Aya (Matlaa) */}
-                <p className="text-xs text-[#143628] dark:text-[#FAF7F2] font-amiri leading-relaxed p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#C5A059]/20 line-clamp-2">
-                  « {hizb.matlaa} »
-                </p>
-
-                {/* Card Footer */}
-                <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-gray-800">
-                  <span className="text-[10px] text-gray-500 font-ibm">
-                    ص {toArabicDigits(hizb.start_page)} إلى ص {toArabicDigits(hizb.end_page)}
-                  </span>
-
-                  <button
-                    onClick={() =>
-                      openHizbReader(
-                        hizb.hizb_number,
-                        isMorning ? "subh" : isEvening ? "masa" : "custom"
-                      )
-                    }
-                    className="px-3.5 py-1.5 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] text-xs font-bold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
-                  >
-                    <BookOpen className="w-3.5 h-3.5" />
-                    <span>تلاوة الحزب بالمصحف</span>
-                  </button>
-                </div>
+        {mainView === "thematic" ? (
+          <QuranThematicExplorer onOpenHizb={(hNum) => openHizbReader(hNum, "custom")} />
+        ) : (
+          <>
+            {/* Search & Filter Toolbar */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+              {/* Search Box */}
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="ابحث برقم الحزب (مثلاً: 1)، اسم السورة (البقرة)، أو مطلع الآية..."
+                  className="w-full pr-10 pl-4 py-2 rounded-xl bg-[#FAF7F2] dark:bg-[#07130E] border border-[#E7DFD5] dark:border-[#203D31] text-xs text-[#1D2A24] dark:text-[#FAF7F2] focus:outline-none focus:border-[#C5A059]"
+                />
               </div>
-            );
-          })}
-        </div>
 
-        {filteredAhzab.length === 0 && (
-          <div className="p-12 text-center bg-white dark:bg-[#0E2019] rounded-2xl border border-gray-200 dark:border-gray-800 space-y-3">
-            <BookOpen className="w-10 h-10 text-gray-400 mx-auto" />
-            <p className="font-amiri text-lg text-gray-600 dark:text-gray-300">
-              لم يتم العثور على أي حزب يطابق بحثك «{searchQuery}».
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedFilter("all");
-              }}
-              className="px-4 py-2 rounded-xl bg-[#143628] text-white text-xs font-bold transition cursor-pointer"
-            >
-              عرض جميع الأحزاب الستين
-            </button>
-          </div>
+              {/* Filter Chips */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none shrink-0">
+                {[
+                  { key: "all", label: "جميع الأحزاب (60)" },
+                  { key: "today", label: "حزبا اليوم الراتب" },
+                  { key: "first_half", label: "النصف الأول (1-30)" },
+                  { key: "second_half", label: "النصف الثاني (31-60)" },
+                  { key: "mufassal", label: "المُفَصَّل (51-60)" },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setSelectedFilter(tab.key as any)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                      selectedFilter === tab.key
+                        ? "bg-[#143628] text-white dark:bg-[#C5A059] dark:text-[#143628] shadow-xs"
+                        : "bg-[#FAF7F2] dark:bg-[#122820] text-[#52796F] dark:text-[#A1B3A9] hover:bg-[#C5A059]/15"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 60 Ahzab Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredAhzab.map((hizb) => {
+                const isMorning = hizb.hizb_number === todayAhzab.morningHizb;
+                const isEvening = hizb.hizb_number === todayAhzab.eveningHizb;
+
+                return (
+                  <div
+                    key={hizb.hizb_number}
+                    className={`p-5 rounded-2xl bg-white dark:bg-[#0E2019] border transition-all duration-200 space-y-3 shadow-xs hover:shadow-md ${
+                      isMorning || isEvening
+                        ? "border-2 border-[#C5A059] ring-2 ring-[#C5A059]/20"
+                        : "border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059]/60"
+                    }`}
+                  >
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-[#143628] dark:bg-[#1B4332] text-[#C5A059] flex items-center justify-center font-sans font-bold text-sm">
+                          {hizb.hizb_number}
+                        </div>
+                        <div>
+                          <h3 className="font-amiri text-base sm:text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            الحِزْبُ {hizb.hizb_number}
+                          </h3>
+                        </div>
+                      </div>
+
+                      {/* Badges */}
+                      <div className="flex items-center gap-1.5">
+                        {isMorning && (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[10px] font-bold">
+                            🌅 ورد الصباح
+                          </span>
+                        )}
+                        {isEvening && (
+                          <span className="px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-700 dark:text-orange-300 text-[10px] font-bold">
+                            🌇 ورد المساء
+                          </span>
+                        )}
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#826122] dark:text-[#E5C378] font-bold">
+                          {hizb.page_count} صفحة
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Surahs contained */}
+                    <div className="flex flex-wrap gap-1 text-[11px]">
+                      {hizb.surahs.map((surah) => (
+                        <span
+                          key={surah}
+                          className="px-2 py-0.5 rounded-md bg-[#FAF7F2] dark:bg-[#122820] text-[#52796F] dark:text-[#A1B3A9] border border-[#E7DFD5]/80 dark:border-[#203D31]/80 font-ibm"
+                        >
+                          سورة {surah}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Opening Aya (Matlaa) */}
+                    <p className="text-xs text-[#143628] dark:text-[#FAF7F2] font-amiri leading-relaxed p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#C5A059]/20 line-clamp-2">
+                      « {hizb.matlaa} »
+                    </p>
+
+                    {/* Card Footer */}
+                    <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-gray-800">
+                      <span className="text-[10px] text-gray-500 font-ibm">
+                        ص {hizb.start_page} إلى ص {hizb.end_page}
+                      </span>
+
+                      <button
+                        onClick={() =>
+                          openHizbReader(
+                            hizb.hizb_number,
+                            isMorning ? "subh" : isEvening ? "masa" : "custom"
+                          )
+                        }
+                        className="px-3.5 py-1.5 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] text-xs font-bold flex items-center gap-1.5 transition shadow-xs cursor-pointer"
+                      >
+                        <BookOpen className="w-3.5 h-3.5" />
+                        <span>تلاوة الحزب بالمصحف</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {filteredAhzab.length === 0 && (
+              <div className="p-12 text-center bg-white dark:bg-[#0E2019] rounded-2xl border border-gray-200 dark:border-gray-800 space-y-3">
+                <BookOpen className="w-10 h-10 text-gray-400 mx-auto" />
+                <p className="font-amiri text-lg text-gray-600 dark:text-gray-300">
+                  لم يتم العثور على أي حزب يطابق بحثك «{searchQuery}».
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedFilter("all");
+                  }}
+                  className="px-4 py-2 rounded-xl bg-[#143628] text-white text-xs font-bold transition cursor-pointer"
+                >
+                  عرض جميع الأحزاب الستين
+                </button>
+              </div>
+            )}
+          </>
         )}
       </main>
 
