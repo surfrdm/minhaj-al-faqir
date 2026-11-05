@@ -21,12 +21,63 @@ import {
 import {
   QuranHizbData,
   QuranPage,
+  QuranWord,
   toArabicDigits,
   getHizbMeta,
   ALL_AHZAB_INDEX,
   getTomonDivisionInfo,
   cleanQuranWordText,
 } from "@/lib/quran";
+
+interface PageSection {
+  type: "surah_title" | "text_block";
+  title?: string;
+  words?: QuranWord[];
+  isEndOfSurah?: boolean;
+}
+
+/**
+ * تقسيم أسطر الصفحة إلى أقسام: عناوين السور، وفقرات نصية قرآنية متصلة تتدفق تلقائياً
+ */
+function getPageSections(page: QuranPage): PageSection[] {
+  const sections: PageSection[] = [];
+  let currentWords: QuranWord[] = [];
+
+  for (const line of page.lines) {
+    if (line.is_surah_title === "1") {
+      if (currentWords.length > 0) {
+        const lastWord = currentWords[currentWords.length - 1];
+        const isEnd =
+          lastWord?.is_last_word === "1" && lastWord?.verse?.is_last_verse === "1";
+        sections.push({
+          type: "text_block",
+          words: currentWords,
+          isEndOfSurah: isEnd,
+        });
+        currentWords = [];
+      }
+      sections.push({
+        type: "surah_title",
+        title: line.surah_title_ar || line.surah_title,
+      });
+    } else if (line.words && line.words.length > 0) {
+      currentWords.push(...line.words);
+    }
+  }
+
+  if (currentWords.length > 0) {
+    const lastWord = currentWords[currentWords.length - 1];
+    const isEnd =
+      lastWord?.is_last_word === "1" && lastWord?.verse?.is_last_verse === "1";
+    sections.push({
+      type: "text_block",
+      words: currentWords,
+      isEndOfSurah: isEnd,
+    });
+  }
+
+  return sections;
+}
 
 interface QuranHizbReaderModalProps {
   isOpen: boolean;
@@ -196,6 +247,127 @@ export function QuranHizbReaderModal({
     setCurrentPageIndex(0);
   };
 
+  const renderQuranWord = (w: QuranWord, wIdx: number) => {
+    const tomonInfo =
+      w.is_first_tomon === "1"
+        ? getTomonDivisionInfo(w.tomon_number || "1", currentHizb)
+        : null;
+    const cleanedText = cleanQuranWordText(w.text);
+
+    return (
+      <React.Fragment key={w.id || wIdx}>
+        {/* Moroccan Quran Division Badge (Hizb, Nisf, Rub', Thumun) */}
+        {tomonInfo && (
+          <span
+            className={`inline-flex items-center gap-1 mx-1.5 align-middle rounded-full select-none cursor-default font-amiri ${tomonInfo.badgeStyle}`}
+            title={tomonInfo.label}
+          >
+            <span>{tomonInfo.label}</span>
+          </span>
+        )}
+
+        {/* Word Text */}
+        <span className="inline-block hover:text-[#C5A059] transition-colors">
+          {cleanedText}
+        </span>
+
+        {/* Verse Number Badge in Western / Latin Digits (1, 2, 3...) */}
+        {w.is_last_word === "1" && w.verse?.verse_number && (
+          <span className="inline-flex items-center justify-center mx-1 select-none font-sans font-bold align-middle">
+            <span className="w-5 h-5 rounded-full border border-[#C5A059] text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 flex items-center justify-center shadow-2xs">
+              {w.verse.verse_number}
+            </span>
+          </span>
+        )}
+        {" "}
+      </React.Fragment>
+    );
+  };
+
+  const renderQuranPageBody = (page: QuranPage) => {
+    // الفاتحة وأول البقرة حتى المفلحون: توسيط متناسق في قلب الصفحة دون تمطيط
+    const isOpeningPage = page.page_number === 2 || page.page_number === 3;
+
+    if (isOpeningPage) {
+      return (
+        <div
+          className="space-y-3.5 sm:space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 text-center py-2"
+          style={{ fontSize: `${fontSize}px` }}
+        >
+          {page.lines.map((line) => {
+            if (line.is_surah_title === "1") {
+              return (
+                <div
+                  key={line.line_id}
+                  className="my-3 py-2 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs max-w-md mx-auto"
+                >
+                  <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
+                    سُورَةُ {line.surah_title_ar || line.surah_title}
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={line.line_id}
+                className="w-full text-center text-[#143628] dark:text-[#EAF2ED] select-text py-0.5"
+                style={{
+                  textAlign: "center",
+                  textAlignLast: "center",
+                  lineHeight: 2.3,
+                }}
+              >
+                {line.words.map((w, wIdx) => renderQuranWord(w, wIdx))}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // صفحات المصحف الشريف من ص 4 وما بعدها:
+    // ملء الأسطر تلقائياً وبمحاذاة كاملة (Justify) تملأ السطور دون فراغات شاذة
+    const sections = getPageSections(page);
+
+    return (
+      <div
+        className="space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 py-1"
+        style={{ fontSize: `${fontSize}px` }}
+      >
+        {sections.map((section, sIdx) => {
+          if (section.type === "surah_title") {
+            return (
+              <div
+                key={`st-${sIdx}`}
+                className="my-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
+              >
+                <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
+                  سُورَةُ {section.title}
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div
+              key={`tb-${sIdx}`}
+              className="w-full text-justify text-[#143628] dark:text-[#EAF2ED] select-text"
+              style={{
+                textAlign: "justify",
+                textJustify: "inter-word",
+                textAlignLast: section.isEndOfSurah ? "center" : "auto",
+                lineHeight: 2.3,
+              }}
+            >
+              {section.words?.map((w, wIdx) => renderQuranWord(w, wIdx))}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-md transition-all duration-300"
@@ -318,83 +490,8 @@ export function QuranHizbReaderModal({
                   <span>الصَّفْحَةُ {toArabicDigits(currentPage.page_number)}</span>
                 </div>
 
-                {/* 15 Lines Text Body */}
-                <div
-                  className="space-y-3 sm:space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30"
-                  style={{ fontSize: `${fontSize}px` }}
-                >
-                  {currentPage.lines.map((line) => {
-                    if (line.is_surah_title === "1") {
-                      return (
-                        <div
-                          key={line.line_id}
-                          className="my-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
-                        >
-                          <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
-                            سُورَةُ {line.surah_title_ar || line.surah_title}
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    const isShortEndLine =
-                      line.words.length <= 4 &&
-                      line.words.some(
-                        (w) => w.is_last_word === "1" && w.verse?.is_last_verse === "1"
-                      );
-
-                    return (
-                      <div
-                        key={line.line_id}
-                        className={`w-full ${
-                          isShortEndLine ? "text-center" : "text-justify"
-                        } text-[#143628] dark:text-[#EAF2ED] select-text transition-colors`}
-                        style={{
-                          textAlignLast: isShortEndLine ? "center" : "justify",
-                          textJustify: "inter-word",
-                          lineHeight: 2.2,
-                        }}
-                      >
-                        {line.words.map((w, wIdx) => {
-                          const tomonInfo =
-                            w.is_first_tomon === "1"
-                              ? getTomonDivisionInfo(w.tomon_number || "1", currentHizb)
-                              : null;
-                          const cleanedText = cleanQuranWordText(w.text);
-
-                          return (
-                            <React.Fragment key={w.id || wIdx}>
-                              {/* Moroccan Quran Division Badge (Hizb, Nisf, Rub', Thumun) */}
-                              {tomonInfo && (
-                                <span
-                                  className={`inline-flex items-center gap-1 mx-1.5 align-middle rounded-full select-none cursor-default font-amiri ${tomonInfo.badgeStyle}`}
-                                  title={tomonInfo.label}
-                                >
-                                  <span>{tomonInfo.label}</span>
-                                </span>
-                              )}
-
-                              {/* Word Text */}
-                              <span className="inline-block hover:text-[#C5A059] transition-colors">
-                                {cleanedText}
-                              </span>
-
-                              {/* Verse Number Badge in Western / Latin Digits (1, 2, 3...) */}
-                              {w.is_last_word === "1" && w.verse?.verse_number && (
-                                <span className="inline-flex items-center justify-center mx-1 select-none font-sans font-bold align-middle">
-                                  <span className="w-5 h-5 rounded-full border border-[#C5A059] text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 flex items-center justify-center shadow-2xs">
-                                    {w.verse.verse_number}
-                                  </span>
-                                </span>
-                              )}
-                              {" "}
-                            </React.Fragment>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
-                </div>
+                {/* Quran Page Body (Opening Pages Centered / Flow Pages Justified) */}
+                {renderQuranPageBody(currentPage)}
 
                 {/* Decorative Bottom Line */}
                 <div className="flex items-center justify-between pt-3 mt-4 border-t-2 border-[#C5A059]/40 text-xs font-ibm text-[#52796F] dark:text-[#9BB0A5]">
@@ -419,77 +516,8 @@ export function QuranHizbReaderModal({
                     <span>صفحة {page.page_number}</span>
                   </div>
 
-                  <div
-                    className="space-y-3 font-maghribi-quran"
-                    style={{ fontSize: `${fontSize}px` }}
-                  >
-                    {page.lines.map((line) => {
-                      if (line.is_surah_title === "1") {
-                        return (
-                          <div
-                            key={line.line_id}
-                            className="my-3 py-2 px-3 rounded-xl bg-[#C5A059]/25 border border-[#C5A059] text-center"
-                          >
-                            <span className="font-thuluth text-xl font-bold text-[#143628] dark:text-[#FAF7F2]">
-                              سُورَةُ {line.surah_title_ar || line.surah_title}
-                            </span>
-                          </div>
-                        );
-                      }
-
-                      const isShortEndLine =
-                        line.words.length <= 4 &&
-                        line.words.some(
-                          (w) => w.is_last_word === "1" && w.verse?.is_last_verse === "1"
-                        );
-
-                      return (
-                        <div
-                          key={line.line_id}
-                          className={`w-full ${
-                            isShortEndLine ? "text-center" : "text-justify"
-                          } text-[#143628] dark:text-[#EAF2ED] select-text`}
-                          style={{
-                            textAlignLast: isShortEndLine ? "center" : "justify",
-                            textJustify: "inter-word",
-                            lineHeight: 2.2,
-                          }}
-                        >
-                          {line.words.map((w, wIdx) => {
-                            const tomonInfo =
-                              w.is_first_tomon === "1"
-                                ? getTomonDivisionInfo(w.tomon_number || "1", currentHizb)
-                                : null;
-                            const cleanedText = cleanQuranWordText(w.text);
-
-                            return (
-                              <React.Fragment key={w.id || wIdx}>
-                                {tomonInfo && (
-                                  <span
-                                    className={`inline-flex items-center gap-1 mx-1.5 align-middle rounded-full select-none cursor-default font-amiri ${tomonInfo.badgeStyle}`}
-                                    title={tomonInfo.label}
-                                  >
-                                    <span>{tomonInfo.label}</span>
-                                  </span>
-                                )}
-                                <span className="inline-block hover:text-[#C5A059] transition-colors">
-                                  {cleanedText}
-                                </span>
-                                {w.is_last_word === "1" && w.verse?.verse_number && (
-                                  <span className="inline-flex items-center justify-center mx-1 select-none font-sans font-bold align-middle">
-                                    <span className="w-5 h-5 rounded-full border border-[#C5A059] text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 flex items-center justify-center shadow-2xs">
-                                      {w.verse.verse_number}
-                                    </span>
-                                  </span>
-                                )}
-                                {" "}
-                              </React.Fragment>
-                            );
-                          })}
-                        </div>
-                      );
-                    })}
-                  </div>
+                  {/* Quran Page Body (Opening Pages Centered / Flow Pages Justified) */}
+                  {renderQuranPageBody(page)}
                 </div>
               ))}
             </div>
