@@ -71,11 +71,12 @@ export function getDualDate(
 
   const gregFormatted = `${dayOfWeek} ${gregDay} ${gregMonth.ar} (${gregMonth.fr}) ${gregYear} م`;
 
-  // 2. Hijri Date with Moroccan Ministry offset
+  // 2. Hijri Date according to official Moroccan sighting (وزارة الأوقاف والشؤون الإسلامية بالمغرب)
+  // Morocco sighting is historically 1 day behind Umm al-Qura
   const hijriCalcDate = new Date(d);
-  hijriCalcDate.setDate(hijriCalcDate.getDate() + hijriOffsetDays);
+  hijriCalcDate.setDate(hijriCalcDate.getDate() - 1 + hijriOffsetDays);
 
-  let hijriDay = 25;
+  let hijriDay = 24;
   let hijriMonth = "جمادى الأولى";
   let hijriYear = 1448;
 

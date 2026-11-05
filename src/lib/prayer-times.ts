@@ -37,7 +37,8 @@ export interface NextPrayerInfo {
 
 export function calculateMoroccanPrayerTimes(
   date: Date = new Date(),
-  cityKey: string = "mohammedia"
+  cityKey: string = "mohammedia",
+  timezoneOffset: number = 0 // Default to GMT (0) to match Moroccan Mosque & Adhan clocks
 ): PrayerTimesResult {
   const city =
     MOROCCAN_CITIES.find((c) => c.key === cityKey) || MOROCCAN_CITIES[0];
@@ -67,9 +68,8 @@ export function calculateMoroccanPrayerTimes(
     0.006758 * Math.cos(2 * gamma) +
     0.000907 * Math.sin(2 * gamma);
 
-  // Morocco operates on UTC+1 (GMT+1) standard
-  const timezone = 1;
-  const solarNoonMinutes = 720 - 4 * city.lng - eqtime + 60 * timezone;
+  // Moroccan Mosque / Habous standard timing is GMT (0)
+  const solarNoonMinutes = 720 - 4 * city.lng - eqtime + 60 * timezoneOffset;
 
   function getHA(altitudeDeg: number) {
     const altRad = altitudeDeg * (Math.PI / 180);
@@ -112,8 +112,14 @@ export function calculateMoroccanPrayerTimes(
   };
 }
 
-export function getNextPrayer(times: PrayerTimesResult, now: Date = new Date()): NextPrayerInfo {
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+export function getNextPrayer(
+  times: PrayerTimesResult,
+  now: Date = new Date(),
+  timezoneOffset: number = 0
+): NextPrayerInfo {
+  // Compute current clock in the same timezone as prayer times (independent of device locale)
+  const currentMinutes =
+    ((now.getUTCHours() + timezoneOffset + 24) % 24) * 60 + now.getUTCMinutes();
 
   const parseTime = (timeStr: string) => {
     const [h, m] = timeStr.split(":").map(Number);

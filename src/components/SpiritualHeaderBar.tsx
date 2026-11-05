@@ -34,7 +34,6 @@ const INITIAL_DATE = new Date("2026-11-05T12:00:00Z");
 
 export function SpiritualHeaderBar() {
   const [selectedCity, setSelectedCity] = useState<string>("mohammedia");
-  const [hijriOffset, setHijriOffset] = useState<number>(0);
   const [isShortMonth, setIsShortMonth] = useState<boolean>(false);
   const [showHizbModal, setShowHizbModal] = useState<boolean>(false);
   const [showCityMenu, setShowCityMenu] = useState<boolean>(false);
@@ -53,9 +52,6 @@ export function SpiritualHeaderBar() {
       const savedCity = localStorage.getItem("minhaj_prayer_city");
       if (savedCity) setSelectedCity(savedCity);
 
-      const savedOffset = localStorage.getItem("minhaj_hijri_offset");
-      if (savedOffset) setHijriOffset(parseInt(savedOffset, 10));
-
       const savedShort = localStorage.getItem("minhaj_hijri_short_month");
       if (savedShort) setIsShortMonth(savedShort === "true");
     } catch (e) {}
@@ -69,13 +65,6 @@ export function SpiritualHeaderBar() {
     } catch (e) {}
   };
 
-  const handleOffsetChange = (newOffset: number) => {
-    setHijriOffset(newOffset);
-    try {
-      localStorage.setItem("minhaj_hijri_offset", String(newOffset));
-    } catch (e) {}
-  };
-
   const handleShortMonthToggle = () => {
     const newVal = !isShortMonth;
     setIsShortMonth(newVal);
@@ -84,21 +73,22 @@ export function SpiritualHeaderBar() {
     } catch (e) {}
   };
 
-  // Calculations
+  // Calculations: Authentic Moroccan official sighting and mosque timing (GMT)
   const dateInfo: DualDateInfo = useMemo(() => {
-    return getDualDate(currentTime, hijriOffset);
-  }, [currentTime, hijriOffset]);
+    return getDualDate(currentTime);
+  }, [currentTime]);
 
   const hizbRatib: DailyHizbRatibResult = useMemo(() => {
     return getDailyHizbRatib(dateInfo.hijri.day, isShortMonth);
   }, [dateInfo.hijri.day, isShortMonth]);
 
   const prayerTimes: PrayerTimesResult = useMemo(() => {
-    return calculateMoroccanPrayerTimes(currentTime, selectedCity);
+    // 0 = GMT standard timing as used in Moroccan Mosques & Adhan (Dhuhr at 12:13)
+    return calculateMoroccanPrayerTimes(currentTime, selectedCity, 0);
   }, [currentTime, selectedCity]);
 
   const nextPrayer: NextPrayerInfo = useMemo(() => {
-    return getNextPrayer(prayerTimes, currentTime);
+    return getNextPrayer(prayerTimes, currentTime, 0);
   }, [prayerTimes, currentTime]);
 
   return (
@@ -136,44 +126,6 @@ export function SpiritualHeaderBar() {
                   {String(currentTime.getMinutes()).padStart(2, "0")}
                 </span>
               </div>
-            </div>
-
-            {/* Hijri Offset Quick Adjustment (-1, 0, +1 day) */}
-            <div className="mr-auto flex items-center gap-1 bg-[#FAF7F2] dark:bg-[#07130E] px-1.5 py-0.5 rounded-lg border border-[#E7DFD5] dark:border-[#203D31] text-[10px]">
-              <span className="text-gray-400 hidden sm:inline">تعديل الرؤية:</span>
-              <button
-                onClick={() => handleOffsetChange(-1)}
-                className={`px-1.5 py-0.5 rounded transition ${
-                  hijriOffset === -1
-                    ? "bg-[#C5A059] text-white font-bold"
-                    : "text-gray-500 hover:text-black dark:hover:text-white"
-                }`}
-                title="تأخير يوم حسب إعلان الوزارة"
-              >
-                -1
-              </button>
-              <button
-                onClick={() => handleOffsetChange(0)}
-                className={`px-1.5 py-0.5 rounded transition ${
-                  hijriOffset === 0
-                    ? "bg-[#143628] text-[#E5C378] font-bold"
-                    : "text-gray-500 hover:text-black dark:hover:text-white"
-                }`}
-                title="التاريخ الافتراضي"
-              >
-                0
-              </button>
-              <button
-                onClick={() => handleOffsetChange(1)}
-                className={`px-1.5 py-0.5 rounded transition ${
-                  hijriOffset === 1
-                    ? "bg-[#C5A059] text-white font-bold"
-                    : "text-gray-500 hover:text-black dark:hover:text-white"
-                }`}
-                title="تقديم يوم حسب إعلان الوزارة"
-              >
-                +1
-              </button>
             </div>
           </div>
 
@@ -276,6 +228,12 @@ export function SpiritualHeaderBar() {
                 </div>
               )}
             </div>
+
+            {/* Mosque Timing Badge */}
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-[#FAF7F2] dark:bg-[#07130E] border border-[#C5A059]/40 text-[#143628] dark:text-[#E5C378]">
+              <Clock className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>توقيت المساجد والزوايا بالمغرب</span>
+            </span>
 
             {/* Next Prayer Countdown Pill */}
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-[11px] font-bold text-emerald-800 dark:text-emerald-300">
