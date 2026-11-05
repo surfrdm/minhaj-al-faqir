@@ -79,19 +79,9 @@ const SCHEDULE_DATA: Record<number, DaySchedule> = {
       },
     ],
   },
-  0: {
-    dayName: "الأحد",
-    dayIndex: 0,
-    items: [
-      {
-        timeLabel: "بعد صلاة المغرب",
-        title: "الحزب الراتب + الوظيفة",
-      },
-    ],
-  },
 };
 
-const ORDERED_DAYS = [1, 2, 3, 4, 5, 6, 0]; // Mon to Sun
+const ORDERED_DAYS = [1, 2, 3, 4, 5, 6]; // Strictly Monday to Saturday
 
 export function ZaouiaSchedule() {
   const [selectedDay, setSelectedDay] = useState<number>(4); // Default to Thursday for SSR
@@ -100,7 +90,8 @@ export function ZaouiaSchedule() {
   useEffect(() => {
     const current = new Date().getDay();
     setTodayDayIndex(current);
-    setSelectedDay(current);
+    // If Sunday (0), display Monday (1)
+    setSelectedDay(current === 0 ? 1 : current);
   }, []);
 
   const activeSchedule = SCHEDULE_DATA[selectedDay] || SCHEDULE_DATA[1];
@@ -116,18 +107,20 @@ export function ZaouiaSchedule() {
             </div>
             <div>
               <h2 className="font-amiri text-base sm:text-lg font-bold text-[#143628] dark:text-[#E8F0EC]">
-                برنامج الزاوية
+                البرنامج اليومي للزاوية المحمدية
               </h2>
             </div>
           </div>
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#143628]/5 dark:bg-[#143628]/40 border border-[#C5A059]/30 text-xs font-bold text-[#143628] dark:text-[#E5C378] self-start sm:self-auto">
-            <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span>اليوم: {SCHEDULE_DATA[todayDayIndex]?.dayName || ""}</span>
-          </div>
+          {todayDayIndex >= 1 && todayDayIndex <= 6 && (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#143628]/5 dark:bg-[#143628]/40 border border-[#C5A059]/30 text-xs font-bold text-[#143628] dark:text-[#E5C378] self-start sm:self-auto">
+              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>اليوم: {SCHEDULE_DATA[todayDayIndex]?.dayName || ""}</span>
+            </div>
+          )}
         </div>
 
-        {/* Day Selector Pills */}
+        {/* Day Selector Pills (Mon to Sat ONLY) */}
         <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-3 scrollbar-none">
           {ORDERED_DAYS.map((dayIdx) => {
             const day = SCHEDULE_DATA[dayIdx];
