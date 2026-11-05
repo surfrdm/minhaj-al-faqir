@@ -28,6 +28,7 @@ import {
 } from "@/lib/prayer-times";
 import { getDailyHizbRatib, DailyHizbRatibResult, HizbInfo } from "@/lib/hizb-ratib";
 import { getDualDate, DualDateInfo } from "@/lib/hijri-calendar";
+import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
 
 // Fixed initial date for deterministic SSG / Next.js prerender
 const INITIAL_DATE = new Date("2026-11-05T12:00:00Z");
@@ -38,6 +39,8 @@ export function SpiritualHeaderBar() {
   const [showHizbModal, setShowHizbModal] = useState<boolean>(false);
   const [showCityMenu, setShowCityMenu] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<Date>(INITIAL_DATE);
+  const [readerHizbNumber, setReaderHizbNumber] = useState<number | null>(null);
+  const [readerPeriod, setReaderPeriod] = useState<"subh" | "masa" | "custom">("subh");
 
   // Update clock on mount and every minute
   useEffect(() => {
@@ -151,14 +154,34 @@ export function SpiritualHeaderBar() {
 
                 {/* Hizbs summary */}
                 <div className="font-amiri text-xs sm:text-sm font-bold text-[#143628] dark:text-[#FAF7F2] flex flex-wrap items-center gap-2 mt-0.5">
-                  <span className="bg-white/80 dark:bg-[#1B4332] px-2 py-0.5 rounded-md border border-[#C5A059]/30">
-                    🌅 الصباح:{" "}
-                    {hizbRatib.morningHizbs.map((h) => `${h.name} (${h.number})`).join(" و ")}
-                  </span>
-                  <span className="bg-white/80 dark:bg-[#1B4332] px-2 py-0.5 rounded-md border border-[#C5A059]/30">
-                    🌇 المساء:{" "}
-                    {hizbRatib.eveningHizbs.map((h) => `${h.name} (${h.number})`).join(" و ")}
-                  </span>
+                  {hizbRatib.morningHizbs.map((h) => (
+                    <button
+                      key={`subh-${h.number}`}
+                      onClick={() => {
+                        setReaderHizbNumber(h.number);
+                        setReaderPeriod("subh");
+                      }}
+                      className="bg-white/90 dark:bg-[#1B4332] hover:bg-[#C5A059]/20 px-2.5 py-1 rounded-xl border border-[#C5A059]/40 flex items-center gap-1.5 transition cursor-pointer text-xs"
+                      title="فتح حزب الصباح في المصحف الشريف"
+                    >
+                      <span>🌅 الصباح: {h.name} ({h.number})</span>
+                      <BookOpen className="w-3.5 h-3.5 text-[#C5A059]" />
+                    </button>
+                  ))}
+                  {hizbRatib.eveningHizbs.map((h) => (
+                    <button
+                      key={`masa-${h.number}`}
+                      onClick={() => {
+                        setReaderHizbNumber(h.number);
+                        setReaderPeriod("masa");
+                      }}
+                      className="bg-white/90 dark:bg-[#1B4332] hover:bg-[#C5A059]/20 px-2.5 py-1 rounded-xl border border-[#C5A059]/40 flex items-center gap-1.5 transition cursor-pointer text-xs"
+                      title="فتح حزب المساء في المصحف الشريف"
+                    >
+                      <span>🌇 المساء: {h.name} ({h.number})</span>
+                      <BookOpen className="w-3.5 h-3.5 text-[#C5A059]" />
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -409,9 +432,22 @@ export function SpiritualHeaderBar() {
                         <span className="font-amiri font-bold text-base text-[#143628] dark:text-[#FAF7F2]">
                           {hizb.name} (رقم {hizb.number})
                         </span>
-                        <span className="text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 px-2.5 py-0.5 rounded-full">
-                          {hizb.surahs}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 px-2.5 py-0.5 rounded-full">
+                            {hizb.surahs}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setShowHizbModal(false);
+                              setReaderHizbNumber(hizb.number);
+                              setReaderPeriod("subh");
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] text-xs font-bold flex items-center gap-1 transition cursor-pointer"
+                          >
+                            <BookOpen className="w-3 h-3" />
+                            <span>اقرأ الحزب بالمصحف</span>
+                          </button>
+                        </div>
                       </div>
                       <p className="font-amiri text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed bg-[#FAF7F2] dark:bg-[#07130E] p-3 rounded-xl border border-[#C5A059]/20">
                         « {hizb.opening} »
@@ -438,9 +474,22 @@ export function SpiritualHeaderBar() {
                         <span className="font-amiri font-bold text-base text-[#143628] dark:text-[#FAF7F2]">
                           {hizb.name} (رقم {hizb.number})
                         </span>
-                        <span className="text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 px-2.5 py-0.5 rounded-full">
-                          {hizb.surahs}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 px-2.5 py-0.5 rounded-full">
+                            {hizb.surahs}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setShowHizbModal(false);
+                              setReaderHizbNumber(hizb.number);
+                              setReaderPeriod("masa");
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] text-xs font-bold flex items-center gap-1 transition cursor-pointer"
+                          >
+                            <BookOpen className="w-3 h-3" />
+                            <span>اقرأ الحزب بالمصحف</span>
+                          </button>
+                        </div>
                       </div>
                       <p className="font-amiri text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed bg-[#FAF7F2] dark:bg-[#07130E] p-3 rounded-xl border border-[#C5A059]/20">
                         « {hizb.opening} »
@@ -478,6 +527,16 @@ export function SpiritualHeaderBar() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Quran Hizb Reader Modal */}
+      {readerHizbNumber && (
+        <QuranHizbReaderModal
+          isOpen={true}
+          onClose={() => setReaderHizbNumber(null)}
+          hizbNumber={readerHizbNumber}
+          hizbPeriod={readerPeriod}
+        />
       )}
     </div>
   );

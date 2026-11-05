@@ -31,6 +31,9 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { getTodayAhzabNumbers, toArabicDigits } from "@/lib/quran";
+import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
+import { DailyQuranAhzabCard } from "@/components/DailyQuranAhzabCard";
 
 // Types
 interface Habit {
@@ -55,12 +58,13 @@ interface PlannerTask {
 }
 
 const DEFAULT_HABITS: Habit[] = [
-  { id: "h1", name: "حِزبا القرآن الكريم (الصبح والمساء)", isDefault: true },
-  { id: "h2", name: "حزب دلائل الخيرات للإمام الجزولي", isDefault: true },
-  { id: "h3", name: "الورد العام (الاستغفار • الصلاة • التوحيد)", isDefault: true },
-  { id: "h4", name: "15,000 هَيْلَلَة (جلسة التوحيد ~ ساعة ونصف)", isDefault: true },
-  { id: "h5", name: "حضور الوظيفة الراتبة بالزاوية", isDefault: true },
-  { id: "h6", name: "أذكار الصباح والمساء وحفظ اللسان", isDefault: true },
+  { id: "h1_subh", name: "🌅 حِزْبُ الصَّبَاحِ (القرآن الكريم)", isDefault: true },
+  { id: "h1_masa", name: "🌇 حِزْبُ المَسَاءِ (القرآن الكريم)", isDefault: true },
+  { id: "h2", name: "📖 حِزْبُ دَلائِلِ الخَيْرَاتِ لِلإِمَامِ الجَزُولِيِّ", isDefault: true },
+  { id: "h3", name: "📿 الورد العام (الاستغفار • الصلاة • التوحيد)", isDefault: true },
+  { id: "h4", name: "✨ 15,000 هَيْلَلَة (جلسة التوحيد ~ ساعة ونصف)", isDefault: true },
+  { id: "h5", name: "🕌 حضور الوظيفة الراتبة بالزاوية", isDefault: true },
+  { id: "h6", name: "🌿 أذكار الصباح والمساء وحفظ اللسان", isDefault: true },
 ];
 
 const NOTE_CATEGORIES: {
@@ -124,6 +128,15 @@ export default function FaqirPortalPage() {
   const [paidMonths, setPaidMonths] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   const [serverSyncStatus, setServerSyncStatus] = useState<"synced" | "saving" | "offline">("synced");
 
+  // Quran Reader Modal State
+  const [readerHizb, setReaderHizb] = useState<number | null>(null);
+  const [readerPeriod, setReaderPeriod] = useState<"subh" | "masa" | "custom">("subh");
+
+  // Selected Day Ahzab numbers (Morning & Evening)
+  const todayAhzab = useMemo(() => {
+    return getTodayAhzabNumbers(selectedDate);
+  }, [selectedDate]);
+
   const syncWithServer = async (data: {
     habits?: Habit[];
     checks?: Record<string, Record<string, boolean>>;
@@ -161,10 +174,40 @@ export default function FaqirPortalPage() {
       setTodayKey(formatDateKey(now));
 
       const savedHabits = localStorage.getItem("minhaj_faqir_habits");
-      if (savedHabits) setHabits(JSON.parse(savedHabits));
+      if (savedHabits) {
+        let parsed: Habit[] = JSON.parse(savedHabits);
+        // Seamless migration: replace legacy 'h1' with h1_subh and h1_masa
+        if (parsed.some((h) => h.id === "h1") && !parsed.some((h) => h.id === "h1_subh")) {
+          parsed = [
+            { id: "h1_subh", name: "🌅 حِزْبُ الصَّبَاحِ (القرآن الكريم)", isDefault: true },
+            { id: "h1_masa", name: "🌇 حِزْبُ المَسَاءِ (القرآن الكريم)", isDefault: true },
+            ...parsed.filter((h) => h.id !== "h1"),
+          ];
+          localStorage.setItem("minhaj_faqir_habits", JSON.stringify(parsed));
+        }
+        setHabits(parsed);
+      }
 
       const savedChecks = localStorage.getItem("minhaj_faqir_checks");
-      if (savedChecks) setHabitChecks(JSON.parse(savedChecks));
+      if (savedChecks) {
+        const parsedChecks = JSON.parse(savedChecks);
+        // Migrate legacy h1 check to both h1_subh and h1_masa
+        Object.keys(parsedChecks).forEach((dateK) => {
+          if (parsedChecks[dateK]["h1"] && !parsedChecks[dateK]["h1_subh"]) {
+            parsedChecks[dateK]["h1_subh"] = true;
+            parsedChecks[dateK]["h1_masa"] = true;
+          }
+        });
+        setHabitChecks(parsedChecks);
+      }
+
+      // Event listener for cross-component sync
+      const handleSyncEvent = () => {
+        const freshChecks = localStorage.getItem("minhaj_faqir_checks");
+        if (freshChecks) setHabitChecks(JSON.parse(freshChecks));
+      };
+      window.addEventListener("faqir-checks-updated", handleSyncEvent);
+      window.addEventListener("storage", handleSyncEvent);
 
       const savedPlanner = localStorage.getItem("minhaj_faqir_planner");
       if (savedPlanner) setPlannerTasks(JSON.parse(savedPlanner));
@@ -727,6 +770,9 @@ export default function FaqirPortalPage() {
                   )}
                 </div>
 
+                {/* Daily Quran Ahzab Card (حزبا الصباح والمساء بالمصحف الشريف) */}
+                <DailyQuranAhzabCard />
+
                 {/* Habits List */}
                 <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] shadow-sm space-y-4">
                   <div className="flex flex-wrap items-center justify-between gap-2 pb-1 border-b border-[#E7DFD5]/60 dark:border-[#203D31]/60">
@@ -788,18 +834,59 @@ export default function FaqirPortalPage() {
                               >
                                 {isChecked && <CheckCircle2 className="w-4 h-4" />}
                               </button>
-                              <span
-                                className={`text-xs sm:text-sm font-semibold ${
-                                  isChecked
-                                    ? "text-[#143628] dark:text-[#E5C378] line-through opacity-80"
-                                    : "text-[#1D2A24] dark:text-[#E8F0EC]"
-                                }`}
-                              >
-                                {habit.name}
-                              </span>
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                <span
+                                  className={`text-xs sm:text-sm font-semibold ${
+                                    isChecked
+                                      ? "text-[#143628] dark:text-[#E5C378] line-through opacity-80"
+                                      : "text-[#1D2A24] dark:text-[#E8F0EC]"
+                                  }`}
+                                >
+                                  {habit.name}
+                                </span>
+
+                                {habit.id === "h1_subh" && (
+                                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded-md">
+                                    الحزب {toArabicDigits(todayAhzab.morningHizb)}
+                                  </span>
+                                )}
+                                {habit.id === "h1_masa" && (
+                                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-orange-700 dark:text-orange-400 bg-orange-500/15 px-2 py-0.5 rounded-md">
+                                    الحزب {toArabicDigits(todayAhzab.eveningHizb)}
+                                  </span>
+                                )}
+                              </div>
                             </div>
 
                             <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                              {habit.id === "h1_subh" && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReaderHizb(todayAhzab.morningHizb);
+                                    setReaderPeriod("subh");
+                                  }}
+                                  className="px-2.5 py-1 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] text-xs font-bold flex items-center gap-1 transition shadow-xs cursor-pointer"
+                                  title="فتح حزب الصباح في المصحف الشريف"
+                                >
+                                  <BookOpen className="w-3.5 h-3.5" />
+                                  <span>اقرأ الحزب</span>
+                                </button>
+                              )}
+                              {habit.id === "h1_masa" && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setReaderHizb(todayAhzab.eveningHizb);
+                                    setReaderPeriod("masa");
+                                  }}
+                                  className="px-2.5 py-1 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] text-xs font-bold flex items-center gap-1 transition shadow-xs cursor-pointer"
+                                  title="فتح حزب المساء في المصحف الشريف"
+                                >
+                                  <BookOpen className="w-3.5 h-3.5" />
+                                  <span>اقرأ الحزب</span>
+                                </button>
+                              )}
                               {habit.isDefault && (
                                 <span className="px-2 py-0.5 rounded-md bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378] text-[10px] font-bold">
                                   راتب الطريقة
@@ -1161,6 +1248,16 @@ export default function FaqirPortalPage() {
           </section>
         </div>
       </main>
+
+      {/* Quran Hizb Reader Modal */}
+      {readerHizb && (
+        <QuranHizbReaderModal
+          isOpen={true}
+          onClose={() => setReaderHizb(null)}
+          hizbNumber={readerHizb}
+          hizbPeriod={readerPeriod}
+        />
+      )}
 
       <Footer />
     </div>

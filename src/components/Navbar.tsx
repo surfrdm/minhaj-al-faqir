@@ -149,6 +149,15 @@ export function Navbar() {
                 <span>زاد اليوم (3)</span>
               </a>
 
+              {/* Raccourci المصحف الشريف */}
+              <Link
+                href="/quran"
+                className="px-3 py-2 rounded-xl text-xs font-bold text-[#143628] dark:text-[#E5C378] hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5 border border-transparent hover:border-[#C5A059]/30"
+              >
+                <BookOpen className="w-4 h-4 text-[#C5A059]" />
+                <span>المصحف (60)</span>
+              </Link>
+
               {/* Raccourci 2: ديوان السماع الصوفي (32 سلسلة) */}
               <Link
                 href="/diwan"
@@ -281,6 +290,22 @@ export function Navbar() {
                       <span>فضاء الفقير (التقويم والمتتبع والمفكرة)</span>
                     </div>
                     <ChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-[#C5A059]" />
+                  </Link>
+
+                  <Link
+                    href="/quran"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-emerald-950/10 via-[#C5A059]/10 to-transparent dark:bg-[#0E2019] border border-[#C5A059]/40 hover:border-[#C5A059] text-xs font-bold text-[#143628] dark:text-[#E8F0EC] transition group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <BookOpen className="w-4 h-4 text-[#C5A059]" />
+                      <span className="font-amiri text-sm font-bold text-[#143628] dark:text-[#E5C378]">
+                        المُصْحَفُ المَحَمَّدِيُّ الشَّرِيفُ (60 حِزْباً)
+                      </span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378] font-bold">
+                      حزبا الراتب
+                    </span>
                   </Link>
 
                   <Link
