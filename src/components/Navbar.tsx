@@ -282,6 +282,22 @@ export function Navbar() {
                     </div>
                     <ChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-[#C5A059]" />
                   </Link>
+
+                  <Link
+                    href="/thawabit"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#C5A059]/15 via-[#1B4332]/10 to-[#C5A059]/15 border border-[#C5A059]/40 hover:border-[#C5A059] text-xs font-bold text-[#143628] dark:text-[#E8F0EC] transition group shadow-xs"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Award className="w-4 h-4 text-[#C5A059]" />
+                      <span className="font-amiri text-sm font-bold text-[#143628] dark:text-[#E5C378]">
+                        الثَّوَابِتُ الخَمْسَةُ وَفِقْهُ الطَّرِيقِ
+                      </span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378] font-bold">
+                      ميثاق وتوجيهات
+                    </span>
+                  </Link>
                 </div>
 
                 {/* 2. الشيخ والدروس والإعلام */}
@@ -412,6 +428,18 @@ export function Navbar() {
                     </div>
                     <ChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-[#C5A059]" />
                   </button>
+
+                  <Link
+                    href="/thawabit#adab-dhikr"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] text-xs font-bold text-[#143628] dark:text-[#E8F0EC] transition group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Compass className="w-4 h-4 text-[#C5A059]" />
+                      <span>فقه الطريق : آداب الذكر (11 أدباً)</span>
+                    </div>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378] font-bold">معتمد</span>
+                  </Link>
 
                   <button
                     onClick={() => navigateToTab("glossary")}
