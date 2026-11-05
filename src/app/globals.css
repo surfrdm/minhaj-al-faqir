@@ -2,7 +2,16 @@
 
 @font-face {
   font-family: 'AALMAGHRIBI';
-  src: url('/fonts/AALMAGHRIBI.ttf') format('truetype');
+  src: url('/fonts/AALMAGHRIBI.woff2') format('woff2'),
+       url('/fonts/AALMAGHRIBI.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DecoTypeThuluth';
+  src: url('/fonts/DecoTypeThuluth.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -97,6 +106,10 @@ body {
 
 .font-maghribi-quran {
   font-family: 'AALMAGHRIBI', 'Amiri', serif;
+}
+
+.font-thuluth {
+  font-family: 'DecoTypeThuluth', serif;
 }
 
 .font-ibm {

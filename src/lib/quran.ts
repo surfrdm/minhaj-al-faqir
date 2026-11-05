@@ -100,10 +100,91 @@ export function getHizbMeta(hizbNumber: number): HizbIndexItem {
 }
 
 /**
- * Convert western digits to Arabic-Indic digits (١ ٢ ٣...)
+ * Formats numbers for Quran UI.
+ * Returns Western / French numerals (1, 2, 3...) as explicitly requested
+ * by the user for maximum clarity and effortless reading.
  */
 export function toArabicDigits(num: number | string): string {
-  const str = String(num);
-  const arabicDigits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-  return str.replace(/[0-9]/g, (w) => arabicDigits[+w]);
+  return String(num);
+}
+
+export function formatQuranNumber(num: number | string): string {
+  return String(num);
+}
+
+export interface TomonBadgeInfo {
+  type: "hizb" | "nisf" | "rub" | "thumun";
+  label: string;
+  shortLabel: string;
+  badgeStyle: string;
+}
+
+/**
+ * Returns authentic Moroccan Quran division metadata:
+ * - Hizb (كبيرة - Large)
+ * - Nisf (فوق المتوسطة - Medium-Large)
+ * - Rub' (متوسطة - Medium)
+ * - Thumun (صغيرة - Small)
+ */
+export function getTomonDivisionInfo(
+  tomonNumber: number | string,
+  hizbNumber?: number | string
+): TomonBadgeInfo | null {
+  const t = Number(tomonNumber);
+  if (!t || t < 1 || t > 8) return null;
+
+  switch (t) {
+    case 1:
+      return {
+        type: "hizb",
+        label: hizbNumber ? `۞ الحِزْبُ ${hizbNumber}` : "۞ الحِزْبُ",
+        shortLabel: hizbNumber ? `الحزب ${hizbNumber}` : "الحزب",
+        badgeStyle: "px-2.5 py-1 text-xs font-bold bg-[#143628] text-[#E5C378] border-2 border-[#C5A059] shadow-sm",
+      };
+    case 5:
+      return {
+        type: "nisf",
+        label: "۞ نِصْفُ الحِزْبِ",
+        shortLabel: "النصف",
+        badgeStyle: "px-2 py-0.5 text-[11px] font-bold bg-[#C5A059]/25 text-[#826122] dark:text-[#E5C378] border border-[#C5A059] shadow-2xs",
+      };
+    case 3:
+      return {
+        type: "rub",
+        label: "۞ رُبُعُ الحِزْبِ",
+        shortLabel: "الربع",
+        badgeStyle: "px-1.5 py-0.5 text-[10px] font-bold bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378] border border-[#C5A059]/80",
+      };
+    case 7:
+      return {
+        type: "rub",
+        label: "۞ ثَلَاثَةُ أَرْبَاعِ الحِزْبِ",
+        shortLabel: "¾ الحزب",
+        badgeStyle: "px-1.5 py-0.5 text-[10px] font-bold bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378] border border-[#C5A059]/80",
+      };
+    case 2:
+    case 4:
+    case 6:
+    case 8:
+      return {
+        type: "thumun",
+        label: "۞ ثُمُنٌ",
+        shortLabel: "ثمن",
+        badgeStyle: "px-1 py-0.2 text-[9px] font-bold bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#DFC07D] border border-[#C5A059]/50",
+      };
+    default:
+      return null;
+  }
+}
+
+/**
+ * Robust sanitizer to prevent rendering glitches (e.g. ؉, ؐ, ؊, ؋)
+ */
+export function cleanQuranWordText(txt: string): string {
+  if (!txt) return "";
+  return txt
+    .replace(/؉ّ/g, "ٍّ")
+    .replace(/؉/g, "ٍ")
+    .replace(/[؊؋ؐ]/g, "")
+    .replace(/[ ;,¢/¿]+$/, "");
 }

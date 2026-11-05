@@ -24,6 +24,8 @@ import {
   toArabicDigits,
   getHizbMeta,
   ALL_AHZAB_INDEX,
+  getTomonDivisionInfo,
+  cleanQuranWordText,
 } from "@/lib/quran";
 
 interface QuranHizbReaderModalProps {
@@ -318,7 +320,7 @@ export function QuranHizbReaderModal({
 
                 {/* 15 Lines Text Body */}
                 <div
-                  className="space-y-3 sm:space-y-4 text-center leading-loose font-maghribi-quran selection:bg-[#C5A059]/30"
+                  className="space-y-3 sm:space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30"
                   style={{ fontSize: `${fontSize}px` }}
                 >
                   {currentPage.lines.map((line) => {
@@ -326,35 +328,69 @@ export function QuranHizbReaderModal({
                       return (
                         <div
                           key={line.line_id}
-                          className="my-4 py-2 px-4 rounded-xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
+                          className="my-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
                         >
-                          <div className="font-amiri text-lg sm:text-xl font-bold text-[#143628] dark:text-[#FAF7F2]">
+                          <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
                             سُورَةُ {line.surah_title_ar || line.surah_title}
                           </div>
                         </div>
                       );
                     }
 
+                    const isShortEndLine =
+                      line.words.length <= 4 &&
+                      line.words.some(
+                        (w) => w.is_last_word === "1" && w.verse?.is_last_verse === "1"
+                      );
+
                     return (
                       <div
                         key={line.line_id}
-                        className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[#143628] dark:text-[#EAF2ED] text-justify text-center"
+                        className={`w-full ${
+                          isShortEndLine ? "text-center" : "text-justify"
+                        } text-[#143628] dark:text-[#EAF2ED] select-text transition-colors`}
+                        style={{
+                          textAlignLast: isShortEndLine ? "center" : "justify",
+                          textJustify: "inter-word",
+                          lineHeight: 2.2,
+                        }}
                       >
-                        {line.words.map((w, wIdx) => (
-                          <span
-                            key={w.id || wIdx}
-                            className="inline-flex items-center hover:text-[#C5A059] transition-colors"
-                          >
-                            <span>{w.text}</span>
-                            {w.is_last_word === "1" && w.verse?.verse_number && (
-                              <span className="inline-flex items-center justify-center mx-1.5 select-none font-amiri">
-                                <span className="w-5 h-5 rounded-full border border-[#C5A059] text-[10px] sm:text-xs font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 flex items-center justify-center shadow-2xs">
-                                  {toArabicDigits(w.verse.verse_number)}
+                        {line.words.map((w, wIdx) => {
+                          const tomonInfo =
+                            w.is_first_tomon === "1"
+                              ? getTomonDivisionInfo(w.tomon_number || "1", currentHizb)
+                              : null;
+                          const cleanedText = cleanQuranWordText(w.text);
+
+                          return (
+                            <React.Fragment key={w.id || wIdx}>
+                              {/* Moroccan Quran Division Badge (Hizb, Nisf, Rub', Thumun) */}
+                              {tomonInfo && (
+                                <span
+                                  className={`inline-flex items-center gap-1 mx-1.5 align-middle rounded-full select-none cursor-default font-amiri ${tomonInfo.badgeStyle}`}
+                                  title={tomonInfo.label}
+                                >
+                                  <span>{tomonInfo.label}</span>
                                 </span>
+                              )}
+
+                              {/* Word Text */}
+                              <span className="inline-block hover:text-[#C5A059] transition-colors">
+                                {cleanedText}
                               </span>
-                            )}
-                          </span>
-                        ))}
+
+                              {/* Verse Number Badge in Western / Latin Digits (1, 2, 3...) */}
+                              {w.is_last_word === "1" && w.verse?.verse_number && (
+                                <span className="inline-flex items-center justify-center mx-1 select-none font-sans font-bold align-middle">
+                                  <span className="w-5 h-5 rounded-full border border-[#C5A059] text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 flex items-center justify-center shadow-2xs">
+                                    {w.verse.verse_number}
+                                  </span>
+                                </span>
+                              )}
+                              {" "}
+                            </React.Fragment>
+                          );
+                        })}
                       </div>
                     );
                   })}
@@ -364,7 +400,7 @@ export function QuranHizbReaderModal({
                 <div className="flex items-center justify-between pt-3 mt-4 border-t-2 border-[#C5A059]/40 text-xs font-ibm text-[#52796F] dark:text-[#9BB0A5]">
                   <span>مصحف محمد السادس بالخط المغربي</span>
                   <span className="font-bold text-[#C5A059]">
-                    {toArabicDigits(currentPageIndex + 1)} / {toArabicDigits(totalPages)}
+                    {currentPageIndex + 1} / {totalPages}
                   </span>
                   <span>رواية ورش عن نافع</span>
                 </div>
@@ -380,11 +416,11 @@ export function QuranHizbReaderModal({
                 >
                   <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#C5A059]/30 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
                     <span>سورة {page.page_surah_title || meta.surahs[0]}</span>
-                    <span>صفحة {toArabicDigits(page.page_number)}</span>
+                    <span>صفحة {page.page_number}</span>
                   </div>
 
                   <div
-                    className="space-y-3 text-center leading-loose font-maghribi-quran"
+                    className="space-y-3 font-maghribi-quran"
                     style={{ fontSize: `${fontSize}px` }}
                   >
                     {page.lines.map((line) => {
@@ -392,32 +428,64 @@ export function QuranHizbReaderModal({
                         return (
                           <div
                             key={line.line_id}
-                            className="my-3 py-1.5 px-3 rounded-xl bg-[#C5A059]/25 border border-[#C5A059] text-center"
+                            className="my-3 py-2 px-3 rounded-xl bg-[#C5A059]/25 border border-[#C5A059] text-center"
                           >
-                            <span className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                            <span className="font-thuluth text-xl font-bold text-[#143628] dark:text-[#FAF7F2]">
                               سُورَةُ {line.surah_title_ar || line.surah_title}
                             </span>
                           </div>
                         );
                       }
 
+                      const isShortEndLine =
+                        line.words.length <= 4 &&
+                        line.words.some(
+                          (w) => w.is_last_word === "1" && w.verse?.is_last_verse === "1"
+                        );
+
                       return (
                         <div
                           key={line.line_id}
-                          className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[#143628] dark:text-[#EAF2ED]"
+                          className={`w-full ${
+                            isShortEndLine ? "text-center" : "text-justify"
+                          } text-[#143628] dark:text-[#EAF2ED] select-text`}
+                          style={{
+                            textAlignLast: isShortEndLine ? "center" : "justify",
+                            textJustify: "inter-word",
+                            lineHeight: 2.2,
+                          }}
                         >
-                          {line.words.map((w, wIdx) => (
-                            <span key={w.id || wIdx} className="inline-flex items-center">
-                              <span>{w.text}</span>
-                              {w.is_last_word === "1" && w.verse?.verse_number && (
-                                <span className="inline-flex items-center justify-center mx-1 select-none font-amiri">
-                                  <span className="w-5 h-5 rounded-full border border-[#C5A059] text-[10px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 flex items-center justify-center">
-                                    {toArabicDigits(w.verse.verse_number)}
+                          {line.words.map((w, wIdx) => {
+                            const tomonInfo =
+                              w.is_first_tomon === "1"
+                                ? getTomonDivisionInfo(w.tomon_number || "1", currentHizb)
+                                : null;
+                            const cleanedText = cleanQuranWordText(w.text);
+
+                            return (
+                              <React.Fragment key={w.id || wIdx}>
+                                {tomonInfo && (
+                                  <span
+                                    className={`inline-flex items-center gap-1 mx-1.5 align-middle rounded-full select-none cursor-default font-amiri ${tomonInfo.badgeStyle}`}
+                                    title={tomonInfo.label}
+                                  >
+                                    <span>{tomonInfo.label}</span>
                                   </span>
+                                )}
+                                <span className="inline-block hover:text-[#C5A059] transition-colors">
+                                  {cleanedText}
                                 </span>
-                              )}
-                            </span>
-                          ))}
+                                {w.is_last_word === "1" && w.verse?.verse_number && (
+                                  <span className="inline-flex items-center justify-center mx-1 select-none font-sans font-bold align-middle">
+                                    <span className="w-5 h-5 rounded-full border border-[#C5A059] text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 flex items-center justify-center shadow-2xs">
+                                      {w.verse.verse_number}
+                                    </span>
+                                  </span>
+                                )}
+                                {" "}
+                              </React.Fragment>
+                            );
+                          })}
                         </div>
                       );
                     })}
