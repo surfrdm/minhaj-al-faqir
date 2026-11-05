@@ -612,7 +612,7 @@ export default function DiwanMasterPage() {
 
               <div className="space-y-2">
                 <h3 className="font-amiri text-xl font-bold text-[#143628] dark:text-[#E5C378]">
-                  مستمع السماع الصوفي الذكي (شازام السماع)
+                  شازام السماع
                 </h3>
                 <p className="text-xs text-gray-500 max-w-md mx-auto">
                   ضع الهاتف بالقرب من المنشدين في مجلس السماع أو حلقة الذكر؛ وسيتعرف النظام فورياً على القصيدة المنشدة حالياً ويعرض لك تلقائياً السلاسل والقصائد التي ستأتي بعدها في النسق.

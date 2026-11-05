@@ -294,7 +294,7 @@ export default function SamaaHubPage() {
             </div>
 
             <h1 className="font-amiri text-2xl sm:text-4xl lg:text-5xl font-bold tracking-wide text-[#FAF7F2] leading-tight">
-              شَازَامُ السَّمَاعِ • التَّعَرُّفُ الصَّوْتِيُّ الحَيُّ
+              شَازَامُ السَّمَاعِ
             </h1>
 
             <p className="text-xs sm:text-sm text-[#FAF7F2]/85 leading-relaxed font-ibm max-w-2xl">
