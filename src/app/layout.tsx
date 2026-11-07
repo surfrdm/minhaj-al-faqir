@@ -3,6 +3,7 @@ import { Amiri, IBM_Plex_Sans_Arabic, Cormorant_Garamond, Plus_Jakarta_Sans } fr
 import { WixDirectEditor } from "@/components/WixDirectEditor";
 import { AiChatWidget } from "@/components/AiChatWidget";
 import { SamaaListener } from "@/components/SamaaListener";
+import { AntiTheftShield } from "@/components/AntiTheftShield";
 import "./globals.css";
 
 const amiri = Amiri({
@@ -71,6 +72,7 @@ export default function RootLayout({
         <AiChatWidget />
         <SamaaListener />
         <WixDirectEditor />
+        <AntiTheftShield />
       </body>
     </html>
   );
