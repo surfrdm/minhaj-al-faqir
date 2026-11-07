@@ -158,6 +158,16 @@ export function Navbar() {
                 <span>المصحف (60)</span>
               </Link>
 
+              {/* Raccourci الحديث والشمائل (البخاري والشفا) */}
+              <Link
+                href="/turath"
+                className="px-3 py-2 rounded-xl text-xs font-bold text-[#143628] dark:text-[#E5C378] hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5 border border-transparent hover:border-[#C5A059]/30"
+                title="صحيح البخاري وكتاب الشفا للقاضي عياض بتأصيل مالكي وترجمة ثلاثية"
+              >
+                <Scroll className="w-4 h-4 text-[#C5A059]" />
+                <span>البخاري والشِّفا</span>
+              </Link>
+
               {/* Raccourci 2: ديوان السماع الصوفي (32 سلسلة) */}
               <Link
                 href="/diwan"
@@ -408,6 +418,22 @@ export function Navbar() {
                       <span className="font-amiri text-sm text-[#FAF7F2]">فِهْرِسُ المَكْتَبَةِ وَالمُتُونِ الشَّامِلَةِ</span>
                     </div>
                     <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#C5A059]/30 text-[#E5C378] font-bold">تصفح الكل</span>
+                  </Link>
+
+                  <Link
+                    href="/turath"
+                    onClick={() => setDrawerOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#C5A059]/15 via-white to-[#FAF7F2] dark:from-[#143628] dark:to-[#0B1E17] border border-[#C5A059]/50 hover:border-[#C5A059] text-xs font-bold text-[#143628] dark:text-[#E8F0EC] transition group shadow-xs"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Scroll className="w-4 h-4 text-[#C5A059]" />
+                      <span className="font-amiri text-sm font-bold text-[#143628] dark:text-[#E5C378]">
+                        الحديث والشمائل (البخاري والشِّفا)
+                      </span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#C5A059]/25 text-[#826122] dark:text-[#E5C378] font-bold">
+                      3 لغات • تأصيل مالكي
+                    </span>
                   </Link>
 
                   <button
