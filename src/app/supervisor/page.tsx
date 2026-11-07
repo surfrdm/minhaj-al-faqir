@@ -293,7 +293,7 @@ export default function SupervisorDashboardPage() {
         },
         {
           parameters: {
-            url: "https://minhaj-al-faqir.vercel.app/api/members/sync",
+            url: "https://minhaj-alfaqir-app.vercel.app/api/members/sync",
             method: "POST",
             sendHeaders: true,
             headerParameters: {
