@@ -46,11 +46,11 @@ interface DynamicQuranPage {
 }
 
 /**
- * الخيار 2 (التقسيم الديناميكي الكامل والمتوازن):
- * ملء كل صفحة شاشة بالكامل حتى نهايتها بتدفق طبيعي مريح (دون التقيد بـ 7-9 كلمات في السطر)
- * بحيث ينزل السطر تلقائياً عند نفاذ المساحة، وتتصل الآيات حتى امتلاء الصفحة (14-16 سطراً)
- * مع الموازنة الذكية لتجنب أي سطر أخير يتيم أو مقطوع (Orphan prevention)،
- * مما يقلل عدد الصفحات الإجمالي ويزيل أي فراغ شاذ.
+ * الخيار 2 (التقسيم الديناميكي الكامل والمتوازن فائق الجمال):
+ * ملء كل صفحة شاشة بالكامل حتى نهايتها بتدفق طبيعي متصل ومريح (دون التقيد بـ 7-9 كلمات في السطر)
+ * بحيث ينزل السطر تلقائياً عند نفاذ المساحة، وتتصل الآيات حتى امتلاء الصفحة بوقار وهيبة (13-15 سطراً)
+ * مع الموازنة التامة والمنع الحازم لأي سطر أخير يتيم أو مقطوع (Anti-Orphan & Smart Lookahead)،
+ * وحفظ فواصل الآيات التامة دون قطع الكلمات أو تشويه السطر الأخير.
  */
 function partitionHizbWords(
   hizbData: QuranHizbData,
@@ -61,14 +61,14 @@ function partitionHizbWords(
   const pages: DynamicQuranPage[] = [];
 
   if (isHizb1 && hizbData.pages.length >= 2) {
-    // 1. الفاتحة (صفحة تصديرية مركزة في الوسط)
+    // 1. الفاتحة (صفحة تصديرية مركزة في الوسط بهيبة الخط المغربي)
     pages.push({
       pageNumber: 1,
       isOpening: true,
       surahTitle: hizbData.pages[0].page_surah_title || "الفاتحة",
       openingLines: hizbData.pages[0].lines,
     });
-    // 2. أول البقرة حتى المفلحون (صفحة تصديرية مركزة في الوسط)
+    // 2. أول البقرة حتى المفلحون (صفحة تصديرية مركزة في الوسط بهيبة الخط المغربي)
     pages.push({
       pageNumber: 2,
       isOpening: true,
@@ -104,14 +104,16 @@ function partitionHizbWords(
   }
 
   const wordItems = items.filter((x) => x.type === "word");
+  const totalWords = wordItems.length;
   // حساب عدد الصفحات الديناميكية المثالي لملء كل صفحة بالكامل دون ترك صفحات شبه فارغة
-  const numDynamicPages = Math.max(1, Math.round(wordItems.length / baseTargetWords));
-  const targetPerP = Math.round(wordItems.length / numDynamicPages);
+  const numDynamicPages = Math.max(1, Math.round(totalWords / baseTargetWords));
+  const avgTarget = totalWords / numDynamicPages;
 
   let currentPageItems: DynamicPageItem[] = [];
   let currentWordCount = 0;
   let pageNum = pages.length + 1;
   let currentSurahTitle = items[0]?.surahTitle || "";
+  let wordsConsumed = 0;
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -122,28 +124,46 @@ function partitionHizbWords(
     }
     if (item.type === "word" && item.word) {
       currentWordCount++;
+      wordsConsumed++;
     }
 
     const isVerseEnd = item.type === "word" && item.word?.is_last_word === "1";
     const remainingDynamicPages = numDynamicPages - (pageNum - (isHizb1 ? 3 : 1));
 
-    // قطع الصفحة بذكاء عند نهاية آية، مع التأكد من أن السطر الأخير ممتلئ بشكل جميل
-    if (
-      remainingDynamicPages > 1 &&
-      isVerseEnd &&
-      currentWordCount >= targetPerP - 18
-    ) {
+    // قطع الصفحة بذكاء عند نهاية آية تامة مع فحص السطر الأخير والمقارنة بالآية التالية (Lookahead)
+    if (remainingDynamicPages > 1 && isVerseEnd && currentWordCount >= avgTarget - 28) {
       const lastLineWords = currentWordCount % estWordsPerLine || estWordsPerLine;
-      if (lastLineWords >= 5 || currentWordCount >= targetPerP + 22) {
-        pages.push({
-          pageNumber: pageNum++,
-          isOpening: false,
-          surahTitle: currentSurahTitle,
-          items: currentPageItems,
-          wordCount: currentWordCount,
-        });
-        currentPageItems = [];
-        currentWordCount = 0;
+
+      // حساب عدد كلمات الآية القادمة لتقييم أيهما أقرب وأجمل للسطر
+      let nextVerseWords = 0;
+      for (let j = i + 1; j < items.length; j++) {
+        if (items[j].type === "word") nextVerseWords++;
+        if (items[j].type === "word" && items[j].word?.is_last_word === "1") break;
+      }
+
+      const currentDiff = Math.abs(currentWordCount - avgTarget);
+      const nextCount = currentWordCount + nextVerseWords;
+      const nextDiff = Math.abs(nextCount - avgTarget);
+      const nextLastLineWords = nextCount % estWordsPerLine || estWordsPerLine;
+
+      // غرامة السطر الأخير اليتيم (Orphan Penalty) لمنع ترك كلمة أو كلمتين في السطر
+      let currentPenalty = currentDiff + (lastLineWords <= 2 ? 80 : lastLineWords <= 4 ? 30 : 0);
+      let nextPenalty = nextDiff + (nextLastLineWords <= 2 ? 80 : nextLastLineWords <= 4 ? 30 : 0);
+
+      if (nextCount > avgTarget + 30) nextPenalty += 60;
+
+      if (currentPenalty <= nextPenalty || currentWordCount >= avgTarget + 25) {
+        if (lastLineWords >= 3 || currentWordCount >= avgTarget + 35) {
+          pages.push({
+            pageNumber: pageNum++,
+            isOpening: false,
+            surahTitle: currentSurahTitle,
+            items: currentPageItems,
+            wordCount: currentWordCount,
+          });
+          currentPageItems = [];
+          currentWordCount = 0;
+        }
       }
     }
   }
@@ -474,8 +494,12 @@ export function QuranHizbReaderModal({
               style={{
                 textAlign: "justify",
                 textJustify: "inter-word",
-                textAlignLast: sec.isEndOfSurah ? "center" : "auto",
-                lineHeight: 2.25,
+                textAlignLast:
+                  sec.isEndOfSurah || (sec.words && sec.words.length % 13 > 0 && sec.words.length % 13 <= 4)
+                    ? "center"
+                    : "auto",
+                textWrap: "pretty" as any,
+                lineHeight: 2.3,
               }}
             >
               {sec.words?.map((w, wIdx) => renderQuranWord(w, wIdx))}
