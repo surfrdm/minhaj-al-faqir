@@ -29,7 +29,7 @@ export default function TurathPage() {
     >
       <Navbar />
 
-      <main className="flex-1 pt-24 pb-16">
+      <main className="flex-1 pt-6 sm:pt-8 pb-16">
         {/* Breadcrumb */}
         <div className="max-w-5xl mx-auto px-4 mb-2">
           <div className="flex items-center gap-2 text-xs text-[#52796F] dark:text-[#9BB0A5]">

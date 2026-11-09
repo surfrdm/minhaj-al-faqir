@@ -1,5 +1,8 @@
 export type TurathSource = 'bukhari' | 'shifa';
 export type LanguageView = 'ar' | 'fr' | 'en' | 'all';
+export type TurathSearchFieldScope = 'all' | 'text' | 'sharh';
+export type BukhariSearchScope = 'all' | 'book' | 'bab';
+export type ShifaSearchScope = 'all' | 'part' | 'chapter';
 
 export interface BukhariBookMeta {
   bookNumber: number;
