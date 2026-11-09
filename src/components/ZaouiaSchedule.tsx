@@ -61,11 +61,11 @@ const SCHEDULE_DATA: Record<number, DaySchedule> = {
     items: [
       {
         timeLabel: "من العصر إلى المغرب",
-        title: "ذكر المخلصين (مع الحزب الراتب)",
+        title: "ذكر المخلصين",
       },
       {
         timeLabel: "بعد صلاة المغرب",
-        title: "الوظيفة",
+        title: "الحزب الراتب + الوظيفة",
       },
     ],
   },
