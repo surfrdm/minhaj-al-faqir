@@ -45,7 +45,7 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 p-1.5 flex items-center justify-center border border-[#C5A059]/40 shadow-inner shrink-0">
               <img
-                src="/images/logo_zawiya_mohammedia_clean.png"
+                src="/images/logo_zawiya_mohammedia_clean.webp"
                 alt="شعار زاوية المحمدية"
                 className="w-full h-full object-contain filter drop-shadow"
               />
@@ -121,7 +121,7 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
                   <div className="relative shrink-0">
                     <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-b from-[#1B4332] to-[#143628] p-1 border-2 border-[#C5A059] shadow-xl overflow-hidden flex items-center justify-center">
                       <img
-                        src="/images/sidi_mounir_portrait.png"
+                        src="/images/sidi_mounir_portrait.webp"
                         alt="فضيلة الشيخ الدكتور سيدي منير القادري بودشيش"
                         className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
                       />

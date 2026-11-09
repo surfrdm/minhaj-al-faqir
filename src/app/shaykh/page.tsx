@@ -76,7 +76,7 @@ export default function ShaykhPage() {
               <div className="relative shrink-0">
                 <div className="w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-3xl bg-gradient-to-b from-[#1B4332] via-[#143628] to-[#0B1E17] p-2 border-2 border-[#C5A059] shadow-2xl overflow-hidden flex items-center justify-center">
                   <img
-                    src="/images/sidi_mounir_portrait.png"
+                    src="/images/sidi_mounir_portrait.webp"
                     alt="فضيلة الشيخ الدكتور سيدي منير القادري بودشيش"
                     className="w-full h-full object-cover object-top filter drop-shadow-md hover:scale-105 transition-transform duration-500"
                   />

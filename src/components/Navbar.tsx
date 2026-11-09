@@ -98,7 +98,7 @@ export function Navbar() {
                 className="flex items-center justify-center p-1 sm:p-1.5 rounded-xl bg-white/80 dark:bg-[#122820] hover:bg-[#C5A059]/15 border border-[#C5A059]/40 hover:border-[#C5A059] shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 group relative touch-manipulation cursor-pointer"
               >
                 <img
-                  src="/images/logo_zawiya_mohammedia_clean.png"
+                  src="/images/logo_zawiya_mohammedia_clean.webp"
                   alt="شعار زاوية مدينة المحمدية - الطريقة القادرية البودشيشية"
                   className="h-10 sm:h-12 w-auto object-contain filter drop-shadow-sm pointer-events-none select-none"
                 />
@@ -119,7 +119,7 @@ export function Navbar() {
               >
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border-2 border-[#C5A059] bg-[#FAF7F2]/20 flex-shrink-0 shadow-sm ring-2 ring-[#C5A059]/30">
                   <img
-                    src="/images/sheikh/sheikh_portrait_close.png"
+                    src="/images/sheikh/sheikh_portrait_close.webp"
                     alt="فضيلة الشيخ الدكتور سيدي منير القادري بودشيش"
                     className="w-full h-full object-cover object-top"
                   />
