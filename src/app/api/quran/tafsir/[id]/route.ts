@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import zlib from "zlib";
 
 interface TafsirVerseEntry {
   key: string;
@@ -9,6 +10,7 @@ interface TafsirVerseEntry {
   surah_name: string;
   warsh_ref: string;
   hafs_note: string;
+  fr_note?: string;
   verse_text: string;
   mukhtasar: string;
   ibn_atiyyah: string;
@@ -26,25 +28,37 @@ interface HizbTafsirPayload {
   verses: Record<string, TafsirVerseEntry>;
 }
 
+const MAX_CACHED_AHZAB = 6;
 const memoryCache = new Map<number, HizbTafsirPayload>();
 
 function loadHizbTafsir(hizbNum: number): HizbTafsirPayload | null {
   const cached = memoryCache.get(hizbNum);
-  if (cached) return cached;
+  if (cached) {
+    memoryCache.delete(hizbNum);
+    memoryCache.set(hizbNum, cached);
+    return cached;
+  }
 
-  const filePath = path.join(
-    process.cwd(),
-    "src",
-    "data",
-    "tafsir",
-    `hizb_${hizbNum}.json`
-  );
+  const baseDir = path.join(process.cwd(), "src", "data", "tafsir");
+  const gzPath = path.join(baseDir, `hizb_${hizbNum}.json.gz`);
+  const jsonPath = path.join(baseDir, `hizb_${hizbNum}.json`);
 
-  if (!fs.existsSync(filePath)) {
+  let rawText: string | null = null;
+  if (fs.existsSync(gzPath)) {
+    rawText = zlib.gunzipSync(fs.readFileSync(gzPath)).toString("utf-8");
+  } else if (fs.existsSync(jsonPath)) {
+    rawText = fs.readFileSync(jsonPath, "utf-8");
+  } else {
     return null;
   }
 
-  const parsed = JSON.parse(fs.readFileSync(filePath, "utf-8")) as HizbTafsirPayload;
+  const parsed = JSON.parse(rawText) as HizbTafsirPayload;
+  if (memoryCache.size >= MAX_CACHED_AHZAB) {
+    const oldestKey = memoryCache.keys().next().value;
+    if (oldestKey !== undefined) {
+      memoryCache.delete(oldestKey);
+    }
+  }
   memoryCache.set(hizbNum, parsed);
   return parsed;
 }
@@ -70,13 +84,10 @@ export async function GET(
         {
           available: false,
           hizb_number: hizbNum,
-          preview_hizb: 1,
-          message: "Tafsir preview is currently available for Hizb 1.",
+          message: "Tafsir data is not available for this Hizb.",
         },
         {
-          headers: {
-            "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
-          },
+          status: 404,
         }
       );
     }
@@ -187,6 +198,7 @@ export async function GET(
       }
     );
   } catch (err: unknown) {
+    console.error("[api/quran/tafsir] Failed to serve tafsir:", err);
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
       { error: "Internal server error", message },

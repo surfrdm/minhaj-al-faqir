@@ -202,6 +202,7 @@ interface TafsirVerseEntry {
   surah_name: string;
   warsh_ref: string;
   hafs_note: string;
+  fr_note?: string;
   verse_text: string;
   mukhtasar: string;
   ibn_atiyyah: string;
@@ -1004,8 +1005,7 @@ export function QuranHizbReaderModal({
                   <div className="mb-3 flex items-center justify-center gap-1.5 text-[11px] font-ibm text-[#596B62] dark:text-[#9BB0A5] select-none">
                     <BookOpenText className="w-3.5 h-3.5 text-[#9E7B35] dark:text-[#E5C378] shrink-0" />
                     <span>
-                      اضغط على أي آية أو رقمها لعرض التفسير والترجمة
-                      {currentHizb === 1 ? " (المختصر، ابن عطية، القرطبي، ابن عاشور)" : " (معاينة كاملة في الحزب 1)"}
+                      اضغط على أي آية أو رقمها لعرض التفسير والترجمة (المختصر، ابن عطية، القرطبي، ابن عاشور، والفرنسية)
                     </span>
                   </div>
 
@@ -1028,6 +1028,12 @@ export function QuranHizbReaderModal({
             ) : (
               // CONTINUOUS SCROLL VIEW (All Dynamic Pages of the Hizb)
               <div className="max-w-2xl mx-auto space-y-6">
+                <div className="flex items-center justify-center gap-1.5 text-[11px] font-ibm text-[#596B62] dark:text-[#9BB0A5] select-none">
+                  <BookOpenText className="w-3.5 h-3.5 text-[#9E7B35] dark:text-[#E5C378] shrink-0" />
+                  <span>
+                    اضغط على أي آية أو رقمها لعرض التفسير والترجمة (المختصر، ابن عطية، القرطبي، ابن عاشور، والفرنسية)
+                  </span>
+                </div>
                 {dynamicPages.map((page) => (
                   <div
                     key={page.pageNumber}
@@ -1216,22 +1222,21 @@ export function QuranHizbReaderModal({
                       className="font-amiri text-base font-bold text-[#143628] dark:text-[#E5C378]"
                       style={{ fontVariantNumeric: "tabular-nums" }}
                     >
-                      تفسير الحزب {currentHizb} قيد الإعداد التدريجي
+                      تعذر العثور على بيانات تفسير الحزب {currentHizb}
                     </div>
                     <p
                       className="text-xs sm:text-sm font-ibm text-[#596B62] dark:text-[#9BB0A5] leading-relaxed"
                       style={{ fontVariantNumeric: "tabular-nums" }}
                     >
-                      تتوفر حالياً المعاينة الكاملة للتفسير (المختصر، ابن عطية، القرطبي، ابن عاشور، والترجمة الفرنسية) على الحزب 1 (سورة الفاتحة ومطلع سورة البقرة).
+                      يرجى إعادة المحاولة لتحميل التفسير والترجمة لهذه الآية المباركة.
                     </p>
                     <button
                       type="button"
-                      onClick={() => handleSelectHizb(1)}
+                      onClick={() => loadVerseTafsir(currentHizb, selectedVerseKey)}
                       className="px-4 py-2 rounded-lg bg-[#143628] text-[#FAF7F2] dark:bg-[#C5A059] dark:text-[#07130E] text-xs font-bold inline-flex items-center gap-2 active:scale-[0.97] transition-[transform,colors] duration-150 cursor-pointer"
-                      style={{ fontVariantNumeric: "tabular-nums" }}
                     >
-                      <BookOpenText className="w-4 h-4" />
-                      <span>الانتقال إلى الحزب 1 للمعاينة</span>
+                      <RefreshCw className="w-4 h-4" />
+                      <span>إعادة المحاولة</span>
                     </button>
                   </div>
                 ) : tafsirData?.verse ? (
@@ -1254,6 +1259,14 @@ export function QuranHizbReaderModal({
                     {/* Tab Content */}
                     {activeTafsirTab === "french" ? (
                       <div dir="ltr" className="text-left space-y-4 max-w-[68ch] font-jakarta">
+                        {tafsirData.verse.fr_note && (
+                          <div
+                            className="inline-block px-2.5 py-1 rounded-md bg-[#C5A059]/12 border border-[#C5A059]/30 text-[11px] font-medium text-[#826122] dark:text-[#E5C378]"
+                            style={{ fontVariantNumeric: "tabular-nums" }}
+                          >
+                            {tafsirData.verse.fr_note}
+                          </div>
+                        )}
                         <div className="space-y-1.5">
                           <div className="text-xs font-bold uppercase tracking-wide text-[#826122] dark:text-[#E5C378]">
                             Traduction française (M. Hamidullah)
