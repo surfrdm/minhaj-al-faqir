@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
   X,
   ChevronLeft,
   ChevronRight,
   BookOpen,
+  BookOpenText,
   CheckCircle2,
   Sparkles,
   Maximize2,
@@ -17,6 +18,8 @@ import {
   Share2,
   Loader2,
   Check,
+  Languages,
+  RefreshCw,
 } from "lucide-react";
 import {
   QuranHizbData,
@@ -190,6 +193,44 @@ function partitionHizbWords(
   return pages;
 }
 
+type TafsirTab = "mukhtasar" | "ibn_atiyyah" | "qurtubi" | "ibn_ashur" | "french";
+
+interface TafsirVerseEntry {
+  key: string;
+  surah_number: number;
+  verse_number: number;
+  surah_name: string;
+  warsh_ref: string;
+  hafs_note: string;
+  verse_text: string;
+  mukhtasar: string;
+  ibn_atiyyah: string;
+  qurtubi: string;
+  ibn_ashur: string;
+  fr_translation: string;
+  fr_mokhtasar: string;
+}
+
+interface TafsirVerseResponse {
+  available: boolean;
+  found?: boolean;
+  hizb_number: number;
+  preview_hizb?: number;
+  riwaya?: string;
+  prev_key?: string | null;
+  next_key?: string | null;
+  sources?: Record<string, { label: string; full_title: string }>;
+  verse?: TafsirVerseEntry;
+}
+
+const TAFSIR_TABS: Array<{ id: TafsirTab; label: string; sourceKey: string }> = [
+  { id: "mukhtasar", label: "المختصر", sourceKey: "mukhtasar" },
+  { id: "ibn_atiyyah", label: "ابن عطية", sourceKey: "ibn_atiyyah" },
+  { id: "qurtubi", label: "القرطبي", sourceKey: "qurtubi" },
+  { id: "ibn_ashur", label: "ابن عاشور", sourceKey: "ibn_ashur" },
+  { id: "french", label: "Français", sourceKey: "french" },
+];
+
 interface QuranHizbReaderModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -213,13 +254,24 @@ export function QuranHizbReaderModal({
   const [viewMode, setViewMode] = useState<"page" | "scroll">("page");
   const [isCompletedToday, setIsCompletedToday] = useState<boolean>(false);
   const [justCompleted, setJustCompleted] = useState<boolean>(false);
+  const [selectedVerseKey, setSelectedVerseKey] = useState<string | null>(null);
+  const [activeTafsirTab, setActiveTafsirTab] = useState<TafsirTab>("mukhtasar");
+  const [tafsirSheetExpanded, setTafsirSheetExpanded] = useState<boolean>(false);
+  const [tafsirLoading, setTafsirLoading] = useState<boolean>(false);
+  const [tafsirError, setTafsirError] = useState<string | null>(null);
+  const [tafsirData, setTafsirData] = useState<TafsirVerseResponse | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const sheetBodyRef = useRef<HTMLDivElement>(null);
+  const tafsirCacheRef = useRef<Map<string, TafsirVerseResponse>>(new Map());
 
   // Sync hizbNumber prop with internal state
   useEffect(() => {
     if (hizbNumber) {
       setCurrentHizb(hizbNumber);
       setCurrentPageIndex(0);
+      setSelectedVerseKey(null);
+      setTafsirData(null);
+      setTafsirError(null);
     }
   }, [hizbNumber]);
 
@@ -336,6 +388,135 @@ export function QuranHizbReaderModal({
     return partitionHizbWords(data, targetWordsPerPage);
   }, [data, targetWordsPerPage]);
 
+  const versePageMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    dynamicPages.forEach((p, idx) => {
+      if (p.isOpening && p.openingLines) {
+        if (p.surahTitle === "الفاتحة") {
+          map["1:0"] = idx;
+        }
+        p.openingLines.forEach((line) => {
+          line.words?.forEach((w) => {
+            if (w.surah_number && w.verse?.verse_number) {
+              const key = `${Number(w.surah_number)}:${Number(w.verse.verse_number)}`;
+              if (map[key] === undefined) map[key] = idx;
+            }
+          });
+        });
+      } else if (p.items) {
+        p.items.forEach((it) => {
+          const w = it.word;
+          if (w?.surah_number && w.verse?.verse_number) {
+            const key = `${Number(w.surah_number)}:${Number(w.verse.verse_number)}`;
+            if (map[key] === undefined) map[key] = idx;
+          }
+        });
+      }
+    });
+    return map;
+  }, [dynamicPages]);
+
+  const scrollVerseIntoView = useCallback((verseKey: string) => {
+    if (!contentRef.current) return;
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const container = contentRef.current;
+        if (!container) return;
+        const target = container.querySelector(
+          `[data-verse-key="${verseKey}"]`
+        ) as HTMLElement | null;
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 60);
+    });
+  }, []);
+
+  const loadVerseTafsir = useCallback(
+    async (hNum: number, verseKey: string, signal?: AbortSignal) => {
+      const cacheKey = `${hNum}:${verseKey}`;
+      const cached = tafsirCacheRef.current.get(cacheKey);
+      if (cached) {
+        setTafsirData(cached);
+        setTafsirLoading(false);
+        setTafsirError(null);
+        return;
+      }
+
+      setTafsirLoading(true);
+      setTafsirError(null);
+      try {
+        const res = await fetch(
+          `/api/quran/tafsir/${hNum}?verse=${encodeURIComponent(verseKey)}`,
+          { signal }
+        );
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const json = (await res.json()) as TafsirVerseResponse;
+        if (signal?.aborted) return;
+        tafsirCacheRef.current.set(cacheKey, json);
+        setTafsirData(json);
+        setTafsirLoading(false);
+      } catch (err: unknown) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setTafsirError("تعذر تحميل التفسير حالياً. يرجى المحاولة مرة أخرى.");
+        setTafsirLoading(false);
+      }
+    },
+    []
+  );
+
+  // Fetch verse tafsir whenever selectedVerseKey or currentHizb changes
+  useEffect(() => {
+    if (!isOpen || !selectedVerseKey) return;
+    const controller = new AbortController();
+    loadVerseTafsir(currentHizb, selectedVerseKey, controller.signal);
+    if (sheetBodyRef.current) {
+      sheetBodyRef.current.scrollTop = 0;
+    }
+    return () => controller.abort();
+  }, [isOpen, currentHizb, selectedVerseKey, loadVerseTafsir]);
+
+  // Escape key closes the Tafsir drawer first before closing the reader modal
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedVerseKey) {
+        e.stopPropagation();
+        setSelectedVerseKey(null);
+        setTafsirSheetExpanded(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen, selectedVerseKey]);
+
+  const handleSelectVerse = useCallback(
+    (verseKey: string, syncPage: boolean = false) => {
+      if (typeof window !== "undefined") {
+        const sel = window.getSelection();
+        if (sel && sel.toString().trim().length > 0) {
+          return;
+        }
+      }
+      if (syncPage && viewMode === "page") {
+        const targetIdx = versePageMap[verseKey];
+        if (targetIdx !== undefined && targetIdx !== currentPageIndex) {
+          setCurrentPageIndex(targetIdx);
+        }
+      }
+      setSelectedVerseKey(verseKey);
+      scrollVerseIntoView(verseKey);
+    },
+    [viewMode, versePageMap, currentPageIndex, scrollVerseIntoView]
+  );
+
+  const handleCloseTafsirSheet = useCallback(() => {
+    setSelectedVerseKey(null);
+    setTafsirSheetExpanded(false);
+  }, []);
+
   if (!isOpen) return null;
 
   const meta = getHizbMeta(currentHizb);
@@ -361,6 +542,10 @@ export function QuranHizbReaderModal({
   const handleSelectHizb = (hNum: number) => {
     setCurrentHizb(hNum);
     setCurrentPageIndex(0);
+    setSelectedVerseKey(null);
+    setTafsirData(null);
+    setTafsirError(null);
+    setTafsirSheetExpanded(false);
   };
 
   const renderHabtiMark = () => (
@@ -374,12 +559,41 @@ export function QuranHizbReaderModal({
     </span>
   );
 
-  const renderBasmalaLine = (rawBasmala?: string) => {
+  const renderBasmalaLine = (rawBasmala?: string, selectableKey?: string) => {
     const base = rawBasmala || "بِسْمِ اِ۬للَّهِ اِ۬لرَّحْمَٰنِ اِ۬لرَّحِيمِ";
     const hasHabti = base.includes("\u06d6");
     const displayBasmala = base.replace(/\u06d6/g, "");
+    const isSelected = Boolean(selectableKey && selectedVerseKey === selectableKey);
+
+    if (!selectableKey) {
+      return (
+        <span className="inline-block whitespace-nowrap">
+          <span>{displayBasmala}</span>
+          {hasHabti && renderHabtiMark()}
+        </span>
+      );
+    }
+
     return (
-      <span className="inline-block whitespace-nowrap">
+      <span
+        data-verse-key={selectableKey}
+        role="button"
+        tabIndex={0}
+        aria-label="عرض تفسير البسملة"
+        onClick={() => handleSelectVerse(selectableKey)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleSelectVerse(selectableKey);
+          }
+        }}
+        className={`inline-block whitespace-nowrap rounded-md cursor-pointer transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] ${
+          isSelected
+            ? "bg-[#C5A059]/24 dark:bg-[#C5A059]/28 text-[#143628] dark:text-[#FFF8E7]"
+            : "hover:text-[#9E7B35] dark:hover:text-[#F1D58E]"
+        }`}
+        title="اضغط لعرض التفسير والترجمة"
+      >
         <span>{displayBasmala}</span>
         {hasHabti && renderHabtiMark()}
       </span>
@@ -394,6 +608,11 @@ export function QuranHizbReaderModal({
     const cleanedText = cleanQuranWordText(w.text);
     const hasHabti = cleanedText.includes("\u06d6");
     const displayWord = hasHabti ? cleanedText.replace(/\u06d6/g, "") : cleanedText;
+    const verseKey =
+      w.surah_number && w.verse?.verse_number
+        ? `${Number(w.surah_number)}:${Number(w.verse.verse_number)}`
+        : null;
+    const isSelected = Boolean(verseKey && selectedVerseKey === verseKey);
 
     return (
       <React.Fragment key={w.id || wIdx}>
@@ -407,63 +626,99 @@ export function QuranHizbReaderModal({
           </span>
         )}
 
-        {/* Word + Optional Habti Stop + Optional Sajdah + Optional Verse Rosette kept non-breaking */}
-        <span className="inline-block whitespace-nowrap">
-          <span className="hover:text-[#C5A059] transition-colors">
-            {displayWord}
-          </span>
-          {hasHabti && renderHabtiMark()}
-
-          {/* Maliki Sajdah emblem when indicated by Awqaf Mushaf */}
-          {w.is_last_word === "1" && w.verse?.sajda === "1" && (
+        {/* Word + Optional Habti Stop + Optional Sajdah + Optional Verse Rosette + trailing space for continuous highlight */}
+        <span
+          data-verse-key={verseKey || undefined}
+          onClick={verseKey ? () => handleSelectVerse(verseKey) : undefined}
+          className={`inline transition-colors duration-150 ${
+            verseKey ? "cursor-pointer" : ""
+          } ${
+            isSelected
+              ? "bg-[#C5A059]/22 dark:bg-[#C5A059]/28 py-0.5"
+              : ""
+          }`}
+        >
+          <span className="inline-block whitespace-nowrap">
             <span
-              className="inline-flex items-center gap-0.5 mx-1 text-[#9E7B35] dark:text-[#E5C378] select-none align-middle"
-              title="موضع سجدة التلاوة"
+              className={`transition-colors duration-150 ${
+                isSelected
+                  ? "text-[#143628] dark:text-[#FFF8E7]"
+                  : "hover:text-[#9E7B35] dark:hover:text-[#E5C378]"
+              }`}
             >
-              <span className="font-maghribi-quran text-[1.05em] leading-none">
-                ۩
-              </span>
+              {displayWord}
             </span>
-          )}
+            {hasHabti && renderHabtiMark()}
 
-          {/* Ornate Moroccan Mushaf Rosette Verse Number in Western Digits (1, 2, 3...) */}
-          {w.is_last_word === "1" && w.verse?.verse_number && (
-            <span
-              className="relative inline-flex items-center justify-center min-w-[28px] h-[28px] px-1 mx-1 select-none align-middle"
-              title={`الآية ${w.verse.verse_number}`}
-            >
-              <svg
-                viewBox="0 0 36 36"
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full text-[#C5A059]"
-              >
-                <polygon
-                  points="18,1.5 22.8,6.2 29.5,6.5 29.8,13.2 34.5,18 29.8,22.8 29.5,29.5 22.8,29.8 18,34.5 13.2,29.8 6.5,29.5 6.2,22.8 1.5,18 6.2,13.2 6.5,6.5 13.2,6.2"
-                  fill="currentColor"
-                  fillOpacity="0.14"
-                  stroke="currentColor"
-                  strokeWidth="1.35"
-                  strokeLinejoin="round"
-                />
-                <circle
-                  cx="18"
-                  cy="18"
-                  r="10.2"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="0.9"
-                  strokeOpacity="0.65"
-                />
-              </svg>
+            {/* Maliki Sajdah emblem when indicated by Awqaf Mushaf */}
+            {w.is_last_word === "1" && w.verse?.sajda === "1" && (
               <span
-                className="relative z-10 font-jakarta text-[11px] font-bold leading-none text-[#826122] dark:text-[#E5C378]"
-                style={{ fontVariantNumeric: "tabular-nums" }}
+                className="inline-flex items-center gap-0.5 mx-1 text-[#9E7B35] dark:text-[#E5C378] select-none align-middle"
+                title="موضع سجدة التلاوة"
               >
-                {w.verse.verse_number}
+                <span className="font-maghribi-quran text-[1.05em] leading-none">
+                  ۩
+                </span>
               </span>
-            </span>
-          )}
-        </span>{" "}
+            )}
+
+            {/* Ornate Moroccan Mushaf Rosette Verse Number in Western Digits (1, 2, 3...) */}
+            {w.is_last_word === "1" && w.verse?.verse_number && (
+              <span
+                role="button"
+                tabIndex={0}
+                aria-label={`عرض تفسير الآية ${w.verse.verse_number}`}
+                aria-pressed={isSelected}
+                onKeyDown={(e) => {
+                  if ((e.key === "Enter" || e.key === " ") && verseKey) {
+                    e.preventDefault();
+                    handleSelectVerse(verseKey);
+                  }
+                }}
+                className="relative inline-flex items-center justify-center min-w-[28px] h-[28px] px-1 mx-1 select-none align-middle rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059]"
+                title={`الآية ${w.verse.verse_number} — اضغط لعرض التفسير`}
+              >
+                <svg
+                  viewBox="0 0 36 36"
+                  aria-hidden="true"
+                  className={`absolute inset-0 w-full h-full transition-transform duration-150 ease-out ${
+                    isSelected
+                      ? "text-[#143628] dark:text-[#E5C378] scale-110"
+                      : "text-[#C5A059]"
+                  }`}
+                >
+                  <polygon
+                    points="18,1.5 22.8,6.2 29.5,6.5 29.8,13.2 34.5,18 29.8,22.8 29.5,29.5 22.8,29.8 18,34.5 13.2,29.8 6.5,29.5 6.2,22.8 1.5,18 6.2,13.2 6.5,6.5 13.2,6.2"
+                    fill="currentColor"
+                    fillOpacity={isSelected ? "0.32" : "0.14"}
+                    stroke="currentColor"
+                    strokeWidth={isSelected ? "1.65" : "1.35"}
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="18"
+                    cy="18"
+                    r="10.2"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="0.9"
+                    strokeOpacity="0.65"
+                  />
+                </svg>
+                <span
+                  className={`relative z-10 font-jakarta text-[11px] font-bold leading-none ${
+                    isSelected
+                      ? "text-[#143628] dark:text-[#FFF8E7]"
+                      : "text-[#826122] dark:text-[#E5C378]"
+                  }`}
+                  style={{ fontVariantNumeric: "tabular-nums" }}
+                >
+                  {w.verse.verse_number}
+                </span>
+              </span>
+            )}
+          </span>{" "}
+        </span>
       </React.Fragment>
     );
   };
@@ -497,7 +752,10 @@ export function QuranHizbReaderModal({
                   className="w-full text-center text-[#1B4332] dark:text-[#E5C378] py-1.5 select-text"
                   style={{ lineHeight: 2 }}
                 >
-                  {renderBasmalaLine(line.basmala_text)}
+                  {renderBasmalaLine(
+                    line.basmala_text,
+                    page.surahTitle === "الفاتحة" ? "1:0" : undefined
+                  )}
                 </div>
               );
             }
@@ -624,15 +882,15 @@ export function QuranHizbReaderModal({
     >
       <div className="relative w-full max-w-4xl h-[95vh] max-h-[920px] bg-[#FAF7F2] dark:bg-[#07130E] border-2 border-[#C5A059]/60 rounded-3xl shadow-2xl flex flex-col overflow-hidden text-[#1D2A24] dark:text-[#E8F0EC]">
         {/* TOP BAR / HEADER */}
-        <div className="p-3.5 sm:p-4 bg-[#143628] border-b-2 border-[#C5A059]/50 text-white flex items-center justify-between gap-3 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#C5A059]/20 border border-[#C5A059]/40 flex items-center justify-center text-[#E5C378] shrink-0">
-              <BookOpen className="w-5 h-5" />
+        <div className="p-3 sm:p-4 bg-[#143628] border-b-2 border-[#C5A059]/50 text-white flex items-center justify-between gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#C5A059]/20 border border-[#C5A059]/40 flex items-center justify-center text-[#E5C378] shrink-0">
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
 
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-amiri text-lg sm:text-2xl font-bold text-[#FAF7F2]">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                <h3 className="font-amiri text-base sm:text-2xl font-bold text-[#FAF7F2]">
                   الحِزْبُ {currentHizb}
                 </h3>
                 {hizbPeriod === "subh" && (
@@ -646,18 +904,18 @@ export function QuranHizbReaderModal({
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#E8F0EC]/80 font-ibm line-clamp-1">
+              <p className="text-[11px] sm:text-xs text-[#E8F0EC]/80 font-ibm line-clamp-1">
                 سُوَر: {meta.surahs.join(" • ")} | مطلع: «<span className="font-maghribi-quran text-sm text-[#FAF7F2]">{meta.matlaa}</span>»
               </p>
             </div>
           </div>
 
           {/* Quick Hizb Dropdown Selector */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <select
               value={currentHizb}
               onChange={(e) => handleSelectHizb(Number(e.target.value))}
-              className="bg-white/10 text-white border border-[#C5A059]/40 rounded-xl px-2.5 py-1.5 text-xs font-amiri font-bold hover:bg-white/20 transition cursor-pointer"
+              className="max-w-[125px] sm:max-w-[205px] truncate bg-white/10 text-white border border-[#C5A059]/40 rounded-xl px-2 sm:px-2.5 py-1.5 text-[11px] sm:text-xs font-amiri font-bold hover:bg-white/20 transition cursor-pointer"
             >
               {ALL_AHZAB_INDEX.map((h) => (
                 <option key={h.hizb_number} value={h.hizb_number} className="text-black">
@@ -704,72 +962,354 @@ export function QuranHizbReaderModal({
           </div>
         </div>
 
-        {/* READING AREA */}
-        <div
-          ref={contentRef}
-          className="flex-1 overflow-y-auto p-3 sm:p-6 bg-gradient-to-b from-[#FAF7F2] to-[#F5EFE6] dark:from-[#091811] dark:to-[#050D09]"
-        >
-          {loading ? (
-            <div className="h-full flex flex-col items-center justify-center space-y-4 py-24">
-              <Loader2 className="w-10 h-10 text-[#C5A059] animate-spin" />
-              <div className="font-amiri text-lg font-bold text-[#143628] dark:text-[#E5C378]">
-                جَارٍ تَحْمِيلُ الحِزْبِ المُبَارَكِ بِالخَطِّ المَغْرِبِيِّ الأَصِيلِ...
-              </div>
-              <p className="text-xs text-[#52796F] dark:text-[#9BB0A5] font-ibm">
-                مِنْ نُسْخَةِ المَصْحَفِ المَحَمَّدِيِّ الشَّرِيفِ (رِوَايَةُ وَرْشٍ عَنْ نَافِعٍ)
-              </p>
-            </div>
-          ) : !data || totalPages === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center space-y-3 py-20 text-center">
-              <BookOpen className="w-12 h-12 text-gray-400" />
-              <p className="font-amiri text-lg text-gray-600 dark:text-gray-300">
-                تعذر تحميل بيانات هذا الحزب حالياً. يرجى المحاولة لاحقاً.
-              </p>
-            </div>
-          ) : viewMode === "page" ? (
-            // SINGLE PAGE MUSHAF VIEW (Dynamic Full Pages - Option 2)
-            currentPage && (
-              <div className="max-w-2xl mx-auto bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-4 border-[#C5A059]/70 p-4 sm:p-6 shadow-xl relative transition-all duration-300">
-                {/* Decorative Top Moroccan Border Line */}
-                <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-[#C5A059]/40 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
-                  <span>سُورَةُ {currentPage.surahTitle || meta.surahs[0]}</span>
-                  <span className="px-3 py-0.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30">
-                    الحِزْبُ {currentHizb}
-                  </span>
-                  <span>الصَّفْحَةُ {currentPage.pageNumber}</span>
+        {/* READING VIEWPORT + DOCKED TAFSIR BOTTOM SHEET */}
+        <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
+          <div
+            ref={contentRef}
+            className="flex-1 overflow-y-auto p-3 sm:p-6 bg-gradient-to-b from-[#FAF7F2] to-[#F5EFE6] dark:from-[#091811] dark:to-[#050D09]"
+          >
+            {loading ? (
+              <div className="h-full flex flex-col items-center justify-center space-y-4 py-24">
+                <Loader2 className="w-10 h-10 text-[#C5A059] animate-spin" />
+                <div className="font-amiri text-lg font-bold text-[#143628] dark:text-[#E5C378]">
+                  جَارٍ تَحْمِيلُ الحِزْبِ المُبَارَكِ بِالخَطِّ المَغْرِبِيِّ الأَصِيلِ...
                 </div>
-
-                {/* Quran Page Body (Option 2 Dynamic Flow) */}
-                {renderDynamicQuranPage(currentPage)}
-
-                {/* Decorative Bottom Line */}
-                <div className="flex items-center justify-between pt-3 mt-4 border-t-2 border-[#C5A059]/40 text-xs font-ibm text-[#52796F] dark:text-[#9BB0A5]">
-                  <span>مصحف محمد السادس بالخط المغربي</span>
-                  <span className="font-bold text-[#C5A059]">
-                    {safePageIndex + 1} / {totalPages}
-                  </span>
-                  <span>رواية ورش عن نافع</span>
-                </div>
+                <p className="text-xs text-[#52796F] dark:text-[#9BB0A5] font-ibm">
+                  مِنْ نُسْخَةِ المَصْحَفِ المَحَمَّدِيِّ الشَّرِيفِ (رِوَايَةُ وَرْشٍ عَنْ نَافِعٍ)
+                </p>
               </div>
-            )
-          ) : (
-            // CONTINUOUS SCROLL VIEW (All Dynamic Pages of the Hizb)
-            <div className="max-w-2xl mx-auto space-y-6">
-              {dynamicPages.map((page) => (
-                <div
-                  key={page.pageNumber}
-                  className="bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-2 border-[#C5A059]/50 p-4 sm:p-6 shadow-md"
-                >
-                  <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#C5A059]/30 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
-                    <span>سورة {page.surahTitle || meta.surahs[0]}</span>
-                    <span>صفحة {page.pageNumber}</span>
+            ) : !data || totalPages === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center space-y-3 py-20 text-center">
+                <BookOpen className="w-12 h-12 text-gray-400" />
+                <p className="font-amiri text-lg text-gray-600 dark:text-gray-300">
+                  تعذر تحميل بيانات هذا الحزب حالياً. يرجى المحاولة لاحقاً.
+                </p>
+              </div>
+            ) : viewMode === "page" ? (
+              // SINGLE PAGE MUSHAF VIEW (Dynamic Full Pages - Option 2)
+              currentPage && (
+                <div className="max-w-2xl mx-auto bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-4 border-[#C5A059]/70 p-4 sm:p-6 shadow-xl relative transition-all duration-300">
+                  {/* Decorative Top Moroccan Border Line */}
+                  <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-[#C5A059]/40 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
+                    <span>سُورَةُ {currentPage.surahTitle || meta.surahs[0]}</span>
+                    <span className="px-3 py-0.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30">
+                      الحِزْبُ {currentHizb}
+                    </span>
+                    <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                      الصَّفْحَةُ {currentPage.pageNumber}
+                    </span>
+                  </div>
+
+                  {/* Subtle Interaction Hint */}
+                  <div className="mb-3 flex items-center justify-center gap-1.5 text-[11px] font-ibm text-[#596B62] dark:text-[#9BB0A5] select-none">
+                    <BookOpenText className="w-3.5 h-3.5 text-[#9E7B35] dark:text-[#E5C378] shrink-0" />
+                    <span>
+                      اضغط على أي آية أو رقمها لعرض التفسير والترجمة
+                      {currentHizb === 1 ? " (المختصر، ابن عطية، القرطبي، ابن عاشور)" : " (معاينة كاملة في الحزب 1)"}
+                    </span>
                   </div>
 
                   {/* Quran Page Body (Option 2 Dynamic Flow) */}
-                  {renderDynamicQuranPage(page)}
+                  {renderDynamicQuranPage(currentPage)}
+
+                  {/* Decorative Bottom Line */}
+                  <div className="flex items-center justify-between pt-3 mt-4 border-t-2 border-[#C5A059]/40 text-xs font-ibm text-[#52796F] dark:text-[#9BB0A5]">
+                    <span>مصحف محمد السادس بالخط المغربي</span>
+                    <span
+                      className="font-bold text-[#C5A059]"
+                      style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                      {safePageIndex + 1} / {totalPages}
+                    </span>
+                    <span>رواية ورش عن نافع</span>
+                  </div>
                 </div>
-              ))}
-            </div>
+              )
+            ) : (
+              // CONTINUOUS SCROLL VIEW (All Dynamic Pages of the Hizb)
+              <div className="max-w-2xl mx-auto space-y-6">
+                {dynamicPages.map((page) => (
+                  <div
+                    key={page.pageNumber}
+                    className="bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-2 border-[#C5A059]/50 p-4 sm:p-6 shadow-md"
+                  >
+                    <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#C5A059]/30 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
+                      <span>سورة {page.surahTitle || meta.surahs[0]}</span>
+                      <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                        صفحة {page.pageNumber}
+                      </span>
+                    </div>
+
+                    {/* Quran Page Body (Option 2 Dynamic Flow) */}
+                    {renderDynamicQuranPage(page)}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Extra scroll clearance so bottom verses stay visible above open Bottom Sheet */}
+            {selectedVerseKey && (
+              <div
+                aria-hidden="true"
+                className={tafsirSheetExpanded ? "h-80 sm:h-96" : "h-64 sm:h-72"}
+              />
+            )}
+          </div>
+
+          {/* BOTTOM SHEET: INTERACTIVE VERSE TAFSIR & FRENCH TRANSLATION */}
+          {selectedVerseKey && (
+            <section
+              role="region"
+              aria-label="لوحة التفسير والترجمة"
+              className={`tafsir-bottom-sheet absolute inset-x-0 bottom-0 z-30 flex flex-col bg-[#FFFDF9] dark:bg-[#0C2018] border-t border-[#C5A059]/50 rounded-t-2xl shadow-[0_-12px_32px_-10px_rgba(20,54,40,0.22)] dark:shadow-[0_-14px_34px_-8px_rgba(0,0,0,0.65)] ${
+                tafsirSheetExpanded
+                  ? "h-[78%] min-h-[320px]"
+                  : "h-[46%] min-h-[250px] max-h-[390px]"
+              }`}
+            >
+              {/* Drag indicator bar */}
+              <div className="flex justify-center pt-2 pb-1 shrink-0">
+                <span className="w-10 h-1 rounded-full bg-[#C5A059]/40" />
+              </div>
+
+              {/* Sheet Header */}
+              <div className="px-4 sm:px-5 pb-2.5 pt-0.5 flex items-center justify-between gap-2 border-b border-[#E7DFD5] dark:border-[#203D31] shrink-0">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#143628]/10 dark:bg-[#C5A059]/15 border border-[#C5A059]/35 flex items-center justify-center text-[#826122] dark:text-[#E5C378] shrink-0">
+                    <BookOpenText className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div
+                      className="font-amiri text-sm sm:text-base font-bold text-[#143628] dark:text-[#FAF7F2] truncate"
+                      style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                      {tafsirData?.verse?.warsh_ref || `الحزب ${currentHizb} • ${selectedVerseKey}`}
+                    </div>
+                    {tafsirData?.verse?.hafs_note && (
+                      <div
+                        className="text-[11px] font-ibm text-[#596B62] dark:text-[#9BB0A5] truncate"
+                        style={{ fontVariantNumeric: "tabular-nums" }}
+                      >
+                        {tafsirData.verse.hafs_note}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Prev / Next Ayah controls */}
+                  {tafsirData?.available && (
+                    <div className="flex items-center gap-1 border border-[#E7DFD5] dark:border-[#203D31] rounded-lg p-0.5 bg-[#FAF7F2] dark:bg-[#081510]">
+                      <button
+                        type="button"
+                        disabled={!tafsirData.prev_key}
+                        onClick={() => tafsirData.prev_key && handleSelectVerse(tafsirData.prev_key, true)}
+                        className="p-1.5 rounded-md text-[#143628] dark:text-[#EAF2ED] hover:bg-[#C5A059]/15 disabled:opacity-35 disabled:cursor-not-allowed active:scale-[0.97] transition-[transform,colors] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] cursor-pointer"
+                        aria-label="الآية السابقة"
+                        title="الآية السابقة"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={!tafsirData.next_key}
+                        onClick={() => tafsirData.next_key && handleSelectVerse(tafsirData.next_key, true)}
+                        className="p-1.5 rounded-md text-[#143628] dark:text-[#EAF2ED] hover:bg-[#C5A059]/15 disabled:opacity-35 disabled:cursor-not-allowed active:scale-[0.97] transition-[transform,colors] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] cursor-pointer"
+                        aria-label="الآية التالية"
+                        title="الآية التالية"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Expand / Collapse toggle */}
+                  <button
+                    type="button"
+                    onClick={() => setTafsirSheetExpanded((v) => !v)}
+                    className="p-1.5 rounded-lg border border-[#E7DFD5] dark:border-[#203D31] bg-[#FAF7F2] dark:bg-[#081510] text-[#143628] dark:text-[#EAF2ED] hover:bg-[#C5A059]/15 active:scale-[0.97] transition-[transform,colors] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] cursor-pointer"
+                    aria-label={tafsirSheetExpanded ? "تصغير لوحة التفسير" : "توسيع لوحة التفسير"}
+                    title={tafsirSheetExpanded ? "تصغير" : "توسيع"}
+                  >
+                    {tafsirSheetExpanded ? (
+                      <Minimize2 className="w-4 h-4" />
+                    ) : (
+                      <Maximize2 className="w-4 h-4" />
+                    )}
+                  </button>
+
+                  {/* Close Sheet */}
+                  <button
+                    type="button"
+                    onClick={handleCloseTafsirSheet}
+                    className="p-1.5 rounded-lg border border-[#E7DFD5] dark:border-[#203D31] bg-[#FAF7F2] dark:bg-[#081510] text-[#143628] dark:text-[#EAF2ED] hover:bg-red-500/12 hover:text-red-700 dark:hover:text-red-300 active:scale-[0.97] transition-[transform,colors] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] cursor-pointer"
+                    aria-label="إغلاق التفسير"
+                    title="إغلاق"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Source Tabs Bar */}
+              {tafsirData?.available !== false && (
+                <div
+                  role="tablist"
+                  aria-label="مصادر التفسير والترجمة"
+                  className="px-3 sm:px-5 py-2 flex items-center gap-1 sm:gap-1.5 overflow-x-auto border-b border-[#E7DFD5] dark:border-[#203D31] bg-[#FAF7F2]/75 dark:bg-[#081510]/65 shrink-0 scrollbar-none"
+                >
+                  {TAFSIR_TABS.map((tab) => {
+                    const isActive = activeTafsirTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        role="tab"
+                        type="button"
+                        aria-selected={isActive}
+                        onClick={() => {
+                          setActiveTafsirTab(tab.id);
+                          if (sheetBodyRef.current) sheetBodyRef.current.scrollTop = 0;
+                        }}
+                        className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold whitespace-nowrap flex items-center gap-1 sm:gap-1.5 active:scale-[0.97] transition-[transform,colors] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] cursor-pointer ${
+                          isActive
+                            ? "bg-[#143628] text-[#FAF7F2] dark:bg-[#C5A059] dark:text-[#07130E]"
+                            : "text-[#596B62] dark:text-[#9BB0A5] hover:bg-[#C5A059]/15 hover:text-[#143628] dark:hover:text-[#FAF7F2]"
+                        } ${tab.id === "french" ? "font-jakarta" : "font-ibm"}`}
+                      >
+                        {tab.id === "french" && <Languages className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
+                        <span>{tab.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Sheet Scrollable Body */}
+              <div
+                ref={sheetBodyRef}
+                className="flex-1 overflow-y-auto px-4 sm:px-6 py-4"
+              >
+                {tafsirLoading ? (
+                  <div className="space-y-3 py-2" aria-busy="true" aria-label="جاري تحميل التفسير">
+                    <div className="h-12 w-full rounded-xl bg-[#E7DFD5]/60 dark:bg-[#172D24] animate-pulse" />
+                    <div className="h-4 w-3/4 rounded bg-[#E7DFD5]/70 dark:bg-[#172D24] animate-pulse" />
+                    <div className="h-4 w-full rounded bg-[#E7DFD5]/55 dark:bg-[#172D24] animate-pulse" />
+                    <div className="h-4 w-5/6 rounded bg-[#E7DFD5]/55 dark:bg-[#172D24] animate-pulse" />
+                  </div>
+                ) : tafsirError ? (
+                  <div className="p-4 rounded-xl border border-[#E7DFD5] dark:border-[#203D31] bg-[#FAF7F2] dark:bg-[#081510] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <p className="text-xs sm:text-sm font-ibm text-[#1D2A24] dark:text-[#EAF2ED]">
+                      {tafsirError}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => loadVerseTafsir(currentHizb, selectedVerseKey)}
+                      className="px-3.5 py-1.5 rounded-lg bg-[#143628] text-[#FAF7F2] dark:bg-[#C5A059] dark:text-[#07130E] text-xs font-bold flex items-center gap-1.5 active:scale-[0.97] transition-[transform,colors] duration-150 cursor-pointer shrink-0"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>إعادة المحاولة</span>
+                    </button>
+                  </div>
+                ) : tafsirData && !tafsirData.available ? (
+                  <div className="p-4 sm:p-5 rounded-xl border border-[#C5A059]/35 bg-[#FAF7F2] dark:bg-[#081510] space-y-3">
+                    <div
+                      className="font-amiri text-base font-bold text-[#143628] dark:text-[#E5C378]"
+                      style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                      تفسير الحزب {currentHizb} قيد الإعداد التدريجي
+                    </div>
+                    <p
+                      className="text-xs sm:text-sm font-ibm text-[#596B62] dark:text-[#9BB0A5] leading-relaxed"
+                      style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                      تتوفر حالياً المعاينة الكاملة للتفسير (المختصر، ابن عطية، القرطبي، ابن عاشور، والترجمة الفرنسية) على الحزب 1 (سورة الفاتحة ومطلع سورة البقرة).
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectHizb(1)}
+                      className="px-4 py-2 rounded-lg bg-[#143628] text-[#FAF7F2] dark:bg-[#C5A059] dark:text-[#07130E] text-xs font-bold inline-flex items-center gap-2 active:scale-[0.97] transition-[transform,colors] duration-150 cursor-pointer"
+                      style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                      <BookOpenText className="w-4 h-4" />
+                      <span>الانتقال إلى الحزب 1 للمعاينة</span>
+                    </button>
+                  </div>
+                ) : tafsirData?.verse ? (
+                  <div className="space-y-4">
+                    {/* Selected Warsh Verse Box */}
+                    <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#081510] border border-[#C5A059]/30">
+                      <div className="font-maghribi-quran text-lg sm:text-xl leading-loose text-[#143628] dark:text-[#E5C378]">
+                        {tafsirData.verse.verse_text}
+                        {tafsirData.verse.verse_number > 0 && (
+                          <span
+                            className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1 mx-2 rounded-full bg-[#C5A059]/20 border border-[#C5A059]/45 font-jakarta text-[11px] font-bold text-[#826122] dark:text-[#E5C378] align-middle"
+                            style={{ fontVariantNumeric: "tabular-nums" }}
+                          >
+                            {tafsirData.verse.verse_number}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Tab Content */}
+                    {activeTafsirTab === "french" ? (
+                      <div dir="ltr" className="text-left space-y-4 max-w-[68ch] font-jakarta">
+                        <div className="space-y-1.5">
+                          <div className="text-xs font-bold uppercase tracking-wide text-[#826122] dark:text-[#E5C378]">
+                            Traduction française (M. Hamidullah)
+                          </div>
+                          <p
+                            className="text-sm sm:text-[15px] leading-[1.75] text-[#1D2A24] dark:text-[#EAF2ED]"
+                            style={{ fontVariantNumeric: "tabular-nums" }}
+                          >
+                            {tafsirData.verse.fr_translation}
+                          </p>
+                        </div>
+
+                        {tafsirData.verse.fr_mokhtasar && (
+                          <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-1.5">
+                            <div className="text-xs font-bold uppercase tracking-wide text-[#596B62] dark:text-[#9BB0A5]">
+                              Explication concise (Al-Mokhtasar)
+                            </div>
+                            <p
+                              className="text-sm sm:text-[15px] leading-[1.75] text-[#1D2A24] dark:text-[#EAF2ED]/90 whitespace-pre-line"
+                              style={{ fontVariantNumeric: "tabular-nums" }}
+                            >
+                              {tafsirData.verse.fr_mokhtasar}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div dir="rtl" className="space-y-3 max-w-[70ch]">
+                        {tafsirData.sources?.[activeTafsirTab]?.full_title && (
+                          <div className="text-xs font-ibm font-bold text-[#826122] dark:text-[#E5C378]">
+                            {tafsirData.sources[activeTafsirTab].full_title}
+                          </div>
+                        )}
+                        <div
+                          className="space-y-3 text-sm sm:text-[15px] font-ibm leading-[1.9] text-[#1D2A24] dark:text-[#EAF2ED]"
+                          style={{ fontVariantNumeric: "tabular-nums" }}
+                        >
+                          {(tafsirData.verse[activeTafsirTab] || "")
+                            .split(/\n{2,}/)
+                            .filter((para) => para.trim().length > 0)
+                            .map((para, pIdx) => (
+                              <p key={pIdx} className="whitespace-pre-line">
+                                {para.trim()}
+                              </p>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs sm:text-sm font-ibm text-[#596B62] dark:text-[#9BB0A5]">
+                    لا تتوفر بيانات لهذه الآية حالياً.
+                  </p>
+                )}
+              </div>
+            </section>
           )}
         </div>
 

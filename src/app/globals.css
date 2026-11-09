@@ -154,3 +154,33 @@ body {
   background-image: radial-gradient(#C5A059 0.6px, transparent 0.6px);
   background-size: 24px 24px;
 }
+
+/* Smooth GPU-accelerated Bottom Sheet drawer entrance (Emil Kowalski / iOS drawer curve) */
+.tafsir-bottom-sheet {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    transform 240ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform, opacity;
+}
+
+@starting-style {
+  .tafsir-bottom-sheet {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tafsir-bottom-sheet {
+    transition: opacity 150ms ease;
+    transform: translateY(0);
+  }
+  @starting-style {
+    .tafsir-bottom-sheet {
+      opacity: 0;
+      transform: translateY(0);
+    }
+  }
+}
