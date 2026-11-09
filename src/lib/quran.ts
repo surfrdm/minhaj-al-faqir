@@ -35,9 +35,12 @@ export interface QuranWord {
 }
 
 export interface QuranLine {
-  line_id: number;
+  line_id: number | string;
   line_number: number;
   is_surah_title: string;
+  is_basmala?: string;
+  basmala_text?: string;
+  surah_number?: string;
   surah_title?: string;
   surah_title_ar?: string;
   surah_title_lt?: string;
@@ -178,13 +181,13 @@ export function getTomonDivisionInfo(
 }
 
 /**
- * Robust sanitizer to prevent rendering glitches (e.g. ؉, ؐ, ؊, ؋)
+ * Sanitizes standard Unicode Warsh word tokens while strictly preserving
+ * all Warsh phonetic diacritics and Moroccan Waqf Al-Habti (U+06D6).
  */
 export function cleanQuranWordText(txt: string): string {
   if (!txt) return "";
   return txt
-    .replace(/؉ّ/g, "ٍّ")
-    .replace(/؉/g, "ٍ")
-    .replace(/[؊؋ؐ]/g, "")
-    .replace(/[ ;,¢/¿]+$/, "");
+    .replace(/\u00a0/g, " ")
+    .replace(/[\u200f\u06de\u06e9]/g, "")
+    .trim();
 }

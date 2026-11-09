@@ -267,8 +267,8 @@ export function DailyQuranAhzabCard({
               </button>
             </div>
 
-            <p className="text-xs text-[#52796F] dark:text-[#9BB0A5] font-ibm line-clamp-1">
-              مَطْلَعُ الحِزْبِ: «{morningMeta.matlaa}»
+            <p className="text-sm text-[#52796F] dark:text-[#9BB0A5] font-maghribi-quran leading-relaxed line-clamp-1">
+              «{morningMeta.matlaa}»
             </p>
 
             <div className="flex items-center justify-between pt-1">
@@ -323,8 +323,8 @@ export function DailyQuranAhzabCard({
               </button>
             </div>
 
-            <p className="text-xs text-[#52796F] dark:text-[#9BB0A5] font-ibm line-clamp-1">
-              مَطْلَعُ الحِزْبِ: «{eveningMeta.matlaa}»
+            <p className="text-sm text-[#52796F] dark:text-[#9BB0A5] font-maghribi-quran leading-relaxed line-clamp-1">
+              «{eveningMeta.matlaa}»
             </p>
 
             <div className="flex items-center justify-between pt-1">

@@ -461,7 +461,7 @@ export function SpiritualHeaderBar() {
                           </button>
                         </div>
                       </div>
-                      <p className="font-amiri text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed bg-[#FAF7F2] dark:bg-[#07130E] p-3 rounded-xl border border-[#C5A059]/20">
+                      <p className="font-maghribi-quran text-base sm:text-lg text-gray-800 dark:text-gray-200 leading-loose bg-[#FAF7F2] dark:bg-[#07130E] p-3.5 rounded-xl border border-[#C5A059]/20">
                         « {hizb.opening} »
                       </p>
                     </div>
@@ -503,7 +503,7 @@ export function SpiritualHeaderBar() {
                           </button>
                         </div>
                       </div>
-                      <p className="font-amiri text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed bg-[#FAF7F2] dark:bg-[#07130E] p-3 rounded-xl border border-[#C5A059]/20">
+                      <p className="font-maghribi-quran text-base sm:text-lg text-gray-800 dark:text-gray-200 leading-loose bg-[#FAF7F2] dark:bg-[#07130E] p-3.5 rounded-xl border border-[#C5A059]/20">
                         « {hizb.opening} »
                       </p>
                     </div>

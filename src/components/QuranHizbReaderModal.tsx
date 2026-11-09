@@ -22,7 +22,6 @@ import {
   QuranHizbData,
   QuranPage,
   QuranWord,
-  toArabicDigits,
   getHizbMeta,
   ALL_AHZAB_INDEX,
   getTomonDivisionInfo,
@@ -30,8 +29,9 @@ import {
 } from "@/lib/quran";
 
 interface DynamicPageItem {
-  type: "banner" | "word";
+  type: "banner" | "basmala" | "word";
   title?: string;
+  basmalaText?: string;
   word?: QuranWord;
   surahTitle?: string;
 }
@@ -91,12 +91,21 @@ function partitionHizbWords(
           title: l.surah_title_ar || l.surah_title,
           surahTitle: l.surah_title_ar || l.surah_title,
         });
+      } else if (l.is_basmala === "1") {
+        items.push({
+          type: "basmala",
+          basmalaText: l.basmala_text || "بِسْمِ اِ۬للَّهِ اِ۬لرَّحْمَٰنِ اِ۬لرَّحِيمِ",
+          surahTitle: l.surah_title_ar || l.surah_title || pageSurah,
+        });
       } else if (l.words) {
         for (const w of l.words) {
+          if (w.hizb_number && Number(w.hizb_number) !== hizbData.hizb_number) {
+            continue;
+          }
           items.push({
             type: "word",
             word: w,
-            surahTitle: pageSurah,
+            surahTitle: l.surah_title_ar || pageSurah,
           });
         }
       }
@@ -200,7 +209,7 @@ export function QuranHizbReaderModal({
   const [data, setData] = useState<QuranHizbData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
-  const [fontSize, setFontSize] = useState<number>(24);
+  const [fontSize, setFontSize] = useState<number>(26);
   const [viewMode, setViewMode] = useState<"page" | "scroll">("page");
   const [isCompletedToday, setIsCompletedToday] = useState<boolean>(false);
   const [justCompleted, setJustCompleted] = useState<boolean>(false);
@@ -321,14 +330,15 @@ export function QuranHizbReaderModal({
     }
   };
 
-  if (!isOpen) return null;
-
-  const meta = getHizbMeta(currentHizb);
-  const targetWordsPerPage = Math.max(120, Math.round(175 * (24 / fontSize)));
+  const targetWordsPerPage = Math.max(120, Math.round(170 * (26 / fontSize)));
   const dynamicPages = useMemo(() => {
     if (!data) return [];
     return partitionHizbWords(data, targetWordsPerPage);
   }, [data, targetWordsPerPage]);
+
+  if (!isOpen) return null;
+
+  const meta = getHizbMeta(currentHizb);
 
   const totalPages = dynamicPages.length;
   const safePageIndex = Math.min(currentPageIndex, Math.max(0, totalPages - 1));
@@ -353,12 +363,37 @@ export function QuranHizbReaderModal({
     setCurrentPageIndex(0);
   };
 
+  const renderHabtiMark = () => (
+    <span
+      className="inline-block font-maghribi-quran text-[0.62em] font-bold leading-none text-[#9E7B35] dark:text-[#E5C378] select-none ms-0.5"
+      style={{ verticalAlign: "0.35em" }}
+      title="وقف الهبطي (المصحف المحمدي)"
+      aria-label="وقف الهبطي"
+    >
+      ص
+    </span>
+  );
+
+  const renderBasmalaLine = (rawBasmala?: string) => {
+    const base = rawBasmala || "بِسْمِ اِ۬للَّهِ اِ۬لرَّحْمَٰنِ اِ۬لرَّحِيمِ";
+    const hasHabti = base.includes("\u06d6");
+    const displayBasmala = base.replace(/\u06d6/g, "");
+    return (
+      <span className="inline-block whitespace-nowrap">
+        <span>{displayBasmala}</span>
+        {hasHabti && renderHabtiMark()}
+      </span>
+    );
+  };
+
   const renderQuranWord = (w: QuranWord, wIdx: number) => {
     const tomonInfo =
       w.is_first_tomon === "1"
         ? getTomonDivisionInfo(w.tomon_number || "1", currentHizb)
         : null;
     const cleanedText = cleanQuranWordText(w.text);
+    const hasHabti = cleanedText.includes("\u06d6");
+    const displayWord = hasHabti ? cleanedText.replace(/\u06d6/g, "") : cleanedText;
 
     return (
       <React.Fragment key={w.id || wIdx}>
@@ -372,20 +407,63 @@ export function QuranHizbReaderModal({
           </span>
         )}
 
-        {/* Word Text */}
-        <span className="inline-block hover:text-[#C5A059] transition-colors">
-          {cleanedText}
-        </span>
-
-        {/* Verse Number Badge in Western / Latin Digits (1, 2, 3...) */}
-        {w.is_last_word === "1" && w.verse?.verse_number && (
-          <span className="inline-flex items-center justify-center mx-1 select-none font-sans font-bold align-middle">
-            <span className="w-5 h-5 rounded-full border border-[#C5A059] text-[11px] font-bold text-[#826122] dark:text-[#E5C378] bg-[#C5A059]/15 flex items-center justify-center shadow-2xs">
-              {w.verse.verse_number}
-            </span>
+        {/* Word + Optional Habti Stop + Optional Sajdah + Optional Verse Rosette kept non-breaking */}
+        <span className="inline-block whitespace-nowrap">
+          <span className="hover:text-[#C5A059] transition-colors">
+            {displayWord}
           </span>
-        )}
-        {" "}
+          {hasHabti && renderHabtiMark()}
+
+          {/* Maliki Sajdah emblem when indicated by Awqaf Mushaf */}
+          {w.is_last_word === "1" && w.verse?.sajda === "1" && (
+            <span
+              className="inline-flex items-center gap-0.5 mx-1 text-[#9E7B35] dark:text-[#E5C378] select-none align-middle"
+              title="موضع سجدة التلاوة"
+            >
+              <span className="font-maghribi-quran text-[1.05em] leading-none">
+                ۩
+              </span>
+            </span>
+          )}
+
+          {/* Ornate Moroccan Mushaf Rosette Verse Number in Western Digits (1, 2, 3...) */}
+          {w.is_last_word === "1" && w.verse?.verse_number && (
+            <span
+              className="relative inline-flex items-center justify-center min-w-[28px] h-[28px] px-1 mx-1 select-none align-middle"
+              title={`الآية ${w.verse.verse_number}`}
+            >
+              <svg
+                viewBox="0 0 36 36"
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full text-[#C5A059]"
+              >
+                <polygon
+                  points="18,1.5 22.8,6.2 29.5,6.5 29.8,13.2 34.5,18 29.8,22.8 29.5,29.5 22.8,29.8 18,34.5 13.2,29.8 6.5,29.5 6.2,22.8 1.5,18 6.2,13.2 6.5,6.5 13.2,6.2"
+                  fill="currentColor"
+                  fillOpacity="0.14"
+                  stroke="currentColor"
+                  strokeWidth="1.35"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="10.2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="0.9"
+                  strokeOpacity="0.65"
+                />
+              </svg>
+              <span
+                className="relative z-10 font-jakarta text-[11px] font-bold leading-none text-[#826122] dark:text-[#E5C378]"
+                style={{ fontVariantNumeric: "tabular-nums" }}
+              >
+                {w.verse.verse_number}
+              </span>
+            </span>
+          )}
+        </span>{" "}
       </React.Fragment>
     );
   };
@@ -405,9 +483,21 @@ export function QuranHizbReaderModal({
                   key={line.line_id}
                   className="my-4 py-2 px-6 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs max-w-sm mx-auto"
                 >
-                  <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
+                  <div className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-snug">
                     سُورَةُ {line.surah_title_ar || line.surah_title}
                   </div>
+                </div>
+              );
+            }
+
+            if (line.is_basmala === "1") {
+              return (
+                <div
+                  key={line.line_id}
+                  className="w-full text-center text-[#1B4332] dark:text-[#E5C378] py-1.5 select-text"
+                  style={{ lineHeight: 2 }}
+                >
+                  {renderBasmalaLine(line.basmala_text)}
                 </div>
               );
             }
@@ -432,17 +522,18 @@ export function QuranHizbReaderModal({
 
     if (!page.items) return null;
 
-    // 2. تقسيم عناصر الصفحة الديناميكية الكاملة إلى لافتات وفقرات نصية متصلة
+    // 2. تقسيم عناصر الصفحة الديناميكية الكاملة إلى لافتات وبسملات وفقرات نصية متصلة
     const sections: Array<{
-      type: "banner" | "text";
+      type: "banner" | "basmala" | "text";
       title?: string;
+      basmalaText?: string;
       words?: QuranWord[];
       isEndOfSurah?: boolean;
     }> = [];
     let curWords: QuranWord[] = [];
 
     for (const it of page.items) {
-      if (it.type === "banner") {
+      if (it.type === "banner" || it.type === "basmala") {
         if (curWords.length > 0) {
           const lastW = curWords[curWords.length - 1];
           sections.push({
@@ -453,7 +544,11 @@ export function QuranHizbReaderModal({
           });
           curWords = [];
         }
-        sections.push({ type: "banner", title: it.title });
+        if (it.type === "banner") {
+          sections.push({ type: "banner", title: it.title });
+        } else {
+          sections.push({ type: "basmala", basmalaText: it.basmalaText });
+        }
       } else if (it.type === "word" && it.word) {
         curWords.push(it.word);
       }
@@ -480,9 +575,21 @@ export function QuranHizbReaderModal({
                 key={`bn-${sIdx}`}
                 className="my-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
               >
-                <div className="font-thuluth text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
+                <div className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-snug">
                   سُورَةُ {sec.title}
                 </div>
+              </div>
+            );
+          }
+
+          if (sec.type === "basmala") {
+            return (
+              <div
+                key={`bsm-${sIdx}`}
+                className="w-full text-center text-[#1B4332] dark:text-[#E5C378] py-1 select-text"
+                style={{ lineHeight: 2 }}
+              >
+                {renderBasmalaLine(sec.basmalaText)}
               </div>
             );
           }
@@ -540,7 +647,7 @@ export function QuranHizbReaderModal({
                 )}
               </div>
               <p className="text-xs text-[#E8F0EC]/80 font-ibm line-clamp-1">
-                سُوَر: {meta.surahs.join(" • ")} | مطلع: «{meta.matlaa}»
+                سُوَر: {meta.surahs.join(" • ")} | مطلع: «<span className="font-maghribi-quran text-sm text-[#FAF7F2]">{meta.matlaa}</span>»
               </p>
             </div>
           </div>
@@ -562,7 +669,7 @@ export function QuranHizbReaderModal({
             {/* Font Size Controls */}
             <div className="hidden sm:flex items-center gap-1 bg-white/10 rounded-xl p-1 border border-white/15">
               <button
-                onClick={() => setFontSize((f) => Math.min(34, f + 2))}
+                onClick={() => setFontSize((f) => Math.min(38, f + 2))}
                 className="p-1 hover:bg-white/20 rounded-lg text-white transition cursor-pointer"
                 title="تكبير الخط"
               >

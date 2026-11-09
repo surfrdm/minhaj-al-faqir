@@ -236,7 +236,7 @@ export function GrandQasaidModal({
               {/* Special Prose view for Dalail al-Khayrat Khatm */}
               {qasida.id === "dalail_khatm" ? (
                 <div
-                  className="space-y-4 font-maghribi-quran selection:bg-[#C5A059]/30 text-justify leading-loose"
+                  className="space-y-4 font-amiri selection:bg-[#C5A059]/30 text-justify leading-loose"
                   style={{ fontSize: `${fontSize}px` }}
                 >
                   {qasida.verses.map((v) => (
@@ -271,7 +271,7 @@ export function GrandQasaidModal({
               ) : (
                 /* Poetic Table / Card View */
                 <div
-                  className="space-y-3 font-maghribi-quran selection:bg-[#C5A059]/30"
+                  className="space-y-3 font-amiri selection:bg-[#C5A059]/30"
                   style={{ fontSize: `${fontSize}px` }}
                 >
                   {qasida.verses.map((v, idx) => {
@@ -284,7 +284,7 @@ export function GrandQasaidModal({
                       <React.Fragment key={v.num}>
                         {showChapter && (
                           <div className="my-6 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs">
-                            <span className="font-thuluth text-lg sm:text-xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wider">
+                            <span className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
                               ⚜️ {v.chapter}
                             </span>
                           </div>

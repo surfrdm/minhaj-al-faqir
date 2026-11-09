@@ -42,7 +42,7 @@ interface TurathReaderProps {
 const ITEMS_PER_PAGE = 25;
 
 const SHIFA_PARTS = [
-  { partNumber: 0, label: '٠. مقدمة المؤلف القاضي عياض' },
+  { partNumber: 0, label: '0. مقدمة المؤلف القاضي عياض' },
   { partNumber: 1, label: 'القسم الأول: في تعظيم العلي الأعلى لقدر النبي ﷺ' },
   { partNumber: 2, label: 'القسم الثاني: فيما يجب على الأنام من حقوقه ﷺ' },
   { partNumber: 3, label: 'القسم الثالث: فيما يجب ويستحيل ويجوز في حقه ﷺ' },
@@ -614,7 +614,7 @@ export default function TurathReader({
       if (bukhariSearchScope === 'book') {
         return `داخل ${bukhariData.meta.title_ar} فقط`;
       }
-      return 'كامل صحيح البخاري (٩٧ كتاباً • ٧٥٨٠ حديثاً)';
+      return 'كامل صحيح البخاري (97 كتاباً • 7580 حديثاً)';
     }
 
     if (shifaSearchScope === 'chapter') {
@@ -632,7 +632,7 @@ export default function TurathReader({
       );
       return partObj ? `داخل ${partObj.label}` : 'داخل القسم المحدد';
     }
-    return 'كامل كتاب الشِّفا للقاضي عياض (٤ أقسام • ١٤ باباً)';
+    return 'كامل كتاب الشِّفا للقاضي عياض (4 أقسام • 14 باباً)';
   }, [
     selectedSource,
     bukhariSearchScope,
@@ -685,7 +685,7 @@ export default function TurathReader({
           الرِّحَابُ الحَدِيثِيَّةُ وَالشَّمَائِلُ النَّبَوِيَّةُ
         </h1>
         <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-          المتن الكامل لصحيح الإمام البخاري (٩٧ كتاباً • ٧٥٨٠ حديثاً) وكتاب الشِّفا للقاضي عياض (٤ أقسام • ١٤ باباً) مؤصَّلَين بشرح الإمام ابن بطال المالكي وشرح الملا علي القاري.
+          المتن الكامل لصحيح الإمام البخاري (97 كتاباً • 7580 حديثاً) وكتاب الشِّفا للقاضي عياض (4 أقسام • 14 باباً) مؤصَّلَين بشرح الإمام ابن بطال المالكي وشرح الملا علي القاري.
         </p>
       </div>
 
@@ -708,7 +708,7 @@ export default function TurathReader({
             }`}
           >
             <BookOpen className="w-4 h-4 text-[#C5A059]" />
-            <span>صحيح البخاري (٩٧)</span>
+            <span>صحيح البخاري (97)</span>
           </button>
           <button
             type="button"
@@ -722,7 +722,7 @@ export default function TurathReader({
             }`}
           >
             <ScrollText className="w-4 h-4 text-[#C5A059]" />
-            <span>الشِّفا للقاضي عياض (١٤)</span>
+            <span>الشِّفا للقاضي عياض (14)</span>
           </button>
         </div>
 
@@ -811,14 +811,14 @@ export default function TurathReader({
                         ? `داخل «${selectedBabObj.title_ar.slice(0, 42)}»`
                         : bukhariSearchScope === 'book'
                         ? `داخل «${bukhariData.meta.title_ar}»`
-                        : 'في جميع كتب البخاري (٩٧ كتاباً)'
+                        : 'في جميع كتب البخاري (97 كتاباً)'
                     } بكلمة أو برقم الحديث مثل 1 أو الإيمان...`
                   : `ابحث ${
                       shifaSearchScope === 'chapter'
                         ? `داخل «${shifaData.meta.title_ar.slice(0, 42)}»`
                         : shifaSearchScope === 'part'
                         ? 'داخل القسم المختار من الشِّفا'
-                        : 'في كامل كتاب الشِّفا (١٦٨ فصلاً)'
+                        : 'في كامل كتاب الشِّفا (168 فصلاً)'
                     } مثل: الشفاعة أو الإسراء أو المحبة...`
               }
               className="w-full pr-10 pl-10 py-3 rounded-xl border-2 border-[#C5A059]/30 dark:border-[#203A2F] bg-[#FAF7F2] dark:bg-[#07130E] text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:border-[#C5A059] transition"
@@ -855,7 +855,7 @@ export default function TurathReader({
               <div>
                 <label className="flex items-center gap-1.5 text-xs font-bold text-[#8F7032] dark:text-[#E5C378] mb-1.5">
                   <Filter className="w-3.5 h-3.5" />
-                  <span>فيلتر الكتاب (١ - ٩٧):</span>
+                  <span>فيلتر الكتاب (1 - 97):</span>
                 </label>
                 <select
                   value={selectedBookNum}
@@ -926,7 +926,7 @@ export default function TurathReader({
                       : 'bg-[#FAF7F2] dark:bg-[#07130E] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#203A2F] hover:border-[#C5A059]'
                   }`}
                 >
-                  كامل البخاري (٩٧ كتاباً)
+                  كامل البخاري (97 كتاباً)
                 </button>
                 <button
                   type="button"
@@ -1000,7 +1000,7 @@ export default function TurathReader({
                   disabled={isLoading}
                   className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-[#203A2F] bg-[#FAF7F2] dark:bg-[#07130E] text-sm font-medium text-[#143628] dark:text-[#E8F0EC] focus:outline-none focus:ring-2 focus:ring-[#C5A059]"
                 >
-                  <option value="all">جميع الأقسام (١ - ٤ + المقدمة)</option>
+                  <option value="all">جميع الأقسام (1 - 4 + المقدمة)</option>
                   {SHIFA_PARTS.map((p) => (
                     <option key={p.partNumber} value={p.partNumber}>
                       {p.label}
@@ -1028,7 +1028,7 @@ export default function TurathReader({
                   {filteredShifaChapters.map((ch) => (
                     <option key={ch.chapterNumber} value={ch.chapterNumber}>
                       {ch.chapterNumber === 0
-                        ? `٠. ${ch.title_ar}`
+                        ? `0. ${ch.title_ar}`
                         : `القسم ${ch.partNumber} • ${ch.title_ar}`}
                       {langView === 'fr' || langView === 'all' ? ` — ${ch.title_fr}` : ''}
                       {` (${ch.faslCount} فصول)`}
@@ -1086,7 +1086,7 @@ export default function TurathReader({
                       : 'bg-[#FAF7F2] dark:bg-[#07130E] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#203A2F] hover:border-[#C5A059]'
                   }`}
                 >
-                  كامل الشِّفا (١٦٨ فصلاً)
+                  كامل الشِّفا (168 فصلاً)
                 </button>
                 <button
                   type="button"
@@ -1182,7 +1182,7 @@ export default function TurathReader({
                 onClick={() => setBukhariSearchScope('all')}
                 className="text-xs font-bold px-3 py-1.5 rounded-lg bg-[#143628] text-white hover:bg-[#1B4332] cursor-pointer"
               >
-                توسيع لكل البخاري (٩٧ كتاباً)
+                توسيع لكل البخاري (97 كتاباً)
               </button>
             )}
             {selectedSource === 'shifa' && shifaSearchScope !== 'all' && (
@@ -1195,7 +1195,7 @@ export default function TurathReader({
                 }}
                 className="text-xs font-bold px-3 py-1.5 rounded-lg bg-[#143628] text-white hover:bg-[#1B4332] cursor-pointer"
               >
-                توسيع لكل الشِّفا (١٦٨ فصلاً)
+                توسيع لكل الشِّفا (168 فصلاً)
               </button>
             )}
             <button
@@ -1212,7 +1212,7 @@ export default function TurathReader({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-xs text-[#E5C378] font-bold mb-1">
-                صحيح الإمام البخاري • الكتاب {bukhariData.meta.bookNumber} من ٩٧
+                صحيح الإمام البخاري • الكتاب {bukhariData.meta.bookNumber} من 97
               </div>
               <h2 className="text-2xl font-bold font-amiri">{bukhariData.meta.title_ar}</h2>
               {(langView === 'fr' || langView === 'all') && (
@@ -1353,7 +1353,7 @@ export default function TurathReader({
                         onClick={() => setBukhariSearchScope('all')}
                         className="px-4 py-2 rounded-xl bg-[#143628] text-white text-xs font-bold hover:bg-[#1B4332] cursor-pointer"
                       >
-                        توسيع البحث إلى كامل صحيح البخاري (٩٧ كتاباً)
+                        توسيع البحث إلى كامل صحيح البخاري (97 كتاباً)
                       </button>
                     </div>
                   )}
@@ -1526,7 +1526,7 @@ export default function TurathReader({
                       }}
                       className="px-4 py-2 rounded-xl bg-[#143628] text-white text-xs font-bold hover:bg-[#1B4332] cursor-pointer"
                     >
-                      توسيع البحث إلى كامل كتاب الشِّفا (١٦٨ فصلاً)
+                      توسيع البحث إلى كامل كتاب الشِّفا (168 فصلاً)
                     </button>
                   </div>
                 )}

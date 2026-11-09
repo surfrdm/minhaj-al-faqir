@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: 'AALMAGHRIBI';
-  src: url('/fonts/AALMAGHRIBI.woff2') format('woff2'),
-       url('/fonts/AALMAGHRIBI.ttf') format('truetype');
+  font-family: 'KFGQPCWarsh';
+  src: url('/fonts/warsh.10.woff2') format('woff2'),
+       url('/fonts/warsh.10.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -71,7 +71,7 @@
   --font-amiri: var(--font-amiri), serif;
   --font-sans: var(--font-ibm-arabic), system-ui, sans-serif;
   --font-maghribi: 'MaghribiKhouaja', serif;
-  --font-maghribi-quran: 'AALMAGHRIBI', serif;
+  --font-maghribi-quran: 'KFGQPCWarsh', 'Amiri', serif;
   --font-shorooq: 'Shorooq', sans-serif;
   --font-cormorant: var(--font-cormorant), serif;
   --font-jakarta: var(--font-jakarta), sans-serif;
@@ -105,7 +105,8 @@ body {
 }
 
 .font-maghribi-quran {
-  font-family: 'AALMAGHRIBI', 'Amiri', serif;
+  font-family: 'KFGQPCWarsh', 'Amiri', serif;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
 
 .font-thuluth {

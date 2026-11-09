@@ -74,7 +74,7 @@ export function AiChatWidget() {
       id: `user-${Date.now()}`,
       sender: "user",
       text: textToSend.trim(),
-      time: new Date().toLocaleTimeString("ar-MA", { hour: "2-digit", minute: "2-digit" }),
+      time: new Date().toLocaleTimeString("ar-MA-u-nu-latn", { hour: "2-digit", minute: "2-digit" }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -95,7 +95,7 @@ export function AiChatWidget() {
           sender: "bot",
           text: data.reply || "تقبل الله طاعاتكم ونفعنا ببركتكم.",
           cards: data.cards || [],
-          time: new Date().toLocaleTimeString("ar-MA", { hour: "2-digit", minute: "2-digit" }),
+          time: new Date().toLocaleTimeString("ar-MA-u-nu-latn", { hour: "2-digit", minute: "2-digit" }),
         };
         setMessages((prev) => [...prev, botMsg]);
       } else {

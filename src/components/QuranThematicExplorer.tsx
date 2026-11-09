@@ -219,9 +219,9 @@ export function QuranThematicExplorer({ onOpenHizb }: QuranThematicExplorerProps
                     </span>
                   </div>
 
-                  {/* VERSE TEXT (Warsh Maghribi Orthography) */}
+                  {/* VERSE TEXT */}
                   <div className="p-4 rounded-2xl bg-white dark:bg-[#122820] border border-[#E7DFD5]/80 dark:border-[#203D31]/80 shadow-2xs">
-                    <blockquote className="font-maghribi-quran text-lg sm:text-xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-loose text-center select-text">
+                    <blockquote className="font-amiri text-lg sm:text-xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-loose text-center select-text">
                       « {verse.verse_text} »
                     </blockquote>
                   </div>

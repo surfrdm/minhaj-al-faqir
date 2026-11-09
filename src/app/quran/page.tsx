@@ -291,7 +291,7 @@ export default function QuranIndexPage() {
                     </div>
 
                     {/* Opening Aya (Matlaa) */}
-                    <p className="text-xs text-[#143628] dark:text-[#FAF7F2] font-amiri leading-relaxed p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#C5A059]/20 line-clamp-2">
+                    <p className="text-base text-[#143628] dark:text-[#FAF7F2] font-maghribi-quran leading-loose p-3 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#C5A059]/20 line-clamp-2">
                       « {hizb.matlaa} »
                     </p>
 
