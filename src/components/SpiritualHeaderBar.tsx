@@ -29,6 +29,7 @@ import {
 import { getDailyHizbRatib, DailyHizbRatibResult, HizbInfo } from "@/lib/hizb-ratib";
 import { getDualDate, DualDateInfo } from "@/lib/hijri-calendar";
 import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
+import { QiblaCompassModal } from "@/components/QiblaCompassModal";
 
 // Fixed initial date for deterministic SSG / Next.js prerender
 const INITIAL_DATE = new Date("2026-11-05T12:00:00Z");
@@ -37,6 +38,7 @@ export function SpiritualHeaderBar() {
   const [selectedCity, setSelectedCity] = useState<string>("mohammedia");
   const [isShortMonth, setIsShortMonth] = useState<boolean>(false);
   const [showHizbModal, setShowHizbModal] = useState<boolean>(false);
+  const [showQiblaModal, setShowQiblaModal] = useState<boolean>(false);
   const [showCityMenu, setShowCityMenu] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<Date>(INITIAL_DATE);
   const [readerHizbNumber, setReaderHizbNumber] = useState<number | null>(null);
@@ -186,7 +188,17 @@ export function SpiritualHeaderBar() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 mr-auto">
+            <div className="flex flex-wrap items-center gap-2 mr-auto">
+              {/* Qibla Compass Button right next to the Daily Hizbs */}
+              <button
+                onClick={() => setShowQiblaModal(true)}
+                className="px-2.5 py-1 rounded-lg bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] border border-[#C5A059]/60 font-bold text-[11px] transition cursor-pointer shadow-sm flex items-center gap-1"
+                title="تحديد اتجاه القبلة الشريفة للصلاة والذكر"
+              >
+                <Compass className="w-3.5 h-3.5 text-[#C5A059]" />
+                <span>القبلة للصلاة</span>
+              </button>
+
               {/* Short / Full Month Toggle (29 vs 30 days) */}
               <button
                 onClick={handleShortMonthToggle}
@@ -538,6 +550,14 @@ export function SpiritualHeaderBar() {
           hizbPeriod={readerPeriod}
         />
       )}
+
+      {/* Qibla Compass Modal */}
+      <QiblaCompassModal
+        isOpen={showQiblaModal}
+        onClose={() => setShowQiblaModal(false)}
+        initialCityKey={selectedCity}
+        onCityChange={handleCityChange}
+      />
     </div>
   );
 }

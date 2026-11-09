@@ -13,6 +13,7 @@ import {
   ChevronDown,
   Layers,
   ArrowUpRight,
+  Compass,
 } from "lucide-react";
 import {
   getTodayAhzabNumbers,
@@ -22,6 +23,7 @@ import {
   HizbIndexItem,
 } from "@/lib/quran";
 import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
+import { QiblaCompassModal } from "@/components/QiblaCompassModal";
 
 interface DailyQuranAhzabCardProps {
   compact?: boolean;
@@ -39,6 +41,8 @@ export function DailyQuranAhzabCard({
   const [activeReaderHizb, setActiveReaderHizb] = useState<number | null>(null);
   const [readerPeriod, setReaderPeriod] = useState<"subh" | "masa" | "custom">("subh");
   const [showAllDropdown, setShowAllDropdown] = useState<boolean>(false);
+  const [showQiblaModal, setShowQiblaModal] = useState<boolean>(false);
+  const [savedCity, setSavedCity] = useState<string>("mohammedia");
 
   // Initialize today's Ahzab and completion status
   const checkStatus = () => {
@@ -51,6 +55,9 @@ export function DailyQuranAhzabCard({
     setEveningHizb(eH);
 
     try {
+      const city = localStorage.getItem("minhaj_prayer_city");
+      if (city) setSavedCity(city);
+
       const savedChecksStr = localStorage.getItem("minhaj_faqir_checks");
       if (savedChecksStr) {
         const savedChecks = JSON.parse(savedChecksStr);
@@ -197,17 +204,28 @@ export function DailyQuranAhzabCard({
             </div>
           </div>
 
-          {/* Quick All Ahzab Link */}
-          {showAllHizbsLink && (
-            <Link
-              href="/quran"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF7F2] dark:bg-[#1B4332] border border-[#C5A059]/30 text-xs font-bold text-[#143628] dark:text-[#FAF7F2] hover:bg-[#C5A059]/15 transition"
+          {/* Quick Actions: Qibla Compass & All Ahzab Link */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setShowQiblaModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] border border-[#C5A059]/60 text-xs font-bold transition shadow-xs cursor-pointer"
+              title="تحديد اتجاه القبلة الشريفة للصلاة وقراءة الحزب"
             >
-              <Layers className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>فهرس الـ 60 حزباً</span>
-              <ChevronLeft className="w-3.5 h-3.5" />
-            </Link>
-          )}
+              <Compass className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>اتِّجَاهُ القِبْلَةِ لِلصَّلَاةِ</span>
+            </button>
+
+            {showAllHizbsLink && (
+              <Link
+                href="/quran"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF7F2] dark:bg-[#1B4332] border border-[#C5A059]/30 text-xs font-bold text-[#143628] dark:text-[#FAF7F2] hover:bg-[#C5A059]/15 transition"
+              >
+                <Layers className="w-3.5 h-3.5 text-[#C5A059]" />
+                <span>فهرس الـ 60 حزباً</span>
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Cards Grid: Subh & Masa' */}
@@ -336,6 +354,14 @@ export function DailyQuranAhzabCard({
           onCompleted={() => checkStatus()}
         />
       )}
+
+      {/* Qibla Compass Modal */}
+      <QiblaCompassModal
+        isOpen={showQiblaModal}
+        onClose={() => setShowQiblaModal(false)}
+        initialCityKey={savedCity}
+        onCityChange={(cityKey) => setSavedCity(cityKey)}
+      />
     </>
   );
 }

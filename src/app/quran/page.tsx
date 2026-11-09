@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Calendar as CalendarIcon,
   BookMarked,
+  Compass,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -24,6 +25,7 @@ import {
 } from "@/lib/quran";
 import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
 import { QuranThematicExplorer } from "@/components/QuranThematicExplorer";
+import { QiblaCompassModal } from "@/components/QiblaCompassModal";
 
 // Fixed date for deterministic SSR / SSG prerender
 const INITIAL_DATE = new Date("2026-11-05T12:00:00Z");
@@ -37,6 +39,7 @@ export default function QuranIndexPage() {
   const [activeReaderHizb, setActiveReaderHizb] = useState<number | null>(null);
   const [readerPeriod, setReaderPeriod] = useState<"subh" | "masa" | "custom">("custom");
   const [todayAhzab, setTodayAhzab] = useState(() => getTodayAhzabNumbers(INITIAL_DATE));
+  const [showQiblaModal, setShowQiblaModal] = useState(false);
 
   // Update client-side on mount
   React.useEffect(() => {
@@ -150,30 +153,40 @@ export default function QuranIndexPage() {
           </div>
         </div>
 
-        {/* Main View Switcher: Ahzab vs Thematic Explorer */}
-        <div className="flex items-center justify-center p-1.5 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] max-w-lg mx-auto shadow-xs">
-          <button
-            onClick={() => setMainView("ahzab")}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
-              mainView === "ahzab"
-                ? "bg-[#143628] text-[#E5C378] shadow-sm"
-                : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#143628] dark:hover:text-white"
-            }`}
-          >
-            <Layers className="w-4 h-4" />
-            <span>الأحزاب الستون (المصحف)</span>
-          </button>
+        {/* Main View Switcher & Qibla Compass Button */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex items-center justify-center p-1.5 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] w-full max-w-lg shadow-xs">
+            <button
+              onClick={() => setMainView("ahzab")}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
+                mainView === "ahzab"
+                  ? "bg-[#143628] text-[#E5C378] shadow-sm"
+                  : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#143628] dark:hover:text-white"
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              <span>الأحزاب الستون (المصحف)</span>
+            </button>
+
+            <button
+              onClick={() => setMainView("thematic")}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
+                mainView === "thematic"
+                  ? "bg-[#143628] text-[#E5C378] shadow-sm"
+                  : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#143628] dark:hover:text-white"
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>الكشاف القرآني لمقامات السلوك</span>
+            </button>
+          </div>
 
           <button
-            onClick={() => setMainView("thematic")}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
-              mainView === "thematic"
-                ? "bg-[#143628] text-[#E5C378] shadow-sm"
-                : "text-[#52796F] dark:text-[#A1B3A9] hover:text-[#143628] dark:hover:text-white"
-            }`}
+            onClick={() => setShowQiblaModal(true)}
+            className="px-4 py-3 rounded-2xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] border-2 border-[#C5A059]/60 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition shadow-md cursor-pointer shrink-0"
           >
-            <Sparkles className="w-4 h-4" />
-            <span>الكشاف القرآني لمقامات السلوك</span>
+            <Compass className="w-4 h-4 text-[#C5A059]" />
+            <span>بوصلة القبلة للصلاة</span>
           </button>
         </div>
 
@@ -336,6 +349,12 @@ export default function QuranIndexPage() {
           hizbPeriod={readerPeriod}
         />
       )}
+
+      {/* Qibla Compass Modal */}
+      <QiblaCompassModal
+        isOpen={showQiblaModal}
+        onClose={() => setShowQiblaModal(false)}
+      />
 
       <Footer />
     </div>
