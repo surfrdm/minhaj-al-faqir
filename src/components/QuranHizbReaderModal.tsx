@@ -32,7 +32,32 @@ import {
   formatQuranTextForMashriqiDots,
 } from "@/lib/quran";
 
-const MASHRIQI_DOTS_STORAGE_KEY = "minhaj_quran_mashriqi_dots";
+type QuranScriptMode = "maghribi" | "mohammadi" | "mashriqi";
+
+const SCRIPT_MODE_STORAGE_KEY = "minhaj_quran_script_mode";
+const LEGACY_MASHRIQI_DOTS_STORAGE_KEY = "minhaj_quran_mashriqi_dots";
+
+const SCRIPT_OPTIONS: Array<{
+  id: QuranScriptMode;
+  label: string;
+  description: string;
+}> = [
+  {
+    id: "maghribi",
+    label: "المغربي",
+    description: "الرسم المغربي القياسي برواية ورش (KFGQPC)",
+  },
+  {
+    id: "mohammadi",
+    label: "المحمدي",
+    description: "الخط المغربي المبسوط المطابق لمصحف وزارة الأوقاف (المصحف المحمدي)",
+  },
+  {
+    id: "mashriqi",
+    label: "بالنقط",
+    description: "إضافة النقط المشرقية على الحروف (ن، ف، ق، ي) دون مساس بالنص الأصلي",
+  },
+];
 
 interface DynamicPageItem {
   type: "banner" | "basmala" | "word";
@@ -256,7 +281,7 @@ export function QuranHizbReaderModal({
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
   const [fontSize, setFontSize] = useState<number>(26);
   const [viewMode, setViewMode] = useState<"page" | "scroll">("page");
-  const [showMashriqiDots, setShowMashriqiDots] = useState<boolean>(false);
+  const [scriptMode, setScriptMode] = useState<QuranScriptMode>("maghribi");
   const [isCompletedToday, setIsCompletedToday] = useState<boolean>(false);
   const [justCompleted, setJustCompleted] = useState<boolean>(false);
   const [selectedVerseKey, setSelectedVerseKey] = useState<string | null>(null);
@@ -267,6 +292,8 @@ export function QuranHizbReaderModal({
   const [tafsirData, setTafsirData] = useState<TafsirVerseResponse | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const sheetBodyRef = useRef<HTMLDivElement>(null);
+  const hizbCacheRef = useRef<Map<string, QuranHizbData>>(new Map());
+  const prevLoadedHizbRef = useRef<number | null>(null);
   const tafsirCacheRef = useRef<Map<string, TafsirVerseResponse>>(new Map());
 
   // Sync hizbNumber prop with internal state
@@ -280,58 +307,92 @@ export function QuranHizbReaderModal({
     }
   }, [hizbNumber]);
 
-  // Restore user preference for Mashriqi dots (defaults to authentic Maghribi script)
+  // Restore saved Quran script preference (defaults to standard Maghribi script)
   useEffect(() => {
     if (typeof window === "undefined") return;
-    try {
-      if (localStorage.getItem(MASHRIQI_DOTS_STORAGE_KEY) === "true") {
-        setShowMashriqiDots(true);
+    queueMicrotask(() => {
+      try {
+        const saved = localStorage.getItem(SCRIPT_MODE_STORAGE_KEY);
+        if (saved === "maghribi" || saved === "mohammadi" || saved === "mashriqi") {
+          setScriptMode(saved);
+          return;
+        }
+        if (localStorage.getItem(LEGACY_MASHRIQI_DOTS_STORAGE_KEY) === "true") {
+          setScriptMode("mashriqi");
+        }
+      } catch {
+        // Ignore storage access errors
       }
+    });
+  }, []);
+
+  const handleSelectScriptMode = useCallback((nextMode: QuranScriptMode) => {
+    setScriptMode(nextMode);
+    try {
+      localStorage.setItem(SCRIPT_MODE_STORAGE_KEY, nextMode);
+      localStorage.setItem(
+        LEGACY_MASHRIQI_DOTS_STORAGE_KEY,
+        String(nextMode === "mashriqi")
+      );
     } catch {
       // Ignore storage access errors
     }
   }, []);
 
-  const handleToggleMashriqiDots = useCallback(() => {
-    setShowMashriqiDots((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem(MASHRIQI_DOTS_STORAGE_KEY, String(next));
-      } catch {
-        // Ignore storage access errors
-      }
-      return next;
-    });
-  }, []);
-
-  // Load Hizb Data
+  // Load Hizb Data (Standard Warsh or Awqaf Mohammadi dataset)
   useEffect(() => {
     if (!isOpen || !currentHizb) return;
 
+    const datasetKey = scriptMode === "mohammadi" ? "mohammadi" : "standard";
+    const cacheKey = `${datasetKey}:${currentHizb}`;
+    const hizbChanged = prevLoadedHizbRef.current !== currentHizb;
+    prevLoadedHizbRef.current = currentHizb;
+
+    const cached = hizbCacheRef.current.get(cacheKey);
+    if (cached) {
+      setData(cached);
+      if (hizbChanged) {
+        setCurrentPageIndex(0);
+      }
+      setLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
     let isMounted = true;
     setLoading(true);
 
-    fetch(`/api/quran/hizb/${currentHizb}`)
+    const url =
+      datasetKey === "mohammadi"
+        ? `/api/quran/hizb/${currentHizb}?script=mohammadi`
+        : `/api/quran/hizb/${currentHizb}`;
+
+    fetch(url, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error("فشل تحميل بيانات الحزب");
         return res.json();
       })
       .then((hizbData: QuranHizbData) => {
         if (isMounted) {
+          hizbCacheRef.current.set(cacheKey, hizbData);
           setData(hizbData);
-          setCurrentPageIndex(0);
+          if (hizbChanged) {
+            setCurrentPageIndex(0);
+          }
           setLoading(false);
         }
       })
       .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         console.error("Error fetching hizb data:", err);
         if (isMounted) setLoading(false);
       });
 
     return () => {
       isMounted = false;
+      controller.abort();
     };
-  }, [isOpen, currentHizb]);
+  }, [isOpen, currentHizb, scriptMode]);
 
   // Check if completed today in localStorage
   useEffect(() => {
@@ -549,7 +610,14 @@ export function QuranHizbReaderModal({
   if (!isOpen) return null;
 
   const meta = getHizbMeta(currentHizb);
-  const quranFontClass = showMashriqiDots
+  const isMohammadiScript = scriptMode === "mohammadi";
+  const isMashriqiScript = scriptMode === "mashriqi";
+  const quranFontClass = isMohammadiScript
+    ? "font-mohammadi-quran"
+    : isMashriqiScript
+      ? "font-mashriqi-quran"
+      : "font-maghribi-quran";
+  const unicodeQuranFontClass = isMashriqiScript
     ? "font-mashriqi-quran"
     : "font-maghribi-quran";
 
@@ -592,10 +660,14 @@ export function QuranHizbReaderModal({
   );
 
   const renderBasmalaLine = (rawBasmala?: string, selectableKey?: string) => {
-    const base = rawBasmala || "بِسْمِ اِ۬للَّهِ اِ۬لرَّحْمَٰنِ اِ۬لرَّحِيمِ";
-    const hasHabti = base.includes("\u06d6");
-    const basmalaWithoutHabti = base.replace(/\u06d6/g, "");
-    const displayBasmala = showMashriqiDots
+    const base =
+      rawBasmala ||
+      (isMohammadiScript
+        ? "بِسْمِ ۱للَّهِ ۱لـرَّحْـمَـٰنِ ۱لرَّحِـيـمِ"
+        : "بِسْمِ اِ۬للَّهِ اِ۬لرَّحْمَٰنِ اِ۬لرَّحِيمِ");
+    const hasHabti = !isMohammadiScript && base.includes("\u06d6");
+    const basmalaWithoutHabti = hasHabti ? base.replace(/\u06d6/g, "") : base;
+    const displayBasmala = isMashriqiScript
       ? formatQuranTextForMashriqiDots(basmalaWithoutHabti)
       : basmalaWithoutHabti;
     const isSelected = Boolean(selectableKey && selectedVerseKey === selectableKey);
@@ -640,10 +712,12 @@ export function QuranHizbReaderModal({
       w.is_first_tomon === "1"
         ? getTomonDivisionInfo(w.tomon_number || "1", currentHizb)
         : null;
-    const cleanedText = cleanQuranWordText(w.text);
-    const hasHabti = cleanedText.includes("\u06d6");
+    const cleanedText = isMohammadiScript
+      ? (w.text || "").replace(/\u200f/g, "").trim()
+      : cleanQuranWordText(w.text);
+    const hasHabti = !isMohammadiScript && cleanedText.includes("\u06d6");
     const wordWithoutHabti = hasHabti ? cleanedText.replace(/\u06d6/g, "") : cleanedText;
-    const displayWord = showMashriqiDots
+    const displayWord = isMashriqiScript
       ? formatQuranTextForMashriqiDots(wordWithoutHabti)
       : wordWithoutHabti;
     const verseKey =
@@ -805,7 +879,7 @@ export function QuranHizbReaderModal({
                 style={{
                   textAlign: "center",
                   textAlignLast: "center",
-                  lineHeight: 2.3,
+                  lineHeight: isMohammadiScript ? 2.15 : 2.3,
                 }}
               >
                 {line.words.map((w, wIdx) => renderQuranWord(w, wIdx))}
@@ -902,7 +976,7 @@ export function QuranHizbReaderModal({
                     ? "center"
                     : "auto",
                 textWrap: "pretty" as any,
-                lineHeight: 2.3,
+                lineHeight: isMohammadiScript ? 2.15 : 2.3,
               }}
             >
               {sec.words?.map((w, wIdx) => renderQuranWord(w, wIdx))}
@@ -948,8 +1022,8 @@ export function QuranHizbReaderModal({
                 </div>
                 <p className="text-[11px] sm:text-xs text-[#E8F0EC]/80 font-ibm line-clamp-1">
                   سُوَر: {meta.surahs.join(" • ")} | مطلع: «
-                  <span className={`${quranFontClass} text-sm text-[#FAF7F2]`}>
-                    {showMashriqiDots
+                  <span className={`${unicodeQuranFontClass} text-sm text-[#FAF7F2]`}>
+                    {isMashriqiScript
                       ? formatQuranTextForMashriqiDots(meta.matlaa, { stripHabti: true })
                       : meta.matlaa}
                   </span>
@@ -971,12 +1045,12 @@ export function QuranHizbReaderModal({
           </div>
 
           {/* Quick Hizb Dropdown Selector & Reader Controls */}
-          <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0 w-full sm:w-auto">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0 w-full sm:w-auto">
             <select
               value={currentHizb}
               onChange={(e) => handleSelectHizb(Number(e.target.value))}
               aria-label="اختيار الحزب"
-              className="min-w-0 flex-1 sm:flex-initial sm:max-w-[190px] truncate bg-white/10 text-white border border-[#C5A059]/40 rounded-xl px-2 sm:px-2.5 py-1.5 text-[11px] sm:text-xs font-amiri font-bold hover:bg-white/20 transition cursor-pointer"
+              className="min-w-0 flex-1 sm:flex-initial sm:max-w-[170px] truncate bg-white/10 text-white border border-[#C5A059]/40 rounded-xl px-2 sm:px-2.5 py-1.5 text-[11px] sm:text-xs font-amiri font-bold hover:bg-white/20 transition cursor-pointer"
               style={{ fontVariantNumeric: "tabular-nums" }}
             >
               {ALL_AHZAB_INDEX.map((h) => (
@@ -986,51 +1060,32 @@ export function QuranHizbReaderModal({
               ))}
             </select>
 
-            {/* Toggle Mashriqi Dots for Rapid Reading */}
-            <button
-              type="button"
-              aria-pressed={showMashriqiDots}
-              onClick={handleToggleMashriqiDots}
-              aria-label={
-                showMashriqiDots
-                  ? "العودة إلى الخط المغربي الأصيل"
-                  : "إضافة النقط المشرقية للحروف دون تغيير النص الأصلي"
-              }
-              title={
-                showMashriqiDots
-                  ? "مفعّل: إظهار النقط المشرقية (اضغط للعودة إلى الخط المغربي الأصيل)"
-                  : "إضافة النقط المشرقية على الحروف (ن، ف، ق، ي) دون مساس بالنص الأصلي"
-              }
-              className={`px-2 sm:px-2.5 py-1.5 rounded-xl border text-[11px] sm:text-xs font-ibm font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shrink-0 active:scale-[0.97] transition-[transform,background-color,color,border-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C378] cursor-pointer ${
-                showMashriqiDots
-                  ? "bg-[#C5A059] text-[#0B1914] border-[#E5C378] shadow-xs"
-                  : "bg-white/10 hover:bg-white/20 text-[#FAF7F2] border-white/20"
-              }`}
+            {/* 3-Way Script Selector: Maghribi (KFGQPC) | Mohammadi (Awqaf) | Mashriqi Dots */}
+            <div
+              role="group"
+              aria-label="نمط الخط القرآني"
+              className="order-last sm:order-none w-full sm:w-auto grid grid-cols-3 sm:inline-flex items-center p-0.5 rounded-xl bg-white/10 border border-white/20 shrink-0"
             >
-              <svg
-                viewBox="0 0 18 18"
-                fill="none"
-                aria-hidden="true"
-                className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"
-              >
-                <path
-                  d="M4.5 9.5C4.5 12.2 6.4 13.8 9 13.8C11.6 13.8 13.5 12.2 13.5 9.2"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="9"
-                  cy="5.2"
-                  r="1.75"
-                  fill={showMashriqiDots ? "currentColor" : "none"}
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeDasharray={showMashriqiDots ? undefined : "1.8 1.5"}
-                />
-              </svg>
-              <span>إضافة النقط</span>
-            </button>
+              {SCRIPT_OPTIONS.map((opt) => {
+                const isActive = scriptMode === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() => handleSelectScriptMode(opt.id)}
+                    title={opt.description}
+                    className={`px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-[10px] text-[11px] sm:text-xs font-ibm font-bold whitespace-nowrap text-center active:scale-[0.97] transition-[transform,background-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C378] cursor-pointer ${
+                      isActive
+                        ? "bg-[#C5A059] text-[#0B1914] shadow-xs"
+                        : "text-[#FAF7F2]/85 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
 
             {/* Font Size Controls */}
             <div className="flex items-center gap-0.5 sm:gap-1 bg-white/10 rounded-xl p-0.5 sm:p-1 border border-white/15 shrink-0">
@@ -1088,7 +1143,9 @@ export function QuranHizbReaderModal({
               <div className="h-full flex flex-col items-center justify-center space-y-4 py-24">
                 <Loader2 className="w-10 h-10 text-[#C5A059] animate-spin" />
                 <div className="font-amiri text-lg font-bold text-[#143628] dark:text-[#E5C378]">
-                  جَارٍ تَحْمِيلُ الحِزْبِ المُبَارَكِ بِالخَطِّ المَغْرِبِيِّ الأَصِيلِ...
+                  {isMohammadiScript
+                    ? "جَارٍ تَحْمِيلُ الحِزْبِ المُبَارَكِ بِالخَطِّ المَحَمَّدِيِّ الرَّسْمِيِّ..."
+                    : "جَارٍ تَحْمِيلُ الحِزْبِ المُبَارَكِ بِالخَطِّ المَغْرِبِيِّ الأَصِيلِ..."}
                 </div>
                 <p className="text-xs text-[#52796F] dark:text-[#9BB0A5] font-ibm">
                   مِنْ نُسْخَةِ المَصْحَفِ المَحَمَّدِيِّ الشَّرِيفِ (رِوَايَةُ وَرْشٍ عَنْ نَافِعٍ)
@@ -1130,9 +1187,11 @@ export function QuranHizbReaderModal({
                   {/* Decorative Bottom Line */}
                   <div className="flex items-center justify-between pt-3 mt-4 border-t-2 border-[#C5A059]/40 text-xs font-ibm text-[#52796F] dark:text-[#9BB0A5]">
                     <span>
-                      {showMashriqiDots
-                        ? "مصحف محمد السادس (بنقط مشرقية)"
-                        : "مصحف محمد السادس بالخط المغربي"}
+                      {isMohammadiScript
+                        ? "المصحف المحمدي الرسمي (خط الأوقاف)"
+                        : isMashriqiScript
+                          ? "مصحف محمد السادس (بنقط مشرقية)"
+                          : "مصحف محمد السادس بالخط المغربي"}
                     </span>
                     <span
                       className="font-bold text-[#C5A059]"
@@ -1362,8 +1421,8 @@ export function QuranHizbReaderModal({
                   <div className="space-y-4">
                     {/* Selected Warsh Verse Box */}
                     <div className="p-3.5 rounded-xl bg-[#FAF7F2] dark:bg-[#081510] border border-[#C5A059]/30">
-                      <div className={`${quranFontClass} text-lg sm:text-xl leading-loose text-[#143628] dark:text-[#E5C378]`}>
-                        {showMashriqiDots
+                      <div className={`${unicodeQuranFontClass} text-lg sm:text-xl leading-loose text-[#143628] dark:text-[#E5C378]`}>
+                        {isMashriqiScript
                           ? formatQuranTextForMashriqiDots(tafsirData.verse.verse_text, {
                               stripHabti: true,
                             })
