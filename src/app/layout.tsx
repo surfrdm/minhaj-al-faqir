@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Amiri, IBM_Plex_Sans_Arabic, Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
+import { Amiri, IBM_Plex_Sans_Arabic, Cormorant_Garamond, Plus_Jakarta_Sans, Scheherazade_New } from "next/font/google";
 import { WixDirectEditor } from "@/components/WixDirectEditor";
 import { AiChatWidget } from "@/components/AiChatWidget";
 import { SamaaListener } from "@/components/SamaaListener";
@@ -35,6 +35,14 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const scheherazadeNew = Scheherazade_New({
+  variable: "--font-scheherazade",
+  subsets: ["arabic", "latin"],
+  weight: ["400", "700"],
+  display: "swap",
+  preload: false,
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://minhaj-alfaqir-app.vercel.app"),
   title: "مِنْهَاجُ الفَقِير | الأكاديمية التكوينية والتأصيلية لسالكي الطريقة القادرية البودشيشية",
@@ -63,7 +71,7 @@ export default function RootLayout({
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${amiri.variable} ${ibmArabic.variable} ${cormorant.variable} ${jakarta.variable} scroll-smooth`}
+      className={`${amiri.variable} ${ibmArabic.variable} ${cormorant.variable} ${jakarta.variable} ${scheherazadeNew.variable} scroll-smooth`}
     >
       <body
         suppressHydrationWarning

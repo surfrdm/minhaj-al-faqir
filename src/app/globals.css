@@ -72,6 +72,7 @@
   --font-sans: var(--font-ibm-arabic), system-ui, sans-serif;
   --font-maghribi: 'MaghribiKhouaja', serif;
   --font-maghribi-quran: 'KFGQPCWarsh', 'Amiri', serif;
+  --font-mashriqi-quran: var(--font-scheherazade), var(--font-amiri), serif;
   --font-shorooq: 'Shorooq', sans-serif;
   --font-cormorant: var(--font-cormorant), serif;
   --font-jakarta: var(--font-jakarta), sans-serif;
@@ -106,6 +107,11 @@ body {
 
 .font-maghribi-quran {
   font-family: 'KFGQPCWarsh', 'Amiri', serif;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+.font-mashriqi-quran {
+  font-family: var(--font-scheherazade), var(--font-amiri), serif;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
 
