@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
+import React, { Suspense, useState, useRef, useMemo, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   BookOpen,
   ChevronRight,
@@ -14,7 +15,11 @@ import {
   ScrollText,
   Sparkles,
   RotateCcw,
+  Users,
+  Library,
 } from 'lucide-react';
+import { RijalHawlRasulSection } from '@/components/RijalHawlRasulSection';
+import { ClassicalBookReader } from '@/components/ClassicalBookReader';
 import type {
   TurathSource,
   LanguageView,
@@ -31,12 +36,66 @@ import type {
   ShifaFasl,
   ShifaSearchResult,
 } from '@/types/turath';
+import type {
+  ClassicalBookSlug,
+  TurathBookOverview,
+  TurathBooksIndexData,
+} from '@/types/turath-books';
 
 interface TurathReaderProps {
   bukhariIndex: BukhariBookMeta[];
   shifaIndex: ShifaChapterMeta[];
   initialBukhariBook: BukhariBookData;
   initialShifaChapter: ShifaChapterData;
+  turathBooksIndex: TurathBooksIndexData;
+}
+
+const VALID_SOURCES = new Set<TurathSource>([
+  'bukhari',
+  'shifa',
+  'rijal',
+  'safwat',
+  'hilya',
+  'isaba',
+]);
+
+function TurathUrlSync({
+  onSync,
+}: {
+  onSync: (source: TurathSource, query: string) => void;
+}) {
+  const searchParams = useSearchParams();
+  const prevUrlKeyRef = useRef<string>('__INIT__');
+  const rawSource = searchParams.get('source');
+  const rawQuery = (searchParams.get('q') || '').trim();
+
+  useEffect(() => {
+    const urlKey = `${rawSource || ''}|${rawQuery}`;
+    if (prevUrlKeyRef.current === urlKey) return;
+
+    const isFirstDefaultVisit =
+      prevUrlKeyRef.current === '__INIT__' && !rawSource && !rawQuery;
+    prevUrlKeyRef.current = urlKey;
+
+    if (isFirstDefaultVisit) return;
+
+    const targetSource: TurathSource =
+      rawSource && VALID_SOURCES.has(rawSource as TurathSource)
+        ? (rawSource as TurathSource)
+        : 'bukhari';
+
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (!cancelled) {
+        onSync(targetSource, rawQuery);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [rawSource, rawQuery, onSync]);
+
+  return null;
 }
 
 const ITEMS_PER_PAGE = 25;
@@ -120,9 +179,12 @@ export default function TurathReader({
   shifaIndex,
   initialBukhariBook,
   initialShifaChapter,
+  turathBooksIndex,
 }: TurathReaderProps) {
   const [selectedSource, setSelectedSource] = useState<TurathSource>('bukhari');
   const [langView, setLangView] = useState<LanguageView>('ar');
+  const [pendingBookQuery, setPendingBookQuery] = useState<string>('');
+  const [bookLookupNonce, setBookLookupNonce] = useState<number>(0);
 
   // Bukhari reading & filter state
   const [selectedBookNum, setSelectedBookNum] = useState<number>(1);
@@ -183,27 +245,58 @@ export default function TurathReader({
     readerTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // Switch strictly between Sahih al-Bukhari & Kitab ash-Shifa
-  const handleSelectSource = (src: TurathSource) => {
-    if (src === selectedSource) return;
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-      debounceTimerRef.current = null;
-    }
+  // Switch cleanly across Bukhari, Shifa, Rijal, and Classical Heritage Books
+  const handleSelectSource = useCallback(
+    (src: TurathSource, initialBookQuery = '') => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
 
-    setSelectedSource(src);
-    setSearchInput('');
-    setActiveSearchQuery('');
-    setBukhariSearchResults(null);
-    setShifaSearchResults(null);
-    setIsSearching(false);
-    setLoadError(null);
-    setCurrentPage(1);
-  };
+      setSelectedSource(src);
+      setPendingBookQuery(initialBookQuery);
+      if (initialBookQuery) {
+        setBookLookupNonce((n) => n + 1);
+      }
+      setSearchInput('');
+      setActiveSearchQuery('');
+      setBukhariSearchResults(null);
+      setShifaSearchResults(null);
+      setIsSearching(false);
+      setLoadError(null);
+      setCurrentPage(1);
+    },
+    []
+  );
+
+  const handleSyncFromUrl = useCallback(
+    (source: TurathSource, query: string) => {
+      handleSelectSource(source, query);
+      if ((source === 'bukhari' || source === 'shifa') && query) {
+        setSearchInput(query);
+      }
+    },
+    [handleSelectSource]
+  );
+
+  const selectedClassicalBookOverview: TurathBookOverview | null = useMemo(() => {
+    if (
+      selectedSource !== 'safwat' &&
+      selectedSource !== 'hilya' &&
+      selectedSource !== 'isaba'
+    ) {
+      return null;
+    }
+    return (
+      turathBooksIndex.books.find(
+        (b) => b.slug === (selectedSource as ClassicalBookSlug)
+      ) ?? null
+    );
+  }, [selectedSource, turathBooksIndex.books]);
 
   const fetchBukhariBookData = useCallback(
     async (bookNum: number): Promise<BukhariBookData | null> => {
@@ -330,6 +423,9 @@ export default function TurathReader({
 
   const executeSearch = useCallback(
     async (rawQuery: string) => {
+      if (selectedSource !== 'bukhari' && selectedSource !== 'shifa') {
+        return;
+      }
       const q = rawQuery.trim();
       if (!q) {
         if (abortControllerRef.current) {
@@ -456,6 +552,9 @@ export default function TurathReader({
   useEffect(() => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
+    }
+    if (selectedSource !== 'bukhari' && selectedSource !== 'shifa') {
+      return;
     }
 
     const q = searchInput.trim();
@@ -603,6 +702,9 @@ export default function TurathReader({
 
   // Active scope summary label shown in search header & results banner
   const activeScopeDescription = useMemo(() => {
+    if (selectedSource !== 'bukhari' && selectedSource !== 'shifa') {
+      return '';
+    }
     if (selectedSource === 'bukhari') {
       if (bukhariSearchScope === 'bab' && selectedBabObj) {
         const shortBab =
@@ -675,39 +777,43 @@ export default function TurathReader({
 
   return (
     <div ref={readerTopRef} className="w-full max-w-5xl mx-auto px-4 py-4" dir="rtl">
+      <Suspense fallback={null}>
+        <TurathUrlSync onSync={handleSyncFromUrl} />
+      </Suspense>
+
       {/* الترويسة */}
       <div className="text-center mb-6">
         <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8F7032] dark:text-[#E5C378] bg-[#C5A059]/10 px-3.5 py-1.5 rounded-full border border-[#C5A059]/30 mb-3">
           <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
-          مِنْهَاجُ الفَقِير • الخِزَانَةُ الحَدِيثِيَّةُ الكَامِلَةُ
+          مِنْهَاجُ الفَقِير • الخِزَانَةُ العِلْمِيَّةُ وَالتُّرَاثِيَّةُ الكَامِلَةُ
         </span>
         <h1 className="text-3xl sm:text-4xl font-bold font-amiri text-[#143628] dark:text-[#E8F0EC] mb-2.5">
-          الرِّحَابُ الحَدِيثِيَّةُ وَالشَّمَائِلُ النَّبَوِيَّةُ
+          خِزَانَةُ التُّرَاثِ وَالحَدِيثِ وَالسِّيَرِ
         </h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-          المتن الكامل لصحيح الإمام البخاري (97 كتاباً • 7580 حديثاً) وكتاب الشِّفا للقاضي عياض (4 أقسام • 14 باباً) مؤصَّلَين بشرح الإمام ابن بطال المالكي وشرح الملا علي القاري.
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          صحيح الإمام البخاري (97 كتاباً) وكتاب الشِّفا للقاضي عياض (14 باباً) بتأصيل مالكي مغربي، مع مدارسة «رجال حول الرسول ﷺ» (60 علماً) والموسوعات التراثية الكاملة: صفة الصفوة، حلية الأولياء، والإصابة في تمييز الصحابة.
         </p>
       </div>
 
-      {/* أشرطة التحكم: التبديل المعزول بين الكتابين واختيار اللغة */}
-      <div className="bg-white dark:bg-[#122820] rounded-2xl p-3.5 sm:p-4 shadow-sm border border-[#C5A059]/30 mb-4 flex flex-col md:flex-row items-center justify-between gap-3">
+      {/* أشرطة التحكم: 6 مراجع كبرى + اللغة أو شارة الضبط التراثي */}
+      <div className="bg-white dark:bg-[#122820] rounded-2xl p-3.5 sm:p-4 shadow-sm border border-[#C5A059]/30 mb-5 space-y-3">
         <div
           role="tablist"
           aria-label="اختيار المرجع"
-          className="flex items-center gap-2 bg-[#FAF7F2] dark:bg-[#07130E] p-1.5 rounded-xl border border-[#C5A059]/20 w-full md:w-auto"
+          className="grid grid-cols-2 sm:grid-cols-3 items-stretch gap-2 bg-[#FAF7F2] dark:bg-[#07130E] p-1.5 rounded-xl border border-[#C5A059]/20"
         >
           <button
             type="button"
             role="tab"
             aria-selected={selectedSource === 'bukhari'}
             onClick={() => handleSelectSource('bukhari')}
-            className={`flex-1 md:flex-initial px-4 sm:px-5 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+            className={`px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               selectedSource === 'bukhari'
                 ? 'bg-[#143628] text-white shadow-md ring-1 ring-[#C5A059]/60'
                 : 'text-gray-700 dark:text-gray-300 hover:text-[#C5A059]'
             }`}
           >
-            <BookOpen className="w-4 h-4 text-[#C5A059]" />
+            <BookOpen className="w-4 h-4 text-[#C5A059] shrink-0" />
             <span>صحيح البخاري (97)</span>
           </button>
           <button
@@ -715,38 +821,126 @@ export default function TurathReader({
             role="tab"
             aria-selected={selectedSource === 'shifa'}
             onClick={() => handleSelectSource('shifa')}
-            className={`flex-1 md:flex-initial px-4 sm:px-5 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+            className={`px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               selectedSource === 'shifa'
                 ? 'bg-[#143628] text-white shadow-md ring-1 ring-[#C5A059]/60'
                 : 'text-gray-700 dark:text-gray-300 hover:text-[#C5A059]'
             }`}
           >
-            <ScrollText className="w-4 h-4 text-[#C5A059]" />
+            <ScrollText className="w-4 h-4 text-[#C5A059] shrink-0" />
             <span>الشِّفا للقاضي عياض (14)</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={selectedSource === 'rijal'}
+            onClick={() => handleSelectSource('rijal')}
+            className={`px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              selectedSource === 'rijal'
+                ? 'bg-[#143628] text-white shadow-md ring-1 ring-[#C5A059]/60'
+                : 'text-gray-700 dark:text-gray-300 hover:text-[#C5A059]'
+            }`}
+          >
+            <Users className="w-4 h-4 text-[#C5A059] shrink-0" />
+            <span>رجال حول الرسول (60)</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={selectedSource === 'safwat'}
+            onClick={() => handleSelectSource('safwat')}
+            className={`px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              selectedSource === 'safwat'
+                ? 'bg-[#143628] text-white shadow-md ring-1 ring-[#C5A059]/60'
+                : 'text-gray-700 dark:text-gray-300 hover:text-[#C5A059]'
+            }`}
+          >
+            <Library className="w-4 h-4 text-[#C5A059] shrink-0" />
+            <span>صفة الصفوة (1108)</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={selectedSource === 'hilya'}
+            onClick={() => handleSelectSource('hilya')}
+            className={`px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              selectedSource === 'hilya'
+                ? 'bg-[#143628] text-white shadow-md ring-1 ring-[#C5A059]/60'
+                : 'text-gray-700 dark:text-gray-300 hover:text-[#C5A059]'
+            }`}
+          >
+            <Library className="w-4 h-4 text-[#C5A059] shrink-0" />
+            <span>حلية الأولياء (10 أجزاء)</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={selectedSource === 'isaba'}
+            onClick={() => handleSelectSource('isaba')}
+            className={`px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              selectedSource === 'isaba'
+                ? 'bg-[#143628] text-white shadow-md ring-1 ring-[#C5A059]/60'
+                : 'text-gray-700 dark:text-gray-300 hover:text-[#C5A059]'
+            }`}
+          >
+            <Library className="w-4 h-4 text-[#C5A059] shrink-0" />
+            <span>الإصابة لابن حجر (12307)</span>
           </button>
         </div>
 
-        {/* اختيار اللغة */}
-        <div className="flex items-center gap-1 bg-[#FAF7F2] dark:bg-[#07130E] p-1 rounded-xl text-xs font-medium w-full md:w-auto justify-center border border-[#C5A059]/20">
-          {(['ar', 'fr', 'en', 'all'] as LanguageView[]).map((lang) => (
-            <button
-              key={lang}
-              type="button"
-              onClick={() => setLangView(lang)}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                langView === lang
-                  ? 'bg-[#C5A059] text-white font-bold shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
-              }`}
-            >
-              {lang === 'ar' && 'العربية'}
-              {lang === 'fr' && 'Français'}
-              {lang === 'en' && 'English'}
-              {lang === 'all' && 'كل اللغات'}
-            </button>
-          ))}
+        {/* اختيار اللغة (للبخاري والشفا) أو شارة النص العربي المحقق */}
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#E7DFD5]/70 dark:border-[#203A2F]/70">
+          {selectedSource === 'bukhari' || selectedSource === 'shifa' ? (
+            <div className="flex items-center gap-1 bg-[#FAF7F2] dark:bg-[#07130E] p-1 rounded-xl text-xs font-medium w-full sm:w-auto justify-center border border-[#C5A059]/20">
+              {(['ar', 'fr', 'en', 'all'] as LanguageView[]).map((lang) => (
+                <button
+                  key={lang}
+                  type="button"
+                  onClick={() => setLangView(lang)}
+                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                    langView === lang
+                      ? 'bg-[#C5A059] text-white font-bold shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                  }`}
+                >
+                  {lang === 'ar' && 'العربية'}
+                  {lang === 'fr' && 'Français'}
+                  {lang === 'en' && 'English'}
+                  {lang === 'all' && 'كل اللغات'}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF7F2] dark:bg-[#07130E] border border-[#C5A059]/30 text-xs font-bold text-[#8F7032] dark:text-[#E5C378]">
+              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>
+                {selectedSource === 'rijal'
+                  ? 'عرض عربي ميسَّر وموثَّق على منهج التربية السلوكية'
+                  : 'النص العربي التراثي الكامل والمضبوط في التراجم والطبقات'}
+              </span>
+            </span>
+          )}
+          <span className="text-[11px] font-medium text-[#52796F] dark:text-[#9BB0A5]">
+            6 مصادر كبرى • نصوص محققة وبحث فوري
+          </span>
         </div>
       </div>
+
+      {selectedSource === 'rijal' ? (
+        <RijalHawlRasulSection
+          onOpenHeritageLookup={(book, query) => {
+            handleSelectSource(book, query);
+            scrollToTop();
+          }}
+        />
+      ) : selectedClassicalBookOverview ? (
+        <ClassicalBookReader
+          key={`${selectedSource}:${pendingBookQuery}:${bookLookupNonce}`}
+          overview={selectedClassicalBookOverview}
+          initialQuery={pendingBookQuery}
+        />
+      ) : (
+        <>
 
       {/* محرك البحث المعزول + الفلاتر الدقيقة حسب الكتاب المختار */}
       <div className="bg-white dark:bg-[#122820] rounded-2xl p-4 sm:p-5 shadow-md border-2 border-[#C5A059]/35 mb-6 space-y-4">
@@ -1724,6 +1918,8 @@ export default function TurathReader({
               )}
             </div>
           )}
+        </>
+      )}
         </>
       )}
     </div>

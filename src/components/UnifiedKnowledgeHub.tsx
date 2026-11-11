@@ -35,12 +35,14 @@ import { HikamArchive } from "./HikamArchive";
 import { HikmaOfTheDay } from "./HikmaOfTheDay";
 import { CurriculumRoadmap } from "./CurriculumRoadmap";
 import { GlossarySection } from "./GlossarySection";
+import { RijalHawlRasulSection } from "./RijalHawlRasulSection";
 import { IBN_ASHIR_TOTAL_COUNT } from "@/lib/ibn-ashir";
 
 export type KnowledgeTab =
   | "arbaeen"
   | "hikam"
   | "hikma-day"
+  | "rijal"
   | "ibn-ashir"
   | "tracks"
   | "evidence"
@@ -109,6 +111,21 @@ const CATEGORIES: NavCategory[] = [
         count: "4 معالم",
         desc: "تَدَرُّجٌ رُوحِيٌّ وَسُلُوكِيٌّ لِلسَّالِكِ مِنَ البِدَايَةِ إِلَى التَّحْقِيقِ",
         icon: GraduationCap,
+      },
+    ],
+  },
+  {
+    id: "sira",
+    title: "مساق القدوة والصحابة والسير",
+    subtitle: "الصحبة الصادقة والارتقاء بالاقتداء بالجيل الأول",
+    branches: [
+      {
+        id: "rijal",
+        title: "رجال حول الرسول ﷺ",
+        badge: "60 علماً",
+        count: "60 صحابياً",
+        desc: "سير 60 صحابياً بقراءة صوفية وأكاديمية ميسَّرة موصولة بمصادر التراجم",
+        icon: Users,
       },
     ],
   },
@@ -182,6 +199,7 @@ export function UnifiedKnowledgeHub() {
         hash === "archive" ||
         hash === "hikam" ||
         hash === "hikma-today" ||
+        hash === "rijal" ||
         hash === "ibn-ashir" ||
         hash === "tracks" ||
         hash === "evidence" ||
@@ -298,7 +316,7 @@ export function UnifiedKnowledgeHub() {
                   <h3 className="font-amiri text-lg font-bold">فهرس المناهل والمدارج الروحية</h3>
                 </div>
                 <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-[#C5A059]/15 text-[#9E7B35] dark:text-[#E5C378]">
-                  5 مدارج
+                  6 مدارج
                 </span>
               </div>
 
@@ -1103,7 +1121,10 @@ export function UnifiedKnowledgeHub() {
                 </div>
               )}
 
-              {/* 7. GLOSSARY SECTION */}
+              {/* 7. RIJAL HAWL AR-RASUL SECTION */}
+              {activeTab === "rijal" && <RijalHawlRasulSection isEmbedded />}
+
+              {/* 8. GLOSSARY SECTION */}
               {activeTab === "glossary" && <GlossarySection />}
             </div>
           </div>

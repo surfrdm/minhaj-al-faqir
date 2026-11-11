@@ -1,4 +1,4 @@
-export type TurathSource = 'bukhari' | 'shifa';
+export type TurathSource = 'bukhari' | 'shifa' | 'rijal' | 'safwat' | 'hilya' | 'isaba';
 export type LanguageView = 'ar' | 'fr' | 'en' | 'all';
 export type TurathSearchFieldScope = 'all' | 'text' | 'sharh';
 export type BukhariSearchScope = 'all' | 'book' | 'bab';

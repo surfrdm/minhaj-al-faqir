@@ -158,14 +158,14 @@ export function Navbar() {
                 <span>المصحف (60)</span>
               </Link>
 
-              {/* Raccourci الحديث والشمائل (البخاري والشفا) */}
+              {/* Raccourci خزانة التراث والسير (البخاري، الشفا، رجال حول الرسول وأمهات التراجم) */}
               <Link
                 href="/turath"
                 className="px-3 py-2 rounded-xl text-xs font-bold text-[#143628] dark:text-[#E5C378] hover:text-[#1B4332] dark:hover:text-[#D4AF37] hover:bg-[#C5A059]/10 transition-all flex items-center gap-1.5 border border-transparent hover:border-[#C5A059]/30"
-                title="صحيح البخاري وكتاب الشفا للقاضي عياض بتأصيل مالكي وترجمة ثلاثية"
+                title="صحيح البخاري، الشفا للقاضي عياض، رجال حول الرسول ﷺ، صفة الصفوة، حلية الأولياء، والإصابة"
               >
                 <Scroll className="w-4 h-4 text-[#C5A059]" />
-                <span>البخاري والشِّفا</span>
+                <span>التراث والسِّيَر</span>
               </Link>
 
               {/* Raccourci 2: ديوان السماع الصوفي (32 سلسلة) */}
@@ -428,13 +428,24 @@ export function Navbar() {
                     <div className="flex items-center gap-2.5">
                       <Scroll className="w-4 h-4 text-[#C5A059]" />
                       <span className="font-amiri text-sm font-bold text-[#143628] dark:text-[#E5C378]">
-                        الحديث والشمائل (البخاري والشِّفا)
+                        خزانة التراث والسِّيَر (البخاري، الشِّفا، التراجم)
                       </span>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-[#C5A059]/25 text-[#826122] dark:text-[#E5C378] font-bold">
-                      3 لغات • تأصيل مالكي
+                      6 مراجع كبرى
                     </span>
                   </Link>
+
+                  <button
+                    onClick={() => navigateToTab("rijal")}
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] text-xs font-bold text-[#143628] dark:text-[#E8F0EC] transition text-right group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <User className="w-4 h-4 text-[#C5A059]" />
+                      <span>رجال حول الرسول ﷺ (60 علماً في ميزان السلوك)</span>
+                    </div>
+                    <ChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-[#C5A059]" />
+                  </button>
 
                   <button
                     onClick={() => navigateToTab("arbaeen")}
