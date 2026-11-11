@@ -34,6 +34,7 @@ import diwaneData from "@/data/diwane_master.json";
 import grandQasaidData from "@/data/grand_qasaid_master.json";
 import { GrandQasaidModal, GrandQasidaItem } from "@/components/GrandQasaidModal";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import { getPageVerses } from "@/lib/quran_thematic";
 
 interface DiwanPoem {
@@ -915,6 +916,19 @@ export default function DiwanMasterPage() {
                   </p>
                 </div>
               )}
+
+              <DualAudioReaderBar
+                title={activePoem.title}
+                text={[
+                  `${activePoem.title} — ${activePoem.poet}.`,
+                  ...activePoem.allVerses,
+                  activePoem.spiritualExplanation || "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                lang="ar"
+                variant="bar"
+              />
             </div>
 
             {/* Modal Footer: Sequential Chain Navigator ("واحدة ورا واحدة") */}

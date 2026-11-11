@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import dourousData from "@/data/dourous_sidi_mounir.json";
 
 interface KeyMoment {
@@ -294,6 +295,13 @@ export default function DourousSearchPage() {
                               «{moment.excerpt}»
                             </p>
                           </div>
+
+                          <DualAudioReaderBar
+                            title={moment.topic}
+                            text={`${moment.topic}. ${moment.excerpt}`}
+                            lang="ar"
+                            variant="compact"
+                          />
 
                           <button
                             onClick={() => handlePlayMoment(dars, moment.second, moment.topic)}

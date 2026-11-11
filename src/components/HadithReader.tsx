@@ -18,6 +18,7 @@ import {
   Scroll,
 } from "lucide-react";
 import { HadithItem, TOTAL_HADITH } from "@/lib/arbaeen";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 
 const ZAWIYA_FACEBOOK_URL = "https://www.facebook.com/zaouia.mohammedia";
 
@@ -91,6 +92,48 @@ export function HadithReader({
   const hasVocab = Boolean(hadith.vocabulary && hadith.vocabulary.length > 0);
   const hasBenefits = Boolean(hadith.benefits && hadith.benefits.length > 0);
   const hasNarratorBio = Boolean(hadith.narrator_bio);
+
+  const audioLang: "ar" | "fr" | "en" =
+    lang === "fr" && hadith.text_fr
+      ? "fr"
+      : lang === "en" && hadith.text_en
+      ? "en"
+      : "ar";
+
+  const activeTabAudioText =
+    activeTab === "sharh"
+      ? hadith.ibn_daqiq_sharh
+        ? [
+            hadith.ibn_daqiq_sharh.introduction,
+            ...hadith.ibn_daqiq_sharh.sections.map((s) => `${s.title}. ${s.content}`),
+            hadith.ibn_daqiq_sharh.conclusion,
+          ]
+            .filter(Boolean)
+            .join(" ")
+        : hadith.suluk_lesson
+      : activeTab === "vocab" && hadith.vocabulary?.length
+      ? `المفردات والتراكيب: ${hadith.vocabulary
+          .map((v) => `${v.word}: ${v.meaning}`)
+          .join(". ")}`
+      : activeTab === "benefits" && hadith.benefits?.length
+      ? `مما يستفاد من الحديث: ${hadith.benefits.join(". ")}`
+      : activeTab === "narrator"
+      ? hadith.narrator_bio || `رواية: ${hadith.narrator}`
+      : "";
+
+  const audioText =
+    audioLang === "fr"
+      ? `${hadith.text_fr}`
+      : audioLang === "en"
+      ? `${hadith.text_en}`
+      : [
+          `الحديث رقم ${hadith.id}: ${hadith.title}.`,
+          hadith.text_ar,
+          activeTabAudioText,
+          hadith.suluk_lesson ? `البعد الإحساني والسلوكي: ${hadith.suluk_lesson}` : "",
+        ]
+          .filter(Boolean)
+          .join(" ");
 
   return (
     <article className="w-full flex flex-col space-y-6">
@@ -226,6 +269,14 @@ export function HadithReader({
           </p>
         </div>
       )}
+
+      {/* Dual Audio Reader Bar */}
+      <DualAudioReaderBar
+        text={audioText}
+        title={hadith.title}
+        lang={audioLang}
+        variant="bar"
+      />
 
       {/* 5. Interactive Official Curriculum Tabs (Option 1) */}
       <section className="space-y-4">

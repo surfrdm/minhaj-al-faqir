@@ -37,6 +37,7 @@ import { CurriculumRoadmap } from "./CurriculumRoadmap";
 import { GlossarySection } from "./GlossarySection";
 import { RijalHawlRasulSection } from "./RijalHawlRasulSection";
 import { QuranicEvidencePanel } from "./QuranicEvidencePanel";
+import { DualAudioReaderBar } from "./DualAudioReaderBar";
 import {
   getEvidenceVerses,
   getWazifaVerses,
@@ -580,6 +581,13 @@ export function UnifiedKnowledgeHub() {
                             </strong>
                             {v.sharh}
                           </div>
+
+                          <DualAudioReaderBar
+                            title={`${v.bab} — البيت ${v.number}`}
+                            text={`${v.firstHemistich} ${v.secondHemistich}. الشرح: ${v.sharh}`}
+                            lang="ar"
+                            variant="compact"
+                          />
                         </div>
                       ))}
                     </div>
@@ -647,6 +655,13 @@ export function UnifiedKnowledgeHub() {
                         • رسالة الحافظ جلال الدين السيوطي: «المنحة في السبحة»، ونصّ فيها: «لم ينقل عن أحد من السلف ولا من الخلف المنع من جواز عدّ الذكر بالسبحة، بل كان أكثرهم يعدون بها ولا يرون ذلك مكروهاً».
                       </p>
 
+                      <DualAudioReaderBar
+                        title="1. تأصيل التسبيح بالسبحة"
+                        text="تأصيل التسبيح بالسبحة. حديث أم المؤمنين صفية رضي الله عنها في إقرار النبي ﷺ للتسبيح بالنوى، ورسالة الحافظ جلال الدين السيوطي: المنحة في السبحة."
+                        lang="ar"
+                        variant="compact"
+                      />
+
                       <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
                         <QuranicEvidencePanel
                           title="الشواهد القرآنية لتأصيل السبحة والكثرة"
@@ -694,6 +709,13 @@ export function UnifiedKnowledgeHub() {
                         • حديث صحيح البخاري عن ابن عباس رضي الله عنهما: «أن رفع الصوت بالذكر حين ينصرف الناس من المكتوبة كان على عهد النبي ﷺ، وكنت أعلم إذا انصرفوا بذلك إذا سمعته».<br />
                         • الحديث القدسي في الصحيحين: «وإن ذكرني في ملأ ذكرته في ملأ خير منهم»، وذكر الملأ لا يكون إلا جهراً وجماعة.
                       </p>
+
+                      <DualAudioReaderBar
+                        title="2. تأصيل الذكر جهراً والجماعي"
+                        text="تأصيل الذكر جهراً والذكر الجماعي. حديث صحيح البخاري عن ابن عباس رضي الله عنهما أن رفع الصوت بالذكر كان على عهد النبي ﷺ، والحديث القدسي: وإن ذكرني في ملأ ذكرته في ملأ خير منهم."
+                        lang="ar"
+                        variant="compact"
+                      />
 
                       <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
                         <QuranicEvidencePanel
@@ -743,6 +765,13 @@ export function UnifiedKnowledgeHub() {
                         • فتوى الإمام العز بن عبد السلام وسلطان العلماء في جواز التواجد والحركة الاضطرارية إذا غلب الوجد والشوق على الذاكر.
                       </p>
 
+                      <DualAudioReaderBar
+                        title="3. تأصيل العمارة والوجد والسماع"
+                        text="تأصيل العمارة والوجد والسماع الروحي. حديث حبشة المسجد النبوي وإقرار النبي ﷺ، وحداء الصحابة في الخندق، وفتوى الإمام العز بن عبد السلام في جواز التواجد عند غلبة الشوق."
+                        lang="ar"
+                        variant="compact"
+                      />
+
                       <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
                         <QuranicEvidencePanel
                           title="الشواهد القرآنية للعمارة والوجد ولين القلوب"
@@ -791,6 +820,13 @@ export function UnifiedKnowledgeHub() {
                         • تحريم إيذاء أولياء الله والطعن في أهل التزكية والصلاح بحديث البخاري: «من عادى لي ولياً فقد آذنته بالحرب».
                       </p>
 
+                      <DualAudioReaderBar
+                        title="4. تأصيل التوسل وحرمة الأولياء"
+                        text="تأصيل التوسل والتبرك وحرمة الأولياء في عقيدة أهل السنة والأشاعرة. التوسل بالأعمال الصالحة ومحبة النبي ﷺ ودعاء الصالحين، وحديث عثمان بن حنيف في الرجل الضرير، وتحريم معاداة أولياء الله."
+                        lang="ar"
+                        variant="compact"
+                      />
+
                       <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
                         <QuranicEvidencePanel
                           title="الشواهد القرآنية في الوسيلة وحرمة الصالحين"
@@ -837,6 +873,12 @@ export function UnifiedKnowledgeHub() {
                           • المحافظة على قراءة الحزبين ختماً لكتاب الله تعالى شهرياً وتثبيتاً للنور القرآني في قلب السالك.
                         </p>
                       </div>
+                      <DualAudioReaderBar
+                        title="حِزْبَانِ مِنَ القُرْآنِ الكَرِيمِ"
+                        text="حزبان من القرآن الكريم صباحاً ومساءً. حزب بعد صلاة الصبح وحزب بعد صلاة العصر أو المغرب، للمحافظة على ختم كتاب الله تعالى شهرياً وتثبيت النور القرآني في قلب السالك."
+                        lang="ar"
+                        variant="compact"
+                      />
                       <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2.5">
                         <QuranicEvidencePanel
                           title="الشواهد القرآنية للورد"
@@ -878,6 +920,12 @@ export function UnifiedKnowledgeHub() {
                           • صلاة دائمة على النبي المصطفى ﷺ، بها تُفتح أبواب القبول وتزكو النفوس وتشرق البصائر.
                         </p>
                       </div>
+                      <DualAudioReaderBar
+                        title="حِزْبُ دَلَائِلِ الخَيْرَاتِ"
+                        text="حزب دلائل الخيرات. تلاوة الحزب اليومي الراتب من كتاب دلائل الخيرات وشوارق الأنوار في ذكر الصلاة على النبي المختار ﷺ للإمام محمد بن سليمان الجزولي رضي الله عنه."
+                        lang="ar"
+                        variant="compact"
+                      />
                       <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2.5">
                         <QuranicEvidencePanel
                           title="الشواهد القرآنية للصلاة على النبي ﷺ"
@@ -919,6 +967,12 @@ export function UnifiedKnowledgeHub() {
                           • يؤدى مرتين يومياً بالسكينة والخشوع والأدب، وهو عهد السالك وركيزة صفاء قلبه واستقامته في السير إلى الله.
                         </p>
                       </div>
+                      <DualAudioReaderBar
+                        title="ذِكْرُ الوِرْدِ العَامِّ"
+                        text="ذكر الورد العام صباحاً ومساءً. الورد الأساسي الراتب لمريدي الطريقة: الاستغفار، الصلاة على النبي ﷺ، وكلمة التوحيد لا إله إلا الله، يؤدى مرتين يومياً بالسكينة والخشوع والأدب."
+                        lang="ar"
+                        variant="compact"
+                      />
                       <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2.5">
                         <QuranicEvidencePanel
                           title="الشواهد القرآنية لأركان الورد العام"
@@ -967,6 +1021,12 @@ export function UnifiedKnowledgeHub() {
                           </p>
                         </div>
                       </div>
+                      <DualAudioReaderBar
+                        title="15,000 هَيْلَلَة (لَا إِلَهَ إِلَّا اللهُ)"
+                        text="ذكر كلمة التوحيد لا إله إلا الله خمسة عشر ألف مرة. الأصل أن يجلس الفقير لها جلسة واحدة بتوجه قلبي تام وإغلاق العينين واستقبال القبلة، ويجوز عند الضرورة تقسيمها على جلستين فقط."
+                        lang="ar"
+                        variant="compact"
+                      />
                       <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2.5">
                         <QuranicEvidencePanel
                           title="الشواهد القرآنية للهيللة وكلمة التوحيد"
@@ -1035,6 +1095,13 @@ export function UnifiedKnowledgeHub() {
                       • الوظيفة الجامعة لقلوب الفقراء في الزاوية كل يوم بين المغرب والعشاء لتجديد العهد وتقوية الرابطة الأخوية.<br />
                       • تلاوة الحزب القرآني الراتب مع الجماعة، استماعاً وإنصاتاً وتدبراً.
                     </p>
+
+                    <DualAudioReaderBar
+                      title="الوظيفة الراتبة بالزاوية (مجلس الجماعة)"
+                      text="الوظيفة الراتبة بالزاوية، مجلس الجماعة بين صلاتي المغرب والعشاء يومياً بمقرات الزاوية. الوظيفة الجامعة لقلوب الفقراء لتجديد العهد وتقوية الرابطة الأخوية مع تلاوة الحزب القرآني الراتب استماعاً وإنصاتاً وتدبراً."
+                      lang="ar"
+                      variant="compact"
+                    />
 
                     <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
                       <QuranicEvidencePanel
@@ -1198,6 +1265,13 @@ export function UnifiedKnowledgeHub() {
                                 {item.text}
                               </p>
                             </div>
+
+                            <DualAudioReaderBar
+                              title={item.title}
+                              text={`${item.title}. ${item.text}`}
+                              lang="ar"
+                              variant="compact"
+                            />
 
                             <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31]">
                               <QuranicEvidencePanel

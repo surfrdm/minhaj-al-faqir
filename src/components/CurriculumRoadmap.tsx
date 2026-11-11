@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { CURRICULUM_TRACKS, CurriculumTrack } from "@/lib/curriculum";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import { getTrackModuleVerses } from "@/lib/quran_thematic";
 
 export function CurriculumRoadmap() {
@@ -132,6 +133,14 @@ export function CurriculumRoadmap() {
                 «{currentTrack.quote}»
               </p>
             </div>
+
+            <DualAudioReaderBar
+              title={currentTrack.title}
+              text={`${currentTrack.title}. ${currentTrack.description}. ${currentTrack.quote}`}
+              lang="ar"
+              variant="bar"
+              className="mt-5"
+            />
           </div>
         </div>
 
@@ -178,6 +187,14 @@ export function CurriculumRoadmap() {
                     ))}
                   </div>
                 )}
+
+                <DualAudioReaderBar
+                  title={mod.title}
+                  text={`${mod.title}. ${mod.summary}${mod.key_takeaways ? `. ${mod.key_takeaways.join(". ")}` : ""}`}
+                  lang="ar"
+                  variant="compact"
+                  className="mt-4"
+                />
 
                 <div className="mt-4 pt-4 border-t border-[#E7DFD5] dark:border-[#203A2F]">
                   <QuranicEvidencePanel
@@ -258,6 +275,19 @@ export function CurriculumRoadmap() {
                     </div>
                   )}
 
+                  <DualAudioReaderBar
+                    title={mod.title}
+                    text={[
+                      mod.title,
+                      mod.summary,
+                      ...(mod.evidence || []),
+                      ...(mod.key_takeaways || []),
+                    ].join(". ")}
+                    lang="ar"
+                    variant="compact"
+                    className="mt-4"
+                  />
+
                   <div className="mt-4 pt-4 border-t border-[#E7DFD5] dark:border-[#203A2F]">
                     <QuranicEvidencePanel
                       title="الشواهد القرآنية المؤصلة"
@@ -317,6 +347,14 @@ export function CurriculumRoadmap() {
                     ))}
                   </div>
                 )}
+
+                <DualAudioReaderBar
+                  title={mod.title}
+                  text={`${mod.title}. ${mod.summary}${mod.key_takeaways ? `. ${mod.key_takeaways.join(". ")}` : ""}`}
+                  lang="ar"
+                  variant="compact"
+                  className="mt-4"
+                />
 
                 <div className="mt-4 pt-4 border-t border-[#E7DFD5] dark:border-[#203A2F]">
                   <QuranicEvidencePanel

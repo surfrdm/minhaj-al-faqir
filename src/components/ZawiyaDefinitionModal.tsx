@@ -18,6 +18,7 @@ import {
   FileText,
   UserCheck
 } from "lucide-react";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 
 interface ZawiyaDefinitionModalProps {
   isOpen: boolean;
@@ -156,6 +157,12 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
                   <p>
                     وقد اقترن اسمه بحضور علمي متميز جمع بين <strong>التكوين الشرعي والمعرفة العصرية</strong>، إذ راكم سيدي منير مسارا أكاديميا متنوعا يعكس انفتاحا على الحقول الإنسانية والاجتماعية والاقتصادية، بما يعزز مقاربته للتصوف في أبعاده الفكرية والتواصلية المعاصرة.
                   </p>
+                  <DualAudioReaderBar
+                    title="التعريف بالشيخ الدكتور سيدي منير القادري بودشيش"
+                    text="الشيخ الدكتور سيدي منير القادري بودشيش، شيخ الطريقة القادرية البودشيشية ومربيها الروحي، آلت إليه مهمة الإرشاد والتربية الروحية بناء على وصيتين مباركتين للشيخين سيدي حمزة بن العباس وسيدي جمال الدين رحمهما الله، وقد جمع بين التكوين الشرعي الأصيل في دار الحديث الحسنية والانفتاح الأكاديمي المعاصر في جامعة السوربون ومجالات الفكر والتواصل الحضاري."
+                    lang="ar"
+                    variant="bar"
+                  />
                 </div>
               </div>
 
@@ -360,6 +367,13 @@ export function ZawiyaDefinitionModal({ isOpen, onClose }: ZawiyaDefinitionModal
           {/* ======================================================== */}
           {activeTab === "tariqa" && (
             <div className="space-y-6 animate-in fade-in duration-200">
+              <DualAudioReaderBar
+                title="التعريف بالطريقة القادرية البودشيشية"
+                text="الطريقة القادرية البودشيشية تنتسب إلى الإمام العارف بالله وسلطان الأولياء سيدي عبد القادر الجيلاني رضي الله عنه، وعُرفت بالبودشيشية نسبة إلى الولي الصالح سيدي علي بن محمد الملقب بودشيش لإطعامه الطعام، وتقوم على المحبة والذكر الكثير، والجمع بين الشريعة والحقيقة على مذهب أهل السنة والأشاعرة والمذهب المالكي، وخدمة الخلق وحفظ الثوابت الوطنية."
+                lang="ar"
+                variant="bar"
+              />
+
               {/* Origin of Name */}
               <div className="p-5 rounded-2xl bg-white dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] shadow-sm">
                 <div className="flex items-center gap-2.5 mb-2 text-[#1B4332] dark:text-[#E5C378]">

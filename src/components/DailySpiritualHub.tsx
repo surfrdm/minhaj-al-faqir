@@ -22,6 +22,7 @@ import {
   IbnAshirVerseLesson,
   IBN_ASHIR_TOTAL_COUNT,
 } from "@/lib/ibn-ashir";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 
 interface DailySpiritualHubProps {
   onOpenPortal?: () => void;
@@ -253,6 +254,26 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
               </div>
             </div>
 
+            <DualAudioReaderBar
+              title={`الحكمة #${activeHikma.number}`}
+              lang={
+                hikmaLang === "fr" && activeHikma.text_fr
+                  ? "fr"
+                  : hikmaLang === "en" && activeHikma.text_en
+                  ? "en"
+                  : "ar"
+              }
+              text={
+                hikmaLang === "fr" && activeHikma.text_fr
+                  ? activeHikma.text_fr
+                  : hikmaLang === "en" && activeHikma.text_en
+                  ? activeHikma.text_en
+                  : `${activeHikma.text_ar}. الشرح السلوكي: ${activeHikma.explanation_ar}`
+              }
+              variant="compact"
+              className="mb-3"
+            />
+
             {/* Action Buttons: Standalone Link, Copy Link, Facebook, & WhatsApp */}
             <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex flex-wrap items-center gap-2">
               <Link
@@ -369,6 +390,14 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
               </div>
             </div>
 
+            <DualAudioReaderBar
+              title={todayHadith.title}
+              text={`${todayHadith.title}. ${todayHadith.text_ar}. المدارسة السلوكية: ${todayHadith.suluk_lesson}`}
+              lang="ar"
+              variant="compact"
+              className="mb-3"
+            />
+
             {/* Action Buttons: Standalone Link, Copy Link, Facebook, & WhatsApp */}
             <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex flex-wrap items-center gap-2">
               <Link
@@ -481,6 +510,18 @@ export function DailySpiritualHub({ onOpenPortal }: DailySpiritualHubProps) {
                 </p>
               </div>
             </div>
+
+            <DualAudioReaderBar
+              title={`متن ابن عاشر (${currentIbnAshir.verseNumbers})`}
+              text={[
+                currentIbnAshir.chapter,
+                ...currentIbnAshir.verses.map((v) => `${v.firstHemistich} ${v.secondHemistich}`),
+                currentIbnAshir.explanation,
+              ].join(". ")}
+              lang="ar"
+              variant="compact"
+              className="mb-3"
+            />
 
             {/* Navigation & Action Buttons */}
             <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2">

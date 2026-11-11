@@ -19,6 +19,7 @@ import {
   Copy,
 } from "lucide-react";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import { getAdabFoundationVerses, getAdabItemVerses } from "@/lib/quran_thematic";
 
 /**
@@ -246,6 +247,13 @@ export function AdabDhikrSection() {
                     {adab.description}
                   </p>
                 </div>
+
+                <DualAudioReaderBar
+                  title={`${adab.num}. ${adab.title}`}
+                  text={`${adab.title}. ${adab.description}`}
+                  lang="ar"
+                  variant="compact"
+                />
 
                 <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31]">
                   <QuranicEvidencePanel

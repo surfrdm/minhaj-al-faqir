@@ -28,6 +28,7 @@ import {
   IBN_ASHIR_TOTAL_COUNT,
 } from "@/lib/ibn-ashir";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import { getPageVerses } from "@/lib/quran_thematic";
 
 export function DailyTrio() {
@@ -139,6 +140,14 @@ export function DailyTrio() {
             </p>
           </div>
 
+          <DualAudioReaderBar
+            title={`حكمة اليوم #${activeHikma.number}`}
+            text={`${activeHikma.text_ar}. ${activeHikma.explanation_ar}`}
+            lang="ar"
+            variant="compact"
+            className="mt-3"
+          />
+
           <div className="pt-3 mt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex items-center justify-between text-xs">
             <button
               type="button"
@@ -195,6 +204,14 @@ export function DailyTrio() {
             </div>
           </div>
 
+          <DualAudioReaderBar
+            title={todayHadith.title}
+            text={`${todayHadith.title}. ${todayHadith.text_ar}`}
+            lang="ar"
+            variant="compact"
+            className="mt-3"
+          />
+
           <div className="pt-3 mt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex items-center justify-between text-xs">
             <button
               type="button"
@@ -249,6 +266,17 @@ export function DailyTrio() {
               {currentIbnAshir.explanation}
             </p>
           </div>
+
+          <DualAudioReaderBar
+            title={`فقه ابن عاشر (${currentIbnAshir.verseNumbers})`}
+            text={[
+              ...currentIbnAshir.verses.map((v) => `${v.firstHemistich} ${v.secondHemistich}`),
+              currentIbnAshir.explanation,
+            ].join(". ")}
+            lang="ar"
+            variant="compact"
+            className="mt-3"
+          />
 
           <div className="pt-3 mt-3 border-t border-[#E7DFD5] dark:border-[#203D31] flex items-center justify-between text-xs">
             <button
@@ -346,6 +374,13 @@ export function DailyTrio() {
                 </p>
               </div>
 
+              <DualAudioReaderBar
+                title={`حكمة اليوم #${activeHikma.number}`}
+                text={`${activeHikma.text_ar}. المعنى والبعد الروحي: ${activeHikma.explanation_ar}`}
+                lang="ar"
+                variant="bar"
+              />
+
               <div className="pt-2 flex items-center justify-between">
                 <Link
                   href={`/hikma/${activeHikma.number}`}
@@ -389,6 +424,13 @@ export function DailyTrio() {
                   </p>
                 </div>
               )}
+
+              <DualAudioReaderBar
+                title={todayHadith.title}
+                text={`${todayHadith.title}. ${todayHadith.text_ar}${todayHadith.suluk_lesson ? `. المدارسة السلوكية: ${todayHadith.suluk_lesson}` : ""}`}
+                lang="ar"
+                variant="bar"
+              />
 
               {todayHadith.vocabulary && todayHadith.vocabulary.length > 0 && (
                 <div className="space-y-2">
@@ -445,6 +487,17 @@ export function DailyTrio() {
                   {currentIbnAshir.explanation}
                 </p>
               </div>
+
+              <DualAudioReaderBar
+                title={`فقه ابن عاشر — ${currentIbnAshir.chapter}`}
+                text={[
+                  currentIbnAshir.chapter,
+                  ...currentIbnAshir.verses.map((v) => `${v.firstHemistich} ${v.secondHemistich}`),
+                  currentIbnAshir.explanation,
+                ].join(". ")}
+                lang="ar"
+                variant="bar"
+              />
 
               <div className="pt-2 flex items-center justify-between">
                 <button

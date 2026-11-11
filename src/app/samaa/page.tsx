@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import samaaList from "@/data/samaa_sequence.json";
 
 interface Poem {
@@ -461,6 +462,19 @@ export default function SamaaHubPage() {
                 </button>
               </div>
             </div>
+
+            <DualAudioReaderBar
+              title={activePoem.title}
+              text={[
+                `${activePoem.title} — ${activePoem.poet}.`,
+                ...activePoem.allVerses,
+                activePoem.spiritualExplanation || "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              lang="ar"
+              variant="bar"
+            />
 
             {/* LIVE VOCALIZED VERSES (الأبيات كاملة مشكولة) */}
             <div className="space-y-4 py-2">

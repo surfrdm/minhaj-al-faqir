@@ -36,6 +36,7 @@ import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
 import { DailyQuranAhzabCard } from "@/components/DailyQuranAhzabCard";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
 import { getPageVerses } from "@/lib/quran_thematic";
+import { openMemberPortal } from "@/lib/member-session";
 
 // Types
 interface Habit {
@@ -505,6 +506,16 @@ export default function FaqirPortalPage() {
                   : "محفوظ في السيرفر"}
               </span>
             </span>
+
+            <button
+              type="button"
+              onClick={() => openMemberPortal("dashboard")}
+              className="px-3 py-1.5 rounded-xl bg-[#1B4332] hover:bg-[#143628] text-[#E5C378] border border-[#C5A059]/40 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+              title="فتح دفتر العضوية وتفعيل صوت Gemini"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span>بطاقة العضوية (صوت Gemini)</span>
+            </button>
 
             <button
               onClick={() => {

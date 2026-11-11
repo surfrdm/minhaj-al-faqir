@@ -15,6 +15,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { HikmaItem, getHikmaOfTheDay, getHikmaByNumber, TOTAL_HIKAM, HIKAM_LIST } from "@/lib/hikam";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 
 const ZAWIYA_FACEBOOK_URL = "https://www.facebook.com/zaouia.mohammedia";
 
@@ -348,6 +349,27 @@ export function HikmaOfTheDay() {
                 </div>
               </div>
             )}
+
+            <div className="mt-5">
+              <DualAudioReaderBar
+                title={`الحكمة العطائية #${currentHikma.number}`}
+                lang={
+                  activeLang === "fr" && currentHikma.text_fr
+                    ? "fr"
+                    : activeLang === "en" && currentHikma.text_en
+                    ? "en"
+                    : "ar"
+                }
+                text={
+                  activeLang === "fr" && currentHikma.text_fr
+                    ? currentHikma.text_fr
+                    : activeLang === "en" && currentHikma.text_en
+                    ? currentHikma.text_en
+                    : `${currentHikma.text_ar}. الشرح السلوكي: ${currentHikma.explanation_ar}`
+                }
+                variant="bar"
+              />
+            </div>
           </div>
 
           {/* Footer note inside card */}

@@ -18,6 +18,7 @@ import {
   Radio,
 } from "lucide-react";
 import samaaList from "@/data/samaa_sequence.json";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 
 interface Poem {
   id: string;
@@ -317,6 +318,13 @@ export function SamaaListener() {
                       </button>
                     </div>
                   </div>
+
+                  <DualAudioReaderBar
+                    title={recognizedPoem.title}
+                    text={`${recognizedPoem.title}. ${recognizedPoem.allVerses.join(". ")}${recognizedPoem.spiritualExplanation ? `. الشرح: ${recognizedPoem.spiritualExplanation}` : ""}`}
+                    lang="ar"
+                    variant="compact"
+                  />
 
                   {/* Vocalized Verses List */}
                   <div className="space-y-2.5">

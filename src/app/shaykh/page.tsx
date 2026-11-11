@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import userEdits from "@/data/user_edits.json";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import { getPageVerses } from "@/lib/quran_thematic";
 
 export const metadata: Metadata = {
@@ -113,6 +114,14 @@ export default function ShaykhPage() {
                 <p className="font-ibm text-sm sm:text-base text-[#1D2A24]/80 dark:text-[#D5E2DB] leading-relaxed max-w-2xl">
                   {description}
                 </p>
+
+                <DualAudioReaderBar
+                  title={name}
+                  text={`${name}. ${role}. ${description} ${sannadTitle}: ${sannadP1} ${sannadP2}`}
+                  lang="ar"
+                  variant="bar"
+                  className="max-w-2xl text-right"
+                />
               </div>
             </div>
           </div>

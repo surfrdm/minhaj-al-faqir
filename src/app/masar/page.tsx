@@ -25,6 +25,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MASAR_DATA, getApprovedBooks, type MasarStage } from "@/lib/masar";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import { getMasarStageVerses } from "@/lib/quran_thematic";
 
 export default function MasarPage() {
@@ -388,6 +389,16 @@ export default function MasarPage() {
                       )}
                     </div>
                   </div>
+                </div>
+
+                {/* Dual Audio Reader for Stage */}
+                <div className="mt-5">
+                  <DualAudioReaderBar
+                    title={`المرحلة ${stage.id}: ${stage.title}`}
+                    text={`${stage.title}. الهدف من المرحلة: ${stage.goal}. الممارسة الروحية: ${stage.practice.join(" ")}`}
+                    lang="ar"
+                    variant="bar"
+                  />
                 </div>
 
                 {/* Quranic Evidences for this Stage */}

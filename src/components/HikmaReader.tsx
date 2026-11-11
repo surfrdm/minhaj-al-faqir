@@ -13,6 +13,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { HikmaItem, TOTAL_HIKAM } from "@/lib/hikam";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 
 const ZAWIYA_FACEBOOK_URL = "https://www.facebook.com/zaouia.mohammedia";
 
@@ -180,6 +181,26 @@ export function HikmaReader({
           «{hikma.text_ar}»
         </p>
       </div>
+
+      {/* Audio Reader Bar */}
+      <DualAudioReaderBar
+        title={hikma.title || `الحكمة العطائية رقم ${hikma.number}`}
+        lang={
+          lang === "fr" && hikma.text_fr
+            ? "fr"
+            : lang === "en" && hikma.text_en
+            ? "en"
+            : "ar"
+        }
+        text={
+          lang === "fr" && hikma.text_fr
+            ? hikma.text_fr
+            : lang === "en" && hikma.text_en
+            ? hikma.text_en
+            : `${hikma.text_ar}. الشرح: ${hikma.explanation_ar}`
+        }
+        variant="bar"
+      />
 
       {/* 4. Spiritual Sharh (شرح مبسط مستفاد من كتب التراث) */}
       <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] space-y-2">

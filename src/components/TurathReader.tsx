@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { RijalHawlRasulSection } from '@/components/RijalHawlRasulSection';
 import { ClassicalBookReader } from '@/components/ClassicalBookReader';
+import { DualAudioReaderBar } from '@/components/DualAudioReaderBar';
 import type {
   TurathSource,
   LanguageView,
@@ -1664,6 +1665,25 @@ export default function TurathReader({
                           </div>
                         )}
 
+                        <DualAudioReaderBar
+                          title={`صحيح البخاري • حديث ${displayNum}`}
+                          text={
+                            langView === 'fr' && hadith.text_fr
+                              ? hadith.text_fr
+                              : langView === 'en' && hadith.text_en
+                              ? hadith.text_en
+                              : `${hadith.text_ar}${bab.sharh_ar ? `. الشرح: ${bab.sharh_ar}` : ''}`
+                          }
+                          lang={
+                            langView === 'fr' && hadith.text_fr
+                              ? 'fr'
+                              : langView === 'en' && hadith.text_en
+                              ? 'en'
+                              : 'ar'
+                          }
+                          variant="compact"
+                        />
+
                         <div className="mt-4 pt-3 border-t border-dashed border-gray-200 dark:border-[#203A2F]">
                           <div className="flex flex-wrap items-center gap-2 mb-1.5">
                             <span className="text-xs font-bold text-[#8F7032] dark:text-[#C5A059]">
@@ -1799,6 +1819,13 @@ export default function TurathReader({
                         query={activeSearchQuery}
                       />
                     </div>
+
+                    <DualAudioReaderBar
+                      title={`الشفا • ${fasl.title_ar}`}
+                      text={`${fasl.title_ar}. ${fasl.text_ar}${fasl.sharh_ar ? `. الشرح: ${fasl.sharh_ar}` : ''}`}
+                      lang="ar"
+                      variant="compact"
+                    />
 
                     {/* شرح الملا علي القاري */}
                     <div className="mt-4 pt-3 border-t border-dashed border-gray-200 dark:border-[#203A2F]">

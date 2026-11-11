@@ -16,6 +16,7 @@ import {
   Award,
 } from "lucide-react";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import { getThawabitVerses } from "@/lib/quran_thematic";
 
 const THAWABIT_TOPIC_MAP: Record<string, string> = {
@@ -305,6 +306,14 @@ export function ThawabitSection() {
                     </div>
                   ))}
                 </div>
+
+                <DualAudioReaderBar
+                  title={`الثابت ${activeThabit.num}: ${activeThabit.title}`}
+                  text={`${activeThabit.title}. ${activeThabit.summary}. ${activeThabit.points.join(" ")}`}
+                  lang="ar"
+                  variant="bar"
+                  className="pt-2"
+                />
               </div>
 
               <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31]">

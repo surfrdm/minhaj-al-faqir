@@ -18,6 +18,7 @@ import {
   ArrowRight,
   Music,
 } from "lucide-react";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 
 export interface GrandQasidaItem {
   id: string;
@@ -233,6 +234,19 @@ export function GrandQasaidModal({
                 </div>
               )}
 
+              <DualAudioReaderBar
+                title={qasida.fullTitle}
+                text={[
+                  qasida.fullTitle,
+                  qasida.intro || "",
+                  ...qasida.verses.map((v) => `${v.sadr} ${v.ajuz || ""}`),
+                ]
+                  .filter(Boolean)
+                  .join(". ")}
+                lang="ar"
+                variant="bar"
+              />
+
               {/* Special Prose view for Dalail al-Khayrat Khatm */}
               {qasida.id === "dalail_khatm" ? (
                 <div
@@ -346,6 +360,16 @@ export function GrandQasaidModal({
                   مستمد من أمهات شروح علماء الغرب الإسلامي: {qasida.scholars || "ابن عجيبة، أحمد زروق، وبنيس الفاسي"}
                 </p>
               </div>
+
+              <DualAudioReaderBar
+                title={`الشرح التحليلي: ${qasida.title}`}
+                text={qasida.explanationMarkdown
+                  .replace(/###\s*[🔹⚜️]?/g, "")
+                  .replace(/^>\s*/gm, "")
+                  .replace(/\*\*/g, "")}
+                lang="ar"
+                variant="bar"
+              />
 
               {/* Rendered Explanation Markdown Content */}
               <div className="bg-white dark:bg-[#0B1F17] rounded-2xl border-2 border-[#C5A059]/40 p-5 sm:p-8 shadow-md space-y-6 font-ibm leading-relaxed">

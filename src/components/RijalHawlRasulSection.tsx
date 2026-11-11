@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react';
 import defaultRijalData from '@/data/rijal_hawl_rasul.json';
+import { DualAudioReaderBar } from '@/components/DualAudioReaderBar';
 import type {
   ClassicalBookSlug,
   RijalCategoryId,
@@ -376,6 +377,23 @@ export function RijalHawlRasulSection({
               </div>
             )}
           </div>
+
+          <DualAudioReaderBar
+            title={`${spotlightCompanion.name_ar} — ${spotlightCompanion.epithet_ar}`}
+            text={[
+              `${spotlightCompanion.name_ar}. ${spotlightCompanion.epithet_ar}.`,
+              spotlightCompanion.famous_quote_or_hadith
+                ? `القول المأثور: ${spotlightCompanion.famous_quote_or_hadith}.`
+                : '',
+              spotlightCompanion.story_episodes?.[0]
+                ? `${spotlightCompanion.story_episodes[0].heading}: ${spotlightCompanion.story_episodes[0].text}`
+                : spotlightCompanion.bio_summary,
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            lang="ar"
+            variant="bar"
+          />
         </div>
       )}
 
@@ -546,6 +564,24 @@ export function RijalHawlRasulSection({
                     </button>
                   </div>
                 </div>
+
+                {/* قارئ صوتي مزدوج للسيرة والمواقف */}
+                <DualAudioReaderBar
+                  title={`${comp.rank}. ${comp.name_ar} — ${comp.epithet_ar}`}
+                  text={[
+                    `${comp.name_ar}، ${comp.epithet_ar} (${comp.kunya_or_lineage_ar}).`,
+                    comp.bio_summary,
+                    comp.famous_quote_or_hadith
+                      ? `الأثر النبوي أو القول المأثور: ${comp.famous_quote_or_hadith}.`
+                      : '',
+                    ...episodes.map((ep, idx) => `الموقف ${idx + 1}: ${ep.heading}. ${ep.text}`),
+                    `الدلالة التربوية واللطيفة السلوكية: ${comp.sufi_lesson}`,
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  lang="ar"
+                  variant="bar"
+                />
 
                 {/* 1. السيرة التاريخية والملخص العام */}
                 <div className="space-y-1.5">

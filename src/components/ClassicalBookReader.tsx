@@ -13,6 +13,7 @@ import {
   Search,
   X,
 } from 'lucide-react';
+import { DualAudioReaderBar } from '@/components/DualAudioReaderBar';
 import type {
   ClassicalBookSlug,
   TurathBookEntry,
@@ -764,6 +765,14 @@ export function ClassicalBookReader({
                 <div className="font-amiri text-lg sm:text-xl leading-loose text-[#143628] dark:text-[#E8F0EC] p-4 sm:p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#07130E] border-r-4 border-[#C5A059] whitespace-pre-line">
                   <HighlightMatch text={displayedText} query={activeQuery} />
                 </div>
+
+                <DualAudioReaderBar
+                  title={`${overview.title_ar} — ${entry.sectionPath_ar}`}
+                  text={displayedText}
+                  lang="ar"
+                  variant="compact"
+                  className="mt-3"
+                />
 
                 {entry.isExcerpt && (
                   <button

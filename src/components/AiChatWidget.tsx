@@ -17,6 +17,7 @@ import {
   ChevronDown,
   Minimize2,
 } from "lucide-react";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 
 interface ChatCard {
   title: string;
@@ -184,6 +185,16 @@ export function AiChatWidget() {
                   }`}
                 >
                   <p className="font-ibm leading-relaxed">{m.text}</p>
+
+                  {m.sender === "bot" && (
+                    <DualAudioReaderBar
+                      title="مرشد المنهاج الذكي"
+                      text={m.text}
+                      lang="ar"
+                      variant="compact"
+                      className="mt-2.5"
+                    />
+                  )}
 
                   {/* Cards inside bot message */}
                   {m.cards && m.cards.length > 0 && (

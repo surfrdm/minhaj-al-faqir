@@ -4,6 +4,7 @@ import { useState } from "react";
 import { HelpCircle, Search, Quote } from "lucide-react";
 import { GLOSSARY_ITEMS } from "@/lib/curriculum";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
 import { getGlossaryTermVerses, normalizeArabicForSearch } from "@/lib/quran_thematic";
 
 export function GlossarySection() {
@@ -116,6 +117,14 @@ export function GlossarySection() {
                   <span>«{item.quote}»</span>
                 </div>
               )}
+
+              <DualAudioReaderBar
+                title={item.term}
+                text={`${item.term}. ${item.definition}${item.quote ? ` ${item.quote}` : ""}`}
+                lang="ar"
+                variant="compact"
+                className="mt-3"
+              />
 
               <div className="mt-3 pt-3 border-t border-[#E7DFD5] dark:border-[#203A2F]">
                 <QuranicEvidencePanel

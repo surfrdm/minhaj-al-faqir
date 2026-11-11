@@ -26,9 +26,17 @@ import {
   Lock,
 } from "lucide-react";
 
+import {
+  getStoredMemberSession,
+  setStoredMemberSession,
+  useMemberSession,
+  type MemberPortalView,
+} from "@/lib/member-session";
+
 interface MemberPortalModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialView?: MemberPortalView;
 }
 
 interface MemberRecord {
@@ -98,13 +106,39 @@ const MONTHS_NAMES = [
   "دجنبر",
 ];
 
-export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
+export function MemberPortalModal({
+  isOpen,
+  onClose,
+  initialView = "dashboard",
+}: MemberPortalModalProps) {
+  const { session: activeSession, isSubscriber } = useMemberSession();
+
   // Views: 'dashboard' | 'login' | 'register' | 'admin'
-  const [view, setView] = useState<"dashboard" | "login" | "register" | "admin">("dashboard");
+  const [view, setView] = useState<MemberPortalView>(initialView);
   const [selectedTab, setSelectedTab] = useState<"malzouma" | "wird" | "privileges">("malzouma");
 
   const [members, setMembers] = useState<MemberRecord[]>(DEFAULT_MEMBERS);
-  const [currentMember, setCurrentMember] = useState<MemberRecord>(DEFAULT_MEMBERS[0]);
+  const [currentMember, setCurrentMember] = useState<MemberRecord>(() => {
+    const stored = getStoredMemberSession();
+    if (stored?.memberId) {
+      const match = DEFAULT_MEMBERS.find((m) => m.id === stored.memberId);
+      if (match) return match;
+      const target = Math.max(stored.monthly * 12, 1000);
+      return {
+        id: stored.memberId,
+        name: stored.name,
+        city: stored.city,
+        monthly: stored.monthly,
+        paidMonths: stored.paidMonths,
+        annualTarget: target,
+        annualPaid: stored.annualPaid,
+        annualRemaining: Math.max(0, target - stored.annualPaid),
+        annualPercentage: Math.min(100, Math.round((stored.annualPaid / target) * 100)),
+        status: stored.status,
+      };
+    }
+    return DEFAULT_MEMBERS[0];
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   // Registration Form State
@@ -123,12 +157,23 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState("");
 
-  // Fetch members on mount or when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      loadMembers();
-    }
-  }, [isOpen]);
+  const syncToStorage = (
+    member: MemberRecord,
+    adminFlag: boolean,
+    pinVal?: string
+  ) => {
+    setStoredMemberSession({
+      memberId: member.id,
+      name: member.name,
+      city: member.city,
+      monthly: member.monthly,
+      paidMonths: member.paidMonths,
+      annualPaid: member.annualPaid,
+      status: member.status,
+      isAdmin: adminFlag,
+      adminPin: pinVal || (adminFlag ? adminPin || activeSession?.adminPin || "1447" : undefined),
+    });
+  };
 
   const loadMembers = async () => {
     try {
@@ -138,10 +183,14 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
         const data = await res.json();
         if (data.members && data.members.length > 0) {
           setMembers(data.members);
-          // Keep current selection or default to first
-          const found = data.members.find((m: MemberRecord) => m.id === currentMember.id);
+          const stored = getStoredMemberSession();
+          const preferredId = stored?.memberId || currentMember.id;
+          const found = data.members.find((m: MemberRecord) => m.id === preferredId);
           if (found) {
             setCurrentMember(found);
+            if (stored && stored.memberId === found.id) {
+              syncToStorage(found, stored.isAdmin, stored.adminPin);
+            }
           } else {
             setCurrentMember(data.members[0]);
           }
@@ -153,6 +202,16 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
       setIsLoading(false);
     }
   };
+
+  // Fetch members on mount or when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+    const timer = setTimeout(() => {
+      void loadMembers();
+    }, 0);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,6 +250,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
         };
         setMembers((prev) => [newRecord, ...prev]);
         setCurrentMember(newRecord);
+        syncToStorage(newRecord, false);
         setView("dashboard");
       } else {
         alert("حدث خطأ أثناء إنشاء الحساب، يرجى المحاولة ثانية.");
@@ -348,11 +408,46 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                     </p>
                   </div>
                 </div>
-                <div className="text-left sm:text-right bg-[#FAF7F2] dark:bg-[#0B1914] px-3.5 py-1.5 rounded-lg border border-[#C5A059]/30">
-                  <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">معرف الفقير الرسمي</span>
-                  <span className="font-mono text-xs font-semibold text-[#1B4332] dark:text-[#E5C378]">
-                    BDT-2026-{currentMember.id.slice(0, 4)}
-                  </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="text-left sm:text-right bg-[#FAF7F2] dark:bg-[#0B1914] px-3.5 py-1.5 rounded-lg border border-[#C5A059]/30">
+                    <span className="text-xs text-[#52796F] dark:text-[#A1B3A9] block">معرف الفقير الرسمي</span>
+                    <span className="font-mono text-xs font-semibold text-[#1B4332] dark:text-[#E5C378]">
+                      BDT-2026-{currentMember.id.slice(0, 4)}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    {activeSession && isSubscriber ? (
+                      <>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 text-[11px] font-bold">
+                          <CheckCircle2 className="w-3 h-3" />
+                          <span>صوت Gemini مفعل</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setStoredMemberSession(null)}
+                          className="inline-flex items-center gap-1 text-[11px] text-[#52796F] hover:text-amber-700 dark:text-[#9BB0A5] dark:hover:text-amber-300 underline cursor-pointer"
+                        >
+                          <LogOut className="w-3 h-3" />
+                          <span>وضع الزائر (فك الربط للتجربة)</span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 text-[11px] font-bold">
+                          <Lock className="w-3 h-3" />
+                          <span>صوت Gemini مقفل</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => syncToStorage(currentMember, adminUnlocked, adminPin)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#1B4332] text-[#E5C378] text-[11px] font-bold hover:bg-[#143628] transition cursor-pointer"
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          <span>تفعيل لهذا الحساب</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -621,6 +716,10 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                       <CheckCircle2 className="w-4 h-4 text-[#C5A059]" />
                       <span>التسجيل التلقائي في الملتقيات والمحاضرات التربوية المقامة بزاوية المحمدية ومداغ.</span>
                     </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#C5A059]" />
+                      <span>تشغيل صوت Gemini AI الطبيعي لقراءة السير، الأحاديث، المتون والشروح السلوكية مع حفظ ذكي لمقاطع الاختبار.</span>
+                    </li>
                   </ul>
                 </div>
               )}
@@ -770,6 +869,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                       key={m.id}
                       onClick={() => {
                         setCurrentMember(m);
+                        syncToStorage(m, adminUnlocked, adminPin);
                         setView("dashboard");
                       }}
                       className={`w-full p-3 rounded-lg border text-right flex items-center justify-between transition-all ${
@@ -816,6 +916,7 @@ export function MemberPortalModal({ isOpen, onClose }: MemberPortalModalProps) {
                       onClick={() => {
                         if (adminPin === "1447" || adminPin === "2026" || adminPin === "admin") {
                           setAdminUnlocked(true);
+                          syncToStorage(currentMember, true, adminPin);
                         } else {
                           alert("الرمز غير صحيح، يرجى إدخال 1447 أو 2026");
                         }
