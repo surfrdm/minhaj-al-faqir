@@ -34,15 +34,233 @@ export interface DualAudioReaderBarProps {
   lang?: "ar" | "fr" | "en";
   variant?: "bar" | "compact";
   defaultPreviewOnly?: boolean;
+  preRecordedSrc?: string;
+  preRecordedLabel?: string;
   className?: string;
 }
 
-type ActiveEngine = "free" | "gemini" | null;
+type ActiveEngine = "prerecorded" | "free" | "gemini" | null;
 type PlaybackStatus = "idle" | "loading" | "playing" | "paused";
 
 interface GeminiErrorState {
   code?: string;
   message: string;
+}
+
+export interface InlineSpeakerButtonProps {
+  text: string;
+  title?: string;
+  lang?: "ar" | "fr" | "en";
+  preRecordedSrc?: string;
+  ariaLabel?: string;
+  size?: "sm" | "md";
+  className?: string;
+  onNotice?: (message: string | null) => void;
+}
+
+export function InlineSpeakerButton({
+  text,
+  title,
+  lang = "ar",
+  preRecordedSrc,
+  ariaLabel = "استماع سريع لهذا المقطع",
+  size = "sm",
+  className = "",
+  onNotice,
+}: InlineSpeakerButtonProps) {
+  const instanceId = useId();
+  const [status, setStatus] = useState<PlaybackStatus>("idle");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const modeRef = useRef<"mp3" | "speech" | null>(null);
+
+  const stopLocally = () => {
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      } catch {
+        // Ignore
+      }
+      audioRef.current = null;
+    }
+    modeRef.current = null;
+    setStatus("idle");
+  };
+
+  useEffect(() => {
+    return () => {
+      audioBus.release(instanceId);
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause();
+        } catch {
+          // Ignore
+        }
+        audioRef.current = null;
+      }
+    };
+  }, [instanceId]);
+
+  const cleanText = sanitizeTextForSpeech(text);
+  if (!cleanText && !preRecordedSrc) return null;
+
+  const speechPayload = title
+    ? `${sanitizeTextForSpeech(title)}. ${cleanText}`
+    : cleanText;
+
+  const startSpeechFallback = (fallbackMsg?: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      onNotice?.("المتصفح الحالي لا يدعم القراءة الصوتية المدمجة.");
+      return;
+    }
+    stopLocally();
+    audioBus.claim(instanceId, stopLocally);
+
+    const utterance = new SpeechSynthesisUtterance(speechPayload);
+    utterance.lang = lang === "fr" ? "fr-FR" : lang === "en" ? "en-US" : "ar-SA";
+    utterance.rate = 0.96;
+    utterance.pitch = 1.0;
+
+    const chosenVoice = pickPreferredSpeechVoice(lang);
+    if (chosenVoice) {
+      utterance.voice = chosenVoice;
+      utterance.lang = chosenVoice.lang;
+    }
+
+    utterance.onend = () => {
+      audioBus.release(instanceId);
+      stopLocally();
+    };
+    utterance.onerror = () => {
+      audioBus.release(instanceId);
+      stopLocally();
+    };
+
+    modeRef.current = "speech";
+    setStatus("playing");
+    if (fallbackMsg) onNotice?.(fallbackMsg);
+    try {
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      audioBus.release(instanceId);
+      stopLocally();
+    }
+  };
+
+  const handleToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (status === "playing") {
+      if (modeRef.current === "mp3" && audioRef.current) {
+        audioRef.current.pause();
+        setStatus("paused");
+        return;
+      }
+      if (modeRef.current === "speech" && typeof window !== "undefined") {
+        try {
+          window.speechSynthesis.pause();
+          setStatus("paused");
+          return;
+        } catch {
+          audioBus.release(instanceId);
+          stopLocally();
+          return;
+        }
+      }
+    }
+
+    if (status === "paused") {
+      if (modeRef.current === "mp3" && audioRef.current) {
+        await audioRef.current.play();
+        setStatus("playing");
+        return;
+      }
+      if (modeRef.current === "speech" && typeof window !== "undefined") {
+        try {
+          window.speechSynthesis.resume();
+          setStatus("playing");
+          return;
+        } catch {
+          audioBus.release(instanceId);
+          stopLocally();
+        }
+      }
+    }
+
+    onNotice?.(null);
+
+    if (preRecordedSrc) {
+      setStatus("loading");
+      try {
+        const probe = await fetch(preRecordedSrc, { method: "HEAD" });
+        if (probe.ok) {
+          stopLocally();
+          audioBus.claim(instanceId, stopLocally);
+          const audio = new Audio(preRecordedSrc);
+          audioRef.current = audio;
+          audioBus.registerHtmlAudio(audio);
+          modeRef.current = "mp3";
+
+          audio.onended = () => {
+            audioBus.release(instanceId);
+            stopLocally();
+          };
+          audio.onerror = () => {
+            startSpeechFallback(
+              "تعذر تشغيل ملف MP3 المسجل؛ تم التحويل للقراءة الفورية."
+            );
+          };
+
+          setStatus("playing");
+          await audio.play();
+          onNotice?.("يشتغل الآن المقطع الصوتي المسجل مسبقاً (0$)");
+          return;
+        }
+      } catch {
+        // Fallback smoothly below
+      }
+      startSpeechFallback(
+        "ملف Gemini MP3 المسجل غير مولّد بعد (مفتاح API وصل 402) — يشتغل الآن بالصوت الفوري مؤقتاً."
+      );
+      return;
+    }
+
+    startSpeechFallback();
+  };
+
+  const dimClass = size === "md" ? "w-8 h-8" : "w-7 h-7";
+  const iconClass = size === "md" ? "w-4 h-4" : "w-3.5 h-3.5";
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => void handleToggle(e)}
+      aria-label={ariaLabel}
+      aria-pressed={status === "playing"}
+      title={
+        preRecordedSrc
+          ? "استماع للمقطع الصوتي المسجل (اضغط للتشغيل أو الإيقاف)"
+          : "استماع سريع لهذا المقطع"
+      }
+      className={`inline-flex items-center justify-center rounded-full border shrink-0 transition-[transform,background-color,border-color,color] duration-150 ease-out active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] cursor-pointer ${dimClass} ${
+        status === "playing"
+          ? "bg-[#143628] text-[#E5C378] border-[#C5A059] shadow-xs"
+          : status === "paused"
+            ? "bg-[#C5A059]/25 text-[#143628] dark:text-[#FAF7F2] border-[#C5A059]"
+            : "bg-[#FAF7F2] dark:bg-[#0D2119] text-[#143628] dark:text-[#E5C378] border-[#C5A059]/45 hover:bg-[#C5A059]/15 hover:border-[#C5A059]"
+      } ${className}`}
+    >
+      {status === "loading" ? (
+        <Loader2 className={`${iconClass} animate-spin`} />
+      ) : status === "playing" ? (
+        <Pause className={iconClass} />
+      ) : status === "paused" ? (
+        <Play className={iconClass} />
+      ) : (
+        <Volume2 className={iconClass} />
+      )}
+    </button>
+  );
 }
 
 export function DualAudioReaderBar({
@@ -51,6 +269,8 @@ export function DualAudioReaderBar({
   lang = "ar",
   variant = "bar",
   defaultPreviewOnly = true,
+  preRecordedSrc,
+  preRecordedLabel = "مقطع مسجل مسبقاً",
   className = "",
 }: DualAudioReaderBarProps) {
   const instanceId = useId();
@@ -124,6 +344,68 @@ export function DualAudioReaderBar({
   const handleStop = () => {
     audioBus.release(instanceId);
     stopLocally();
+  };
+
+  const handlePlayPreRecorded = async () => {
+    if (!preRecordedSrc) return;
+    setGeminiError(null);
+    setShowGateCard(false);
+
+    if (engine === "prerecorded" && status === "playing" && audioRef.current) {
+      audioRef.current.pause();
+      setStatus("paused");
+      return;
+    }
+    if (engine === "prerecorded" && status === "paused" && audioRef.current) {
+      await audioRef.current.play();
+      setStatus("playing");
+      return;
+    }
+
+    stopLocally();
+    audioBus.claim(instanceId, stopLocally);
+    setEngine("prerecorded");
+    setStatus("loading");
+
+    try {
+      const probe = await fetch(preRecordedSrc, { method: "HEAD" });
+      if (!probe.ok) {
+        audioBus.release(instanceId);
+        stopLocally();
+        handlePlayFree();
+        setGeminiError({
+          code: "BILLING_DEPLETED",
+          message:
+            "ملف MP3 المسجل مسبقاً بـ Gemini غير مولّد بعد (مفتاح API الحالي وصل لحالة 402). تم تشغيل القراءة المجانية الفورية مؤقتاً؛ أضف مفتاحاً جديداً في .env.local ثم نفّذ: node tools/generate_rijal_demo.mjs",
+        });
+        return;
+      }
+
+      const audio = new Audio(preRecordedSrc);
+      audioRef.current = audio;
+      audioBus.registerHtmlAudio(audio);
+
+      audio.onended = () => {
+        audioBus.release(instanceId);
+        stopLocally();
+      };
+      audio.onerror = () => {
+        audioBus.release(instanceId);
+        stopLocally();
+        setGeminiError({
+          code: "AUDIO_PLAY_ERR",
+          message: "تعذر فك تشفير المقطع المسجل مسبقاً.",
+        });
+      };
+
+      setCacheBadge("مسجل مسبقاً (0$)");
+      setStatus("playing");
+      await audio.play();
+    } catch {
+      audioBus.release(instanceId);
+      stopLocally();
+      handlePlayFree();
+    }
   };
 
   const handlePlayFree = () => {
@@ -339,6 +621,42 @@ export function DualAudioReaderBar({
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
+          {/* 0. Pre-recorded Book Excerpt Button (when available) */}
+          {preRecordedSrc && (
+            <button
+              type="button"
+              onClick={() => void handlePlayPreRecorded()}
+              disabled={engine === "prerecorded" && status === "loading"}
+              className={`inline-flex items-center gap-1.5 rounded-xl font-bold transition-[transform,background-color,border-color,color] duration-150 ease-out active:scale-[0.97] cursor-pointer disabled:opacity-70 ${
+                isCompact ? "px-2.5 py-1 text-[11px]" : "px-3 py-1.5 text-xs"
+              } ${
+                engine === "prerecorded"
+                  ? "bg-[#1B4332] text-[#E5C378] border border-[#C5A059]"
+                  : "bg-[#143628]/8 dark:bg-[#1B4332]/40 text-[#143628] dark:text-[#E5C378] border border-[#C5A059]/45 hover:bg-[#C5A059]/15"
+              }`}
+              title="تشغيل المقطع الصوتي المسجل مسبقاً لهذا الفصل (0$)"
+            >
+              {engine === "prerecorded" && status === "loading" ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C5A059]" />
+              ) : engine === "prerecorded" && status === "playing" ? (
+                <Pause className="w-3.5 h-3.5 text-[#C5A059]" />
+              ) : engine === "prerecorded" && status === "paused" ? (
+                <Play className="w-3.5 h-3.5 text-[#C5A059]" />
+              ) : (
+                <Headphones className="w-3.5 h-3.5 text-[#C5A059]" />
+              )}
+              <span>
+                {engine === "prerecorded" && status === "loading"
+                  ? "جارٍ الفتح..."
+                  : engine === "prerecorded" && status === "playing"
+                  ? "إيقاف المقطع المسجل"
+                  : engine === "prerecorded" && status === "paused"
+                  ? "متابعة المقطع المسجل"
+                  : preRecordedLabel}
+              </span>
+            </button>
+          )}
+
           {/* 1. Free Browser Speech Button */}
           <button
             type="button"

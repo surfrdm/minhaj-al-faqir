@@ -21,7 +21,12 @@ import {
   X,
 } from 'lucide-react';
 import defaultRijalData from '@/data/rijal_hawl_rasul.json';
-import { DualAudioReaderBar } from '@/components/DualAudioReaderBar';
+import {
+  DualAudioReaderBar,
+  InlineSpeakerButton,
+} from '@/components/DualAudioReaderBar';
+
+const MUSAB_PRERECORDED_SRC = '/audio/demo/rijal-musab-demo.mp3';
 import type {
   ClassicalBookSlug,
   RijalCategoryId,
@@ -65,6 +70,7 @@ export function RijalHawlRasulSection({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [spotlightCursor, setSpotlightCursor] = useState<number>(0);
   const [collapsedStories, setCollapsedStories] = useState<Record<string, boolean>>({});
+  const [speakerNotice, setSpeakerNotice] = useState<string | null>(null);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { all: dataset.companions.length };
@@ -353,9 +359,35 @@ export function RijalHawlRasulSection({
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
             <div className="lg:col-span-5 space-y-1.5">
-              <h3 className="font-amiri text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
-                {spotlightCompanion.name_ar}
-              </h3>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-amiri text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
+                  {spotlightCompanion.name_ar}
+                </h3>
+                <InlineSpeakerButton
+                  size="md"
+                  title={spotlightCompanion.name_ar}
+                  text={[
+                    spotlightCompanion.epithet_ar,
+                    spotlightCompanion.story_episodes?.[0]
+                      ? `${spotlightCompanion.story_episodes[0].heading}: ${spotlightCompanion.story_episodes[0].text}`
+                      : spotlightCompanion.bio_summary,
+                  ]
+                    .filter(Boolean)
+                    .join('. ')}
+                  preRecordedSrc={
+                    spotlightCompanion.id === 'musab-ibn-umayr'
+                      ? MUSAB_PRERECORDED_SRC
+                      : undefined
+                  }
+                  ariaLabel={`استماع لسيرة ${spotlightCompanion.name_ar}`}
+                  onNotice={setSpeakerNotice}
+                />
+              </div>
+              {speakerNotice && (
+                <p className="text-[11px] font-ibm text-[#7A5B1F] dark:text-[#E5C378] bg-[#FAF7F2] dark:bg-[#07130E] px-2.5 py-1 rounded-lg border border-[#C5A059]/35 leading-relaxed">
+                  {speakerNotice}
+                </p>
+              )}
               <p className="text-xs sm:text-sm font-semibold text-[#8F7032] dark:text-[#E5C378]">
                 {spotlightCompanion.epithet_ar}
               </p>
@@ -393,6 +425,12 @@ export function RijalHawlRasulSection({
               .join(' ')}
             lang="ar"
             variant="bar"
+            preRecordedSrc={
+              spotlightCompanion.id === 'musab-ibn-umayr'
+                ? MUSAB_PRERECORDED_SRC
+                : undefined
+            }
+            preRecordedLabel="مقطع الكتاب المسجل (مصعب)"
           />
         </div>
       )}
@@ -511,9 +549,30 @@ export function RijalHawlRasulSection({
                       {comp.rank}
                     </span>
                     <div className="space-y-1">
-                      <h3 className="font-amiri text-2xl sm:text-3xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-snug">
-                        {comp.name_ar}
-                      </h3>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-amiri text-2xl sm:text-3xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-snug">
+                          {comp.name_ar}
+                        </h3>
+                        <InlineSpeakerButton
+                          size="sm"
+                          title={comp.name_ar}
+                          text={[
+                            comp.epithet_ar,
+                            episodes[0]
+                              ? `${episodes[0].heading}: ${episodes[0].text}`
+                              : comp.bio_summary,
+                          ]
+                            .filter(Boolean)
+                            .join('. ')}
+                          preRecordedSrc={
+                            comp.id === 'musab-ibn-umayr'
+                              ? MUSAB_PRERECORDED_SRC
+                              : undefined
+                          }
+                          ariaLabel={`استماع لقصة ${comp.name_ar}`}
+                          onNotice={setSpeakerNotice}
+                        />
+                      </div>
                       <p className="text-xs sm:text-sm font-bold text-[#8F7032] dark:text-[#E5C378]">
                         {comp.epithet_ar}
                       </p>
@@ -581,6 +640,12 @@ export function RijalHawlRasulSection({
                     .join(' ')}
                   lang="ar"
                   variant="bar"
+                  preRecordedSrc={
+                    comp.id === 'musab-ibn-umayr'
+                      ? MUSAB_PRERECORDED_SRC
+                      : undefined
+                  }
+                  preRecordedLabel="مقطع الكتاب المسجل (مصعب)"
                 />
 
                 {/* 1. السيرة التاريخية والملخص العام */}

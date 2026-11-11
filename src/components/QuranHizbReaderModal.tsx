@@ -20,7 +20,22 @@ import {
   Check,
   Languages,
   RefreshCw,
+  Volume2,
+  Pause,
+  Play,
+  Square,
+  Download,
+  Headphones,
 } from "lucide-react";
+import { audioBus } from "@/lib/audio-bus";
+import {
+  QURAN_WARSH_RECITERS,
+  QURAN_WARSH_DEMO_COMBINED_URL,
+  resolveWarshAudioTrack,
+  formatAudioClock,
+  type WarshReciterId,
+  type ResolvedQuranAudioTrack,
+} from "@/lib/quran-audio";
 import {
   QuranHizbData,
   QuranPage,
@@ -187,7 +202,7 @@ function partitionHizbWords(
       const nextLastLineWords = nextCount % estWordsPerLine || estWordsPerLine;
 
       // غرامة السطر الأخير اليتيم (Orphan Penalty) لمنع ترك كلمة أو كلمتين في السطر
-      let currentPenalty = currentDiff + (lastLineWords <= 2 ? 80 : lastLineWords <= 4 ? 30 : 0);
+      const currentPenalty = currentDiff + (lastLineWords <= 2 ? 80 : lastLineWords <= 4 ? 30 : 0);
       let nextPenalty = nextDiff + (nextLastLineWords <= 2 ? 80 : nextLastLineWords <= 4 ? 30 : 0);
 
       if (nextCount > avgTarget + 30) nextPenalty += 60;
@@ -290,6 +305,16 @@ export function QuranHizbReaderModal({
   const [tafsirLoading, setTafsirLoading] = useState<boolean>(false);
   const [tafsirError, setTafsirError] = useState<string | null>(null);
   const [tafsirData, setTafsirData] = useState<TafsirVerseResponse | null>(null);
+  const [reciterId, setReciterId] = useState<WarshReciterId>("kazabri");
+  const [audioState, setAudioState] = useState<"idle" | "loading" | "playing" | "paused">("idle");
+  const [activeTrack, setActiveTrack] = useState<ResolvedQuranAudioTrack | null>(null);
+  const [audioProgress, setAudioProgress] = useState<{ current: number; duration: number }>({
+    current: 0,
+    duration: 0,
+  });
+  const [audioError, setAudioError] = useState<string | null>(null);
+  const [showAudioBar, setShowAudioBar] = useState<boolean>(true);
+  const warshAudioRef = useRef<HTMLAudioElement | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const sheetBodyRef = useRef<HTMLDivElement>(null);
   const hizbCacheRef = useRef<Map<string, QuranHizbData>>(new Map());
@@ -298,13 +323,14 @@ export function QuranHizbReaderModal({
 
   // Sync hizbNumber prop with internal state
   useEffect(() => {
-    if (hizbNumber) {
+    if (!hizbNumber) return;
+    queueMicrotask(() => {
       setCurrentHizb(hizbNumber);
       setCurrentPageIndex(0);
       setSelectedVerseKey(null);
       setTafsirData(null);
       setTafsirError(null);
-    }
+    });
   }, [hizbNumber]);
 
   // Restore saved Quran script preference (defaults to standard Maghribi script)
@@ -397,33 +423,35 @@ export function QuranHizbReaderModal({
   // Check if completed today in localStorage
   useEffect(() => {
     if (!isOpen || typeof window === "undefined") return;
-    try {
-      const now = new Date();
-      const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-      const savedChecksStr = localStorage.getItem("minhaj_faqir_checks");
-      if (savedChecksStr) {
-        const savedChecks = JSON.parse(savedChecksStr);
-        const dayChecks = savedChecks[todayKey] || {};
-        if (hizbPeriod === "subh" && dayChecks["h1_subh"]) {
-          setIsCompletedToday(true);
-        } else if (hizbPeriod === "masa" && dayChecks["h1_masa"]) {
-          setIsCompletedToday(true);
-        } else {
-          // Check general quran log
-          const quranLogStr = localStorage.getItem("minhaj_quran_ahzab_checks");
-          if (quranLogStr) {
-            const quranLog = JSON.parse(quranLogStr);
-            if (quranLog[todayKey]?.[currentHizb]) {
-              setIsCompletedToday(true);
-            } else {
-              setIsCompletedToday(false);
+    queueMicrotask(() => {
+      try {
+        const now = new Date();
+        const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+        const savedChecksStr = localStorage.getItem("minhaj_faqir_checks");
+        if (savedChecksStr) {
+          const savedChecks = JSON.parse(savedChecksStr);
+          const dayChecks = savedChecks[todayKey] || {};
+          if (hizbPeriod === "subh" && dayChecks["h1_subh"]) {
+            setIsCompletedToday(true);
+          } else if (hizbPeriod === "masa" && dayChecks["h1_masa"]) {
+            setIsCompletedToday(true);
+          } else {
+            // Check general quran log
+            const quranLogStr = localStorage.getItem("minhaj_quran_ahzab_checks");
+            if (quranLogStr) {
+              const quranLog = JSON.parse(quranLogStr);
+              if (quranLog[todayKey]?.[currentHizb]) {
+                setIsCompletedToday(true);
+              } else {
+                setIsCompletedToday(false);
+              }
             }
           }
         }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
+    });
   }, [isOpen, currentHizb, hizbPeriod]);
 
   // Handle Mark as Completed
@@ -602,6 +630,150 @@ export function QuranHizbReaderModal({
     [viewMode, versePageMap, currentPageIndex, scrollVerseIntoView]
   );
 
+  const getPageSurahNumber = useCallback((page: DynamicQuranPage | null): number => {
+    if (!page) return 1;
+    if (page.isOpening && page.openingLines) {
+      for (const line of page.openingLines) {
+        if (line.surah_number) return Number(line.surah_number);
+        const w = line.words?.find((wd) => wd.surah_number);
+        if (w?.surah_number) return Number(w.surah_number);
+      }
+    }
+    if (page.items) {
+      for (const it of page.items) {
+        if (it.word?.surah_number) return Number(it.word.surah_number);
+      }
+    }
+    if (page.surahTitle === "البقرة") return 2;
+    return 1;
+  }, []);
+
+  const stopWarshAudio = useCallback(() => {
+    audioBus.release("quran-warsh-reader");
+    if (warshAudioRef.current) {
+      try {
+        warshAudioRef.current.pause();
+        warshAudioRef.current.currentTime = 0;
+      } catch {
+        // Ignore
+      }
+      warshAudioRef.current = null;
+    }
+    setAudioState("idle");
+    setActiveTrack(null);
+    setAudioProgress({ current: 0, duration: 0 });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      audioBus.release("quran-warsh-reader");
+      if (warshAudioRef.current) {
+        try {
+          warshAudioRef.current.pause();
+        } catch {
+          // Ignore
+        }
+        warshAudioRef.current = null;
+      }
+    };
+  }, []);
+
+  const playWarshTrack = useCallback(
+    async (
+      targetSurah: number,
+      options?: {
+        isOpening?: boolean;
+        forceCombinedDemo?: boolean;
+        overrideReciter?: WarshReciterId;
+      }
+    ) => {
+      const effectiveReciter = options?.overrideReciter || reciterId;
+      const track = resolveWarshAudioTrack({
+        reciterId: effectiveReciter,
+        hizbNumber: currentHizb,
+        surahNumber: targetSurah,
+        isOpening: options?.isOpening,
+        forceCombinedDemo: options?.forceCombinedDemo,
+      });
+
+      // Toggle pause / resume when clicking same active track
+      if (activeTrack?.id === track.id && warshAudioRef.current) {
+        if (audioState === "playing") {
+          warshAudioRef.current.pause();
+          setAudioState("paused");
+          return;
+        }
+        if (audioState === "paused") {
+          await warshAudioRef.current.play();
+          setAudioState("playing");
+          return;
+        }
+      }
+
+      setAudioError(null);
+      stopWarshAudio();
+      audioBus.claim("quran-warsh-reader", () => {
+        if (warshAudioRef.current) {
+          try {
+            warshAudioRef.current.pause();
+            warshAudioRef.current.currentTime = 0;
+          } catch {
+            // Ignore
+          }
+          warshAudioRef.current = null;
+        }
+        setAudioState("idle");
+        setActiveTrack(null);
+        setAudioProgress({ current: 0, duration: 0 });
+      });
+
+      const audio = new Audio(track.url);
+      audio.preload = "metadata";
+      warshAudioRef.current = audio;
+      audioBus.registerHtmlAudio(audio);
+      setActiveTrack(track);
+      setAudioState("loading");
+      setShowAudioBar(true);
+
+      audio.onloadedmetadata = () => {
+        setAudioProgress((prev) => ({
+          ...prev,
+          duration: Number.isFinite(audio.duration) ? audio.duration : 0,
+        }));
+      };
+      audio.ontimeupdate = () => {
+        setAudioProgress({
+          current: audio.currentTime,
+          duration: Number.isFinite(audio.duration) ? audio.duration : 0,
+        });
+      };
+      audio.onended = () => {
+        stopWarshAudio();
+      };
+      audio.onerror = () => {
+        stopWarshAudio();
+        setAudioError(
+          "تعذر تحميل ملف التلاوة. يرجى التحقق من الاتصال أو اختيار القارئ مرة أخرى."
+        );
+      };
+
+      try {
+        await audio.play();
+        setAudioState("playing");
+      } catch (err: unknown) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        stopWarshAudio();
+        setAudioError("لم يتمكن المتصفح من بدء الصوت. اضغط مرة أخرى للتشغيل.");
+      }
+    },
+    [reciterId, currentHizb, activeTrack, audioState, stopWarshAudio]
+  );
+
+  const handleCloseReaderModal = useCallback(() => {
+    stopWarshAudio();
+    onClose();
+  }, [stopWarshAudio, onClose]);
+
   const handleCloseTafsirSheet = useCallback(() => {
     setSelectedVerseKey(null);
     setTafsirSheetExpanded(false);
@@ -627,6 +799,9 @@ export function QuranHizbReaderModal({
 
   const handlePrevPage = () => {
     if (safePageIndex > 0) {
+      if (activeTrack && activeTrack.id !== "demo-combined-fatiha-baqarah") {
+        stopWarshAudio();
+      }
       setCurrentPageIndex(safePageIndex - 1);
       if (contentRef.current) contentRef.current.scrollTop = 0;
     }
@@ -634,18 +809,76 @@ export function QuranHizbReaderModal({
 
   const handleNextPage = () => {
     if (safePageIndex < totalPages - 1) {
+      if (activeTrack && activeTrack.id !== "demo-combined-fatiha-baqarah") {
+        stopWarshAudio();
+      }
       setCurrentPageIndex(safePageIndex + 1);
       if (contentRef.current) contentRef.current.scrollTop = 0;
     }
   };
 
   const handleSelectHizb = (hNum: number) => {
+    stopWarshAudio();
     setCurrentHizb(hNum);
     setCurrentPageIndex(0);
     setSelectedVerseKey(null);
     setTafsirData(null);
     setTafsirError(null);
     setTafsirSheetExpanded(false);
+  };
+
+  const currentPageSurahNum = getPageSurahNumber(currentPage);
+
+  const renderWarshSpeakerButton = (
+    targetSurah: number,
+    options?: { isOpening?: boolean; size?: "sm" | "md"; label?: string }
+  ) => {
+    const resolved = resolveWarshAudioTrack({
+      reciterId,
+      hizbNumber: currentHizb,
+      surahNumber: targetSurah,
+      isOpening: options?.isOpening,
+    });
+    const isThisTrack = activeTrack?.id === resolved.id;
+    const isPlaying = isThisTrack && audioState === "playing";
+    const isPaused = isThisTrack && audioState === "paused";
+    const isLoading = isThisTrack && audioState === "loading";
+    const dim = options?.size === "md" ? "w-8 h-8" : "w-7 h-7";
+    const ic = options?.size === "md" ? "w-4 h-4" : "w-3.5 h-3.5";
+
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          void playWarshTrack(targetSurah, { isOpening: options?.isOpening });
+        }}
+        aria-label={options?.label || "استماع للتلاوة المغربية برواية ورش"}
+        aria-pressed={isPlaying}
+        title={
+          isPlaying
+            ? "إيقاف التلاوة مؤقتاً"
+            : `استماع بصوت ${resolved.reciterName} (${resolved.label})`
+        }
+        className={`inline-flex items-center justify-center rounded-full border shrink-0 transition-[transform,background-color,border-color,color] duration-150 ease-out active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C5A059] cursor-pointer ${dim} ${
+          isPlaying
+            ? "bg-[#143628] text-[#E5C378] border-[#C5A059] shadow-xs"
+            : isPaused
+              ? "bg-[#C5A059]/30 text-[#143628] dark:text-[#FAF7F2] border-[#C5A059]"
+              : "bg-[#FFFDF9]/95 dark:bg-[#0D2119] text-[#143628] dark:text-[#E5C378] border-[#C5A059]/60 hover:bg-[#143628] hover:text-[#E5C378]"
+        }`}
+      >
+        {isLoading ? (
+          <Loader2 className={`${ic} animate-spin`} />
+        ) : isPlaying ? (
+          <Pause className={ic} />
+        ) : isPaused ? (
+          <Play className={ic} />
+        ) : (
+          <Volume2 className={ic} />
+        )}
+      </button>
+    );
   };
 
   const renderHabtiMark = () => (
@@ -836,6 +1069,8 @@ export function QuranHizbReaderModal({
   };
 
   const renderDynamicQuranPage = (page: DynamicQuranPage) => {
+    const pageSurahNumber = getPageSurahNumber(page);
+
     // 1. الفاتحة وأول البقرة (صفحات تصديرية مركزة في الوسط بهيبة ووقار)
     if (page.isOpening && page.openingLines) {
       return (
@@ -845,14 +1080,20 @@ export function QuranHizbReaderModal({
         >
           {page.openingLines.map((line) => {
             if (line.is_surah_title === "1") {
+              const bannerSurahNum = Number(line.surah_number) || pageSurahNumber;
               return (
                 <div
                   key={line.line_id}
-                  className="my-4 py-2 px-6 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs max-w-sm mx-auto"
+                  className="my-4 py-2 px-4 sm:px-6 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] shadow-xs max-w-sm mx-auto flex items-center justify-center gap-2.5"
                 >
                   <div className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-snug">
                     سُورَةُ {line.surah_title_ar || line.surah_title}
                   </div>
+                  {renderWarshSpeakerButton(bannerSurahNum, {
+                    isOpening: true,
+                    size: "md",
+                    label: `استماع لتلاوة سورة ${line.surah_title_ar || line.surah_title} برواية ورش`,
+                  })}
                 </div>
               );
             }
@@ -940,14 +1181,26 @@ export function QuranHizbReaderModal({
       >
         {sections.map((sec, sIdx) => {
           if (sec.type === "banner") {
+            let bannerSurah = pageSurahNumber;
+            for (let k = sIdx + 1; k < sections.length; k++) {
+              const firstW = sections[k].words?.[0];
+              if (firstW?.surah_number) {
+                bannerSurah = Number(firstW.surah_number);
+                break;
+              }
+            }
             return (
               <div
                 key={`bn-${sIdx}`}
-                className="my-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] text-center shadow-xs"
+                className="my-4 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#C5A059]/20 via-[#C5A059]/35 to-[#C5A059]/20 border-2 border-[#C5A059] shadow-xs flex items-center justify-center gap-2.5"
               >
                 <div className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2] leading-snug">
                   سُورَةُ {sec.title}
                 </div>
+                {renderWarshSpeakerButton(bannerSurah, {
+                  size: "md",
+                  label: `استماع لسورة ${sec.title} برواية ورش`,
+                })}
               </div>
             );
           }
@@ -975,7 +1228,7 @@ export function QuranHizbReaderModal({
                   sec.isEndOfSurah || (sec.words && sec.words.length % 13 > 0 && sec.words.length % 13 <= 4)
                     ? "center"
                     : "auto",
-                textWrap: "pretty" as any,
+                textWrap: "pretty" as React.CSSProperties["textWrap"],
                 lineHeight: isMohammadiScript ? 2.15 : 2.3,
               }}
             >
@@ -1035,7 +1288,7 @@ export function QuranHizbReaderModal({
             {/* Mobile Close Button */}
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleCloseReaderModal}
               className="sm:hidden p-2 bg-white/10 hover:bg-red-500/80 text-white rounded-xl border border-white/20 active:scale-[0.97] transition-[transform,background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C378] cursor-pointer shrink-0"
               aria-label="إغلاق المصحف"
               title="إغلاق المصحف"
@@ -1046,6 +1299,20 @@ export function QuranHizbReaderModal({
 
           {/* Quick Hizb Dropdown Selector & Reader Controls */}
           <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => setShowAudioBar((s) => !s)}
+              aria-pressed={showAudioBar}
+              className={`px-2.5 py-1.5 rounded-xl border text-[11px] sm:text-xs font-ibm font-bold flex items-center gap-1.5 active:scale-[0.97] transition-[transform,background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C378] cursor-pointer shrink-0 ${
+                audioState === "playing" || showAudioBar
+                  ? "bg-[#C5A059] text-[#0B1914] border-[#C5A059]"
+                  : "bg-white/10 text-white border-white/20 hover:bg-white/20"
+              }`}
+              title="إظهار أو إخفاء شريط التلاوة المغربية برواية ورش"
+            >
+              <Volume2 className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">تلاوة ورش</span>
+            </button>
             <select
               value={currentHizb}
               onChange={(e) => handleSelectHizb(Number(e.target.value))}
@@ -1123,7 +1390,7 @@ export function QuranHizbReaderModal({
             {/* Desktop Close Button */}
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleCloseReaderModal}
               className="hidden sm:flex p-2 bg-white/10 hover:bg-red-500/80 text-white rounded-xl border border-white/20 active:scale-[0.97] transition-[transform,background-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E5C378] cursor-pointer shrink-0"
               aria-label="إغلاق المصحف"
               title="إغلاق المصحف"
@@ -1132,6 +1399,161 @@ export function QuranHizbReaderModal({
             </button>
           </div>
         </div>
+
+        {/* MOROCCAN WARSH RECITATION BAR (Human Reciters via MP3Quran.net — NO AI TTS) */}
+        {showAudioBar && (
+          <div className="px-3 sm:px-4 py-2 bg-[#F5EFE6] dark:bg-[#0D2018] border-b border-[#C5A059]/35 shrink-0 space-y-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                {/* Play / Pause Current Page */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    void playWarshTrack(currentPageSurahNum, {
+                      isOpening: currentPage?.isOpening,
+                    })
+                  }
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-ibm font-bold transition-[transform,background-color,border-color,color] duration-150 ease-out active:scale-[0.97] cursor-pointer ${
+                    audioState === "playing"
+                      ? "bg-[#143628] text-[#E5C378] border border-[#C5A059]"
+                      : "bg-white dark:bg-[#122820] text-[#143628] dark:text-[#FAF7F2] border border-[#C5A059]/50 hover:border-[#C5A059]"
+                  }`}
+                >
+                  {audioState === "loading" ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C5A059]" />
+                  ) : audioState === "playing" ? (
+                    <Pause className="w-3.5 h-3.5 text-[#C5A059]" />
+                  ) : (
+                    <Volume2 className="w-3.5 h-3.5 text-[#1B4332] dark:text-[#C5A059]" />
+                  )}
+                  <span>
+                    {audioState === "playing"
+                      ? "إيقاف مؤقت"
+                      : audioState === "paused"
+                        ? "متابعة التلاوة"
+                        : "تشغيل هذه الصفحة"}
+                  </span>
+                </button>
+
+                {/* Combined 2-Page Client Demo Button (only on Hizb 1) */}
+                {currentHizb === 1 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      void playWarshTrack(1, { forceCombinedDemo: true })
+                    }
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-ibm font-bold border transition-[transform,background-color] duration-150 active:scale-[0.97] cursor-pointer ${
+                      activeTrack?.id === "demo-combined-fatiha-baqarah"
+                        ? "bg-[#C5A059] text-[#0B1914] border-[#C5A059]"
+                        : "bg-[#C5A059]/15 text-[#7A5B1F] dark:text-[#E5C378] border-[#C5A059]/45 hover:bg-[#C5A059]/25"
+                    }`}
+                    title="استماع للنموذج المدمج: سورة الفاتحة + بداية سورة البقرة (الآيات 1-5)"
+                  >
+                    <Headphones className="w-3.5 h-3.5 shrink-0" />
+                    <span>نموذج صفحتين (الفاتحة + البقرة)</span>
+                  </button>
+                )}
+
+                {audioState !== "idle" && (
+                  <button
+                    type="button"
+                    onClick={stopWarshAudio}
+                    className="inline-flex items-center gap-1 px-2 py-1.5 rounded-xl bg-red-50 dark:bg-red-950/35 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/50 text-[11px] font-bold hover:bg-red-100 cursor-pointer"
+                    aria-label="إيقاف التلاوة"
+                    title="إيقاف التلاوة"
+                  >
+                    <Square className="w-3 h-3 fill-current" />
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                {activeTrack && (
+                  <span
+                    className="text-[11px] font-mono tabular-nums text-[#52796F] dark:text-[#9BB0A5] px-2 py-0.5 rounded-lg bg-white/80 dark:bg-[#081510] border border-[#E7DFD5] dark:border-[#203D31]"
+                    dir="ltr"
+                  >
+                    {formatAudioClock(audioProgress.current)} /{" "}
+                    {formatAudioClock(audioProgress.duration)}
+                  </span>
+                )}
+
+                <select
+                  value={reciterId}
+                  onChange={(e) => {
+                    const nextReciter = e.target.value as WarshReciterId;
+                    setReciterId(nextReciter);
+                    if (audioState === "playing" || audioState === "paused") {
+                      void playWarshTrack(currentPageSurahNum, {
+                        isOpening: currentPage?.isOpening,
+                        overrideReciter: nextReciter,
+                      });
+                    }
+                  }}
+                  aria-label="اختيار القارئ المغربي برواية ورش"
+                  className="px-2.5 py-1 rounded-xl bg-white dark:bg-[#081510] border border-[#C5A059]/45 text-[11px] sm:text-xs font-ibm font-semibold text-[#143628] dark:text-[#FAF7F2] focus:outline-none focus:border-[#C5A059] cursor-pointer"
+                >
+                  {QURAN_WARSH_RECITERS.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+
+                {currentHizb === 1 && (
+                  <a
+                    href={QURAN_WARSH_DEMO_COMBINED_URL}
+                    download="quran-warsh-fatiha-baqarah-demo.mp3"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white dark:bg-[#081510] border border-[#C5A059]/40 text-[11px] font-ibm font-bold text-[#143628] dark:text-[#E5C378] hover:border-[#C5A059] transition"
+                    title="تنزيل نموذج MP3 الصغير (897 KB) لمشاركته مع العميل"
+                  >
+                    <Download className="w-3 h-3 text-[#C5A059]" />
+                    <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                      MP3 (897 KB)
+                    </span>
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {activeTrack && audioProgress.duration > 0 && (
+              <div className="flex items-center gap-2 text-[11px] font-ibm text-[#52796F] dark:text-[#9BB0A5]">
+                <span className="truncate font-semibold text-[#143628] dark:text-[#E5C378]">
+                  {activeTrack.reciterName} — {activeTrack.label}
+                </span>
+                <input
+                  type="range"
+                  min={0}
+                  max={Math.floor(audioProgress.duration)}
+                  value={Math.min(
+                    Math.floor(audioProgress.current),
+                    Math.floor(audioProgress.duration)
+                  )}
+                  onChange={(e) => {
+                    const sec = Number(e.target.value);
+                    if (warshAudioRef.current) {
+                      warshAudioRef.current.currentTime = sec;
+                      setAudioProgress((p) => ({ ...p, current: sec }));
+                    }
+                  }}
+                  aria-label="شريط تقديم التلاوة"
+                  className="flex-1 accent-[#C5A059] h-1.5 cursor-pointer"
+                />
+                <span className="hidden sm:inline text-[10px] opacity-80">
+                  {activeTrack.sourceType === "local-demo"
+                    ? "نموذج فوري (بدون حقوق)"
+                    : "MP3Quran.net (ورش)"}
+                </span>
+              </div>
+            )}
+
+            {audioError && (
+              <p className="text-[11px] font-ibm text-red-700 dark:text-red-300">
+                {audioError}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* READING VIEWPORT + DOCKED TAFSIR BOTTOM SHEET */}
         <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
@@ -1164,7 +1586,14 @@ export function QuranHizbReaderModal({
                 <div className="max-w-2xl mx-auto bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-4 border-[#C5A059]/70 p-4 sm:p-6 shadow-xl relative transition-all duration-300">
                   {/* Decorative Top Moroccan Border Line */}
                   <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-[#C5A059]/40 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
-                    <span>سُورَةُ {currentPage.surahTitle || meta.surahs[0]}</span>
+                    <div className="flex items-center gap-2">
+                      <span>سُورَةُ {currentPage.surahTitle || meta.surahs[0]}</span>
+                      {renderWarshSpeakerButton(currentPageSurahNum, {
+                        isOpening: currentPage.isOpening,
+                        size: "sm",
+                        label: `استماع لصفحة ${currentPage.surahTitle || meta.surahs[0]} برواية ورش`,
+                      })}
+                    </div>
                     <span className="px-3 py-0.5 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30">
                       الحِزْبُ {currentHizb}
                     </span>
@@ -1212,22 +1641,32 @@ export function QuranHizbReaderModal({
                     اضغط على أي آية أو رقمها لعرض التفسير والترجمة (المختصر، ابن عطية، القرطبي، ابن عاشور، والفرنسية)
                   </span>
                 </div>
-                {dynamicPages.map((page) => (
-                  <div
-                    key={page.pageNumber}
-                    className="bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-2 border-[#C5A059]/50 p-4 sm:p-6 shadow-md"
-                  >
-                    <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#C5A059]/30 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
-                      <span>سورة {page.surahTitle || meta.surahs[0]}</span>
-                      <span style={{ fontVariantNumeric: "tabular-nums" }}>
-                        صفحة {page.pageNumber}
-                      </span>
-                    </div>
+                {dynamicPages.map((page) => {
+                  const pSurahNum = getPageSurahNumber(page);
+                  return (
+                    <div
+                      key={page.pageNumber}
+                      className="bg-[#FFFDF9] dark:bg-[#0B1F17] rounded-2xl border-2 border-[#C5A059]/50 p-4 sm:p-6 shadow-md"
+                    >
+                      <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#C5A059]/30 text-xs font-amiri font-bold text-[#826122] dark:text-[#E5C378]">
+                        <div className="flex items-center gap-2">
+                          <span>سورة {page.surahTitle || meta.surahs[0]}</span>
+                          {renderWarshSpeakerButton(pSurahNum, {
+                            isOpening: page.isOpening,
+                            size: "sm",
+                            label: `استماع لصفحة ${page.surahTitle || meta.surahs[0]} برواية ورش`,
+                          })}
+                        </div>
+                        <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                          صفحة {page.pageNumber}
+                        </span>
+                      </div>
 
-                    {/* Quran Page Body (Option 2 Dynamic Flow) */}
-                    {renderDynamicQuranPage(page)}
-                  </div>
-                ))}
+                      {/* Quran Page Body (Option 2 Dynamic Flow) */}
+                      {renderDynamicQuranPage(page)}
+                    </div>
+                  );
+                })}
               </div>
             )}
 
