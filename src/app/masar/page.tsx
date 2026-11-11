@@ -24,6 +24,8 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MASAR_DATA, getApprovedBooks, type MasarStage } from "@/lib/masar";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getMasarStageVerses } from "@/lib/quran_thematic";
 
 export default function MasarPage() {
   const [completedStages, setCompletedStages] = useState<number[]>([]);
@@ -386,6 +388,17 @@ export default function MasarPage() {
                       )}
                     </div>
                   </div>
+                </div>
+
+                {/* Quranic Evidences for this Stage */}
+                <div className="mt-6">
+                  <QuranicEvidencePanel
+                    title={`الشواهد القرآنية للمرحلة ${stage.id}: ${stage.title}`}
+                    verses={getMasarStageVerses(stage.id)}
+                    variant="grid"
+                    defaultCollapsed={stage.id !== 1}
+                    initialVisibleCount={2}
+                  />
                 </div>
 
                 {/* Next Stage Navigation Link */}

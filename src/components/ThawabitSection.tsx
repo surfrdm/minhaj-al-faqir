@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Sparkles,
   BookOpen,
   Share2,
   Users,
-  HeartHandshake,
-  ShieldCheck,
   Coins,
   Send,
   ExternalLink,
@@ -16,6 +15,16 @@ import {
   ChevronDown,
   Award,
 } from "lucide-react";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getThawabitVerses } from "@/lib/quran_thematic";
+
+const THAWABIT_TOPIC_MAP: Record<string, string> = {
+  dhikr: "dhikr",
+  talim: "ilm",
+  nashr: "dawah",
+  shabab: "shabab",
+  joud: "nafaqa",
+};
 
 const ZAWIYA_FACEBOOK_URL = "https://www.facebook.com/zaouia.mohammedia";
 
@@ -172,105 +181,146 @@ export function ThawabitSection() {
           </div>
         </div>
 
-        {/* 5 Pillars Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 items-start">
+        {/* 5 Pillars Selector Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5 items-stretch">
           {THAWABIT_DATA.map((t) => {
             const Icon = t.icon;
             const isExpanded = expandedId === t.id;
+            const proofCount = getThawabitVerses(t.id).length;
 
             return (
               <div
                 key={t.id}
-                className={`rounded-3xl border transition-all duration-300 flex flex-col justify-between overflow-hidden lg:col-span-1 ${
+                onClick={() => setExpandedId(isExpanded ? null : t.id)}
+                className={`rounded-3xl border transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer ${
                   isExpanded
                     ? "bg-white dark:bg-[#0E2019] border-[#C5A059] shadow-xl ring-1 ring-[#C5A059]/40"
                     : "bg-white/90 dark:bg-[#0E2019]/90 border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] shadow-sm hover:shadow-md"
                 }`}
               >
-                {/* Pillar Card Header */}
-                <div
-                  onClick={() => setExpandedId(isExpanded ? null : t.id)}
-                  className="p-5 cursor-pointer flex flex-col justify-between"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="w-9 h-9 rounded-2xl bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center font-mono font-bold text-sm border border-[#C5A059]/30">
-                      #{t.num}
-                    </span>
-                    <div className="w-9 h-9 rounded-2xl bg-[#1B4332]/10 dark:bg-[#C5A059]/15 flex items-center justify-center text-[#1B4332] dark:text-[#E5C378]">
-                      <Icon className="w-5 h-5" />
+                <div className="p-5 flex flex-col justify-between flex-1">
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="w-9 h-9 rounded-2xl bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center font-mono font-bold text-sm border border-[#C5A059]/30">
+                        #{t.num}
+                      </span>
+                      <div className="w-9 h-9 rounded-2xl bg-[#1B4332]/10 dark:bg-[#C5A059]/15 flex items-center justify-center text-[#1B4332] dark:text-[#E5C378]">
+                        <Icon className="w-5 h-5" />
+                      </div>
                     </div>
+
+                    <h3 className="font-amiri text-xl font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
+                      {t.title}
+                    </h3>
+                    <span className="text-xs font-semibold text-[#C5A059] block mb-2">
+                      {t.tagline}
+                    </span>
+
+                    <p className="font-ibm text-xs text-[#52796F] dark:text-[#95B8A8] leading-relaxed line-clamp-3">
+                      {t.summary}
+                    </p>
                   </div>
 
-                  <h3 className="font-amiri text-xl font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
-                    {t.title}
-                  </h3>
-                  <span className="text-xs font-semibold text-[#C5A059] block mb-2">
-                    {t.tagline}
-                  </span>
-
-                  <p className="font-ibm text-xs text-[#52796F] dark:text-[#95B8A8] leading-relaxed line-clamp-3">
-                    {t.summary}
-                  </p>
+                  <div className="mt-3 pt-2 border-t border-[#E7DFD5]/60 dark:border-[#203D31]/60 flex items-center justify-between text-[11px] font-bold text-[#826122] dark:text-[#E5C378]">
+                    <span>{proofCount} شواهد قرآنية</span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                        isExpanded ? "rotate-180 text-[#C5A059]" : ""
+                      }`}
+                    />
+                  </div>
                 </div>
-
-                {/* Expanded Detailed Points */}
-                {isExpanded && (
-                  <div className="px-5 pb-5 pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-3 bg-[#FAF7F2]/60 dark:bg-[#081410]/60 animate-in fade-in duration-200">
-                    <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378] block">
-                      التفاصيل والتوجيهات المعتمدة:
-                    </span>
-                    <div className="space-y-2">
-                      {t.points.map((pt, pIdx) => (
-                        <div
-                          key={pIdx}
-                          className="flex items-start gap-2 p-2.5 rounded-xl bg-white dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] text-xs font-ibm text-[#1D2A24]/90 dark:text-[#C5D5CC] leading-relaxed"
-                        >
-                          <span className="text-[#C5A059] font-mono text-xs mt-0.5">•</span>
-                          <span>{pt}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Action Bar */}
-                    <div className="pt-3 flex items-center justify-between gap-2">
-                      <a
-                        href={ZAWIYA_FACEBOOK_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="py-1.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center gap-1 transition"
-                        title="زيارة صفحة الزاوية على فيسبوك"
-                      >
-                        <span>زيارة صفحة الزاوية</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-
-                      <button
-                        onClick={() => handleShareWhatsApp(t)}
-                        className="py-1.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs font-semibold flex items-center gap-1 transition"
-                      >
-                        <Share2 className="w-3 h-3" />
-                        <span>مشاركة الثابت</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Footer Expand Toggle Button */}
-                <button
-                  onClick={() => setExpandedId(isExpanded ? null : t.id)}
-                  className="w-full py-2 px-4 bg-[#FAF7F2] dark:bg-[#122820] text-center text-xs font-semibold text-[#52796F] dark:text-[#A1B3A9] hover:text-[#C5A059] border-t border-[#E7DFD5] dark:border-[#203D31] flex items-center justify-center gap-1 transition"
-                >
-                  <span>{isExpanded ? "طي التفاصيل" : "عرض التوجيهات بالتفصيل"}</span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                      isExpanded ? "rotate-180 text-[#C5A059]" : ""
-                    }`}
-                  />
-                </button>
               </div>
             );
           })}
         </div>
+
+        {/* Full-Width Expanded Pillar Panel + Verified Quranic Proofs */}
+        {(() => {
+          const activeThabit = THAWABIT_DATA.find((t) => t.id === expandedId);
+          if (!activeThabit) return null;
+          const ActiveIcon = activeThabit.icon;
+          const topicSlug = THAWABIT_TOPIC_MAP[activeThabit.id] || "dhikr";
+
+          return (
+            <div className="mt-6 p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#0E2019] border-2 border-[#C5A059]/50 shadow-lg space-y-6 animate-in fade-in duration-200">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E7DFD5] dark:border-[#203D31] pb-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-11 h-11 rounded-2xl bg-[#143628] text-[#C5A059] flex items-center justify-center shrink-0">
+                    <ActiveIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-[#C5A059]">
+                      الثابت {activeThabit.num} من 5 • {activeThabit.tagline}
+                    </span>
+                    <h3 className="font-amiri text-2xl sm:text-3xl font-bold text-[#143628] dark:text-[#FAF7F2]">
+                      {activeThabit.title}
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <Link
+                    href={`/quran?view=thematic&topic=${topicSlug}`}
+                    className="py-1.5 px-3 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] border border-[#C5A059]/40 text-xs font-bold flex items-center gap-1.5 transition"
+                  >
+                    <BookOpen className="w-3.5 h-3.5" />
+                    <span>تصفح الباب في الكشاف القرآني</span>
+                  </Link>
+
+                  <a
+                    href={ZAWIYA_FACEBOOK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-1.5 px-3 rounded-xl bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] border border-[#1877F2]/30 text-xs font-semibold flex items-center gap-1 transition"
+                    title="زيارة صفحة الزاوية على فيسبوك"
+                  >
+                    <span>صفحة الزاوية</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => handleShareWhatsApp(activeThabit)}
+                    className="py-1.5 px-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/30 text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
+                  >
+                    <Share2 className="w-3 h-3" />
+                    <span>مشاركة الثابت</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2.5">
+                <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378] block">
+                  التفاصيل والتوجيهات المعتمدة:
+                </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  {activeThabit.points.map((pt, pIdx) => (
+                    <div
+                      key={pIdx}
+                      className="flex items-start gap-2 p-3 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] text-xs sm:text-sm font-ibm text-[#1D2A24]/90 dark:text-[#C5D5CC] leading-relaxed"
+                    >
+                      <span className="text-[#C5A059] font-mono text-xs mt-0.5">•</span>
+                      <span>{pt}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31]">
+                <QuranicEvidencePanel
+                  key={activeThabit.id}
+                  title={`الشواهد القرآنية المؤصلة للثابت ${activeThabit.num}: ${activeThabit.title}`}
+                  verses={getThawabitVerses(activeThabit.id)}
+                  topicLabel={activeThabit.title}
+                  variant="grid"
+                  defaultCollapsed={false}
+                  initialVisibleCount={4}
+                />
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </section>
   );

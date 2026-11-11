@@ -27,6 +27,8 @@ import {
   IbnAshirVerseLesson,
   IBN_ASHIR_TOTAL_COUNT,
 } from "@/lib/ibn-ashir";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getPageVerses } from "@/lib/quran_thematic";
 
 export function DailyTrio() {
   const [dayOfYear, setDayOfYear] = useState(0);
@@ -457,6 +459,18 @@ export function DailyTrio() {
           )}
         </div>
       )}
+
+      {/* Supporting Quranic Evidences for Daily Study */}
+      <div className="mt-6">
+        <QuranicEvidencePanel
+          title="شواهد قرآنية مساندة للتكوين اليومي"
+          subtitle="آيات محققة برواية ورش تربط الحكمة اليومية والحديث النبوي ومتن ابن عاشر بكتاب الله تعالى."
+          verses={getPageVerses("daily_trio")}
+          variant="grid"
+          defaultCollapsed={true}
+          initialVisibleCount={2}
+        />
+      </div>
     </section>
   );
 }

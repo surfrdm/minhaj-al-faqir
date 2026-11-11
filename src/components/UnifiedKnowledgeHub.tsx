@@ -36,6 +36,13 @@ import { HikmaOfTheDay } from "./HikmaOfTheDay";
 import { CurriculumRoadmap } from "./CurriculumRoadmap";
 import { GlossarySection } from "./GlossarySection";
 import { RijalHawlRasulSection } from "./RijalHawlRasulSection";
+import { QuranicEvidencePanel } from "./QuranicEvidencePanel";
+import {
+  getEvidenceVerses,
+  getWazifaVerses,
+  getAdabFoundationVerses,
+  getAdabItemVerses,
+} from "@/lib/quran_thematic";
 import { IBN_ASHIR_TOTAL_COUNT } from "@/lib/ibn-ashir";
 
 export type KnowledgeTab =
@@ -57,7 +64,7 @@ interface NavBranch {
   badge?: string;
   count?: string;
   desc: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 interface NavCategory {
@@ -215,9 +222,10 @@ export function UnifiedKnowledgeHub() {
     handleHash();
     window.addEventListener("hashchange", handleHash);
 
-    const handleCustomSwitch = (e: any) => {
-      if (typeof e.detail === "string") setActiveTab(e.detail as KnowledgeTab);
-      else if (e.detail?.tabId) setActiveTab(e.detail.tabId as KnowledgeTab);
+    const handleCustomSwitch = (e: Event) => {
+      const ce = e as CustomEvent<string | { tabId?: string }>;
+      if (typeof ce.detail === "string") setActiveTab(ce.detail as KnowledgeTab);
+      else if (ce.detail?.tabId) setActiveTab(ce.detail.tabId as KnowledgeTab);
     };
     window.addEventListener("switch-knowledge-tab", handleCustomSwitch);
 
@@ -638,6 +646,17 @@ export function UnifiedKnowledgeHub() {
                         • حديث أم المؤمنين صفية رضي الله عنها: «دخل عليّ رسول الله ﷺ وبين يدي أربعة آلاف نواة أسبح بها، فقال: لقد سبحت بهذا! ألا أعلمك بأكثر مما سبحت به؟...» (رواه الترمذي والحاكم وصححه، وأقرّها على أصل التسبيح بالنوى ولم ينكره).<br />
                         • رسالة الحافظ جلال الدين السيوطي: «المنحة في السبحة»، ونصّ فيها: «لم ينقل عن أحد من السلف ولا من الخلف المنع من جواز عدّ الذكر بالسبحة، بل كان أكثرهم يعدون بها ولا يرون ذلك مكروهاً».
                       </p>
+
+                      <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
+                        <QuranicEvidencePanel
+                          title="الشواهد القرآنية لتأصيل السبحة والكثرة"
+                          verses={getEvidenceVerses("sibha")}
+                          topicLabel="تأصيل السبحة"
+                          variant="compact"
+                          defaultCollapsed={false}
+                          initialVisibleCount={2}
+                        />
+                      </div>
                     </div>
 
                     {/* Jahran Evidence */}
@@ -675,6 +694,17 @@ export function UnifiedKnowledgeHub() {
                         • حديث صحيح البخاري عن ابن عباس رضي الله عنهما: «أن رفع الصوت بالذكر حين ينصرف الناس من المكتوبة كان على عهد النبي ﷺ، وكنت أعلم إذا انصرفوا بذلك إذا سمعته».<br />
                         • الحديث القدسي في الصحيحين: «وإن ذكرني في ملأ ذكرته في ملأ خير منهم»، وذكر الملأ لا يكون إلا جهراً وجماعة.
                       </p>
+
+                      <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
+                        <QuranicEvidencePanel
+                          title="الشواهد القرآنية للذكر جهراً والجماعي"
+                          verses={getEvidenceVerses("jahran")}
+                          topicLabel="تأصيل الذكر الجماعي"
+                          variant="compact"
+                          defaultCollapsed={false}
+                          initialVisibleCount={2}
+                        />
+                      </div>
                     </div>
 
                     {/* Imara Evidence */}
@@ -712,6 +742,65 @@ export function UnifiedKnowledgeHub() {
                         • حداء الصحابة وهم يحفرون الخندق ونشيدهم: «نحن الذين بايعوا محمدا... على الجهاد ما بقينا أبدا».<br />
                         • فتوى الإمام العز بن عبد السلام وسلطان العلماء في جواز التواجد والحركة الاضطرارية إذا غلب الوجد والشوق على الذاكر.
                       </p>
+
+                      <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
+                        <QuranicEvidencePanel
+                          title="الشواهد القرآنية للعمارة والوجد ولين القلوب"
+                          verses={getEvidenceVerses("imara")}
+                          topicLabel="تأصيل العمارة والسماع"
+                          variant="compact"
+                          defaultCollapsed={false}
+                          initialVisibleCount={2}
+                        />
+                      </div>
+                    </div>
+
+                    {/* 4. Tawassul Evidence */}
+                    <div className="p-5 rounded-xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-[#1B4332] dark:text-[#E5C378]">
+                          <CheckCircle2 className="w-5 h-5 text-[#C5A059]" />
+                          <h5 className="font-amiri text-base font-bold">4. تأصيل التوسل والتبرك وحرمة الأولياء</h5>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href="https://www.facebook.com/zaouia.mohammedia"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] dark:text-[#5B9DF8] text-xs font-semibold flex items-center gap-1 transition"
+                            title="زيارة صفحة الزاوية على فيسبوك"
+                          >
+                            <span>زيارة صفحة الزاوية</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                          <button
+                            onClick={() => {
+                              const text = `⚖️ تأصيل التوسل وحرمة الأولياء في عقيدة أهل السنة:\nقوله تعالى: ﴿يا أيها الذين آمنوا اتقوا الله وابتغوا إليه الوسيلة﴾، وحديث الضرير عند الترمذي والحاكم، وإجماع المذاهب الأربعة على حفظ مكانة الصالحين.\n\nطالع التأصيل كاملاً: ${typeof window !== "undefined" ? window.location.origin : ""}/#evidence`;
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                            }}
+                            className="p-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                            title="مشاركة عبر واتساب"
+                          >
+                            <Share2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                      <p className="text-xs text-[#1D2A24]/85 dark:text-[#D5E2DB] font-ibm leading-relaxed">
+                        • تقرير عقيدة أهل السنة والأشاعرة أن الفاعل والنافع والضار حقيقة هو الله وحده، وأن التوسل بالأعمال الصالحة، ومحبة النبي ﷺ وشفاعته، ودعاء الصالحين أسباب مشروعة مأذون فيها.<br />
+                        • حديث عثمان بن حنيف في الرجل الضرير الذي علّمه النبي ﷺ أن يتوجه إلى الله بدعاء التوسل (رواه الترمذي وصححه والحاكم ووافقه الذهبي).<br />
+                        • تحريم إيذاء أولياء الله والطعن في أهل التزكية والصلاح بحديث البخاري: «من عادى لي ولياً فقد آذنته بالحرب».
+                      </p>
+
+                      <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
+                        <QuranicEvidencePanel
+                          title="الشواهد القرآنية في الوسيلة وحرمة الصالحين"
+                          verses={getEvidenceVerses("tawassul")}
+                          topicLabel="التوسل وحرمة الأولياء"
+                          variant="compact"
+                          defaultCollapsed={false}
+                          initialVisibleCount={2}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -748,17 +837,27 @@ export function UnifiedKnowledgeHub() {
                           • المحافظة على قراءة الحزبين ختماً لكتاب الله تعالى شهرياً وتثبيتاً للنور القرآني في قلب السالك.
                         </p>
                       </div>
-                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
-                        <button
-                          onClick={() => {
-                            const text = `📖 أوراد السالك في الطريقة البودشيشية:\nقراءة حِزبين من القرآن الكريم يومياً (حزب صباحاً وحزب مساءً ختماً لكتاب الله شهرياً).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
-                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
-                          }}
-                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
-                        >
-                          <Share2 className="w-3 h-3" />
-                          <span>مشاركة الورد</span>
-                        </button>
+                      <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2.5">
+                        <QuranicEvidencePanel
+                          title="الشواهد القرآنية للورد"
+                          verses={getWazifaVerses("quran_ahzab")}
+                          topicLabel="حزبا القرآن الكريم"
+                          variant="compact"
+                          defaultCollapsed={true}
+                          showScriptToggle={false}
+                        />
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => {
+                              const text = `📖 أوراد السالك في الطريقة البودشيشية:\nقراءة حِزبين من القرآن الكريم يومياً (حزب صباحاً وحزب مساءً ختماً لكتاب الله شهرياً).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                          >
+                            <Share2 className="w-3 h-3" />
+                            <span>مشاركة الورد</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -779,17 +878,27 @@ export function UnifiedKnowledgeHub() {
                           • صلاة دائمة على النبي المصطفى ﷺ، بها تُفتح أبواب القبول وتزكو النفوس وتشرق البصائر.
                         </p>
                       </div>
-                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
-                        <button
-                          onClick={() => {
-                            const text = `🌹 أوراد السالك في الطريقة البودشيشية:\nتلاوة الحزب اليومي من كتاب «دلائل الخيرات» للإمام الجزولي رضي الله عنه في الصلاة على النبي ﷺ.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
-                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
-                          }}
-                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
-                        >
-                          <Share2 className="w-3 h-3" />
-                          <span>مشاركة الورد</span>
-                        </button>
+                      <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2.5">
+                        <QuranicEvidencePanel
+                          title="الشواهد القرآنية للصلاة على النبي ﷺ"
+                          verses={getWazifaVerses("dalail")}
+                          topicLabel="دلائل الخيرات"
+                          variant="compact"
+                          defaultCollapsed={true}
+                          showScriptToggle={false}
+                        />
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => {
+                              const text = `🌹 أوراد السالك في الطريقة البودشيشية:\nتلاوة الحزب اليومي من كتاب «دلائل الخيرات» للإمام الجزولي رضي الله عنه في الصلاة على النبي ﷺ.\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                          >
+                            <Share2 className="w-3 h-3" />
+                            <span>مشاركة الورد</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -810,17 +919,27 @@ export function UnifiedKnowledgeHub() {
                           • يؤدى مرتين يومياً بالسكينة والخشوع والأدب، وهو عهد السالك وركيزة صفاء قلبه واستقامته في السير إلى الله.
                         </p>
                       </div>
-                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
-                        <button
-                          onClick={() => {
-                            const text = `📿 ذِكْرُ الورد العام في الطريقة البودشيشية:\nالورد الأساسي الراتب صباحاً ومساءً (الاستغفار، الصلاة على النبي ﷺ، لا إله إلا الله).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
-                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
-                          }}
-                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
-                        >
-                          <Share2 className="w-3 h-3" />
-                          <span>مشاركة الورد</span>
-                        </button>
+                      <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2.5">
+                        <QuranicEvidencePanel
+                          title="الشواهد القرآنية لأركان الورد العام"
+                          verses={getWazifaVerses("wird_aam")}
+                          topicLabel="الورد العام"
+                          variant="compact"
+                          defaultCollapsed={true}
+                          showScriptToggle={false}
+                        />
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => {
+                              const text = `📿 ذِكْرُ الورد العام في الطريقة البودشيشية:\nالورد الأساسي الراتب صباحاً ومساءً (الاستغفار، الصلاة على النبي ﷺ، لا إله إلا الله).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition"
+                          >
+                            <Share2 className="w-3 h-3" />
+                            <span>مشاركة الورد</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -848,17 +967,27 @@ export function UnifiedKnowledgeHub() {
                           </p>
                         </div>
                       </div>
-                      <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31] flex justify-end">
-                        <button
-                          onClick={() => {
-                            const text = `✨ 15,000 هيللة في الطريقة البودشيشية:\nذكر كلمة التوحيد «لا إله إلا الله» 15,000 مرة (تستغرق نحو ساعة ونصف).\n\n• الأصل والمطلوب من الفقير أداؤها في جلسة واحدة بتوجّه كامل، وإغلاق العينين، واستقبال القبلة دائماً في جميع الأذكار.\n• المعترف به عند الحاجة تقسيمها على جلستين اثنتين (7,500 في كل جلسة).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
-                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
-                          }}
-                          className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
-                        >
-                          <Share2 className="w-3 h-3" />
-                          <span>مشاركة الورد</span>
-                        </button>
+                      <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31] space-y-2.5">
+                        <QuranicEvidencePanel
+                          title="الشواهد القرآنية للهيللة وكلمة التوحيد"
+                          verses={getWazifaVerses("haylala_15k")}
+                          topicLabel="15,000 هيللة"
+                          variant="compact"
+                          defaultCollapsed={true}
+                          showScriptToggle={false}
+                        />
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => {
+                              const text = `✨ 15,000 هيللة في الطريقة البودشيشية:\nذكر كلمة التوحيد «لا إله إلا الله» 15,000 مرة (تستغرق نحو ساعة ونصف).\n\n• الأصل والمطلوب من الفقير أداؤها في جلسة واحدة بتوجّه كامل، وإغلاق العينين، واستقبال القبلة دائماً في جميع الأذكار.\n• المعترف به عند الحاجة تقسيمها على جلستين اثنتين (7,500 في كل جلسة).\n\nطالع تفاصيل الأوراد: ${typeof window !== "undefined" ? window.location.origin : ""}/#wazifa`;
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
+                          >
+                            <Share2 className="w-3 h-3" />
+                            <span>مشاركة الورد</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -906,6 +1035,17 @@ export function UnifiedKnowledgeHub() {
                       • الوظيفة الجامعة لقلوب الفقراء في الزاوية كل يوم بين المغرب والعشاء لتجديد العهد وتقوية الرابطة الأخوية.<br />
                       • تلاوة الحزب القرآني الراتب مع الجماعة، استماعاً وإنصاتاً وتدبراً.
                     </p>
+
+                    <div className="pt-3 border-t border-[#E7DFD5] dark:border-[#203D31]">
+                      <QuranicEvidencePanel
+                        title="الشواهد القرآنية للوظيفة الراتبة ومجالس الزاوية"
+                        verses={getWazifaVerses("wazifa_zawiya")}
+                        topicLabel="الوظيفة بالزاوية"
+                        variant="compact"
+                        defaultCollapsed={false}
+                        initialVisibleCount={2}
+                      />
+                    </div>
                   </div>
 
                   {/* فقه الطريق: آداب مجالس الذكر (11 أدباً) */}
@@ -950,172 +1090,128 @@ export function UnifiedKnowledgeHub() {
                       </div>
                     </div>
 
+                    {/* Foundation Quranic Proofs for Adab & Majalis Al-Dhikr */}
+                    <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#0E2019] border border-[#C5A059]/35">
+                      <QuranicEvidencePanel
+                        title="التأصيل القرآني لمجالس الذكر وآداب الحضرة"
+                        verses={getAdabFoundationVerses()}
+                        topicLabel="آداب مجالس الذكر"
+                        variant="grid"
+                        defaultCollapsed={true}
+                        initialVisibleCount={4}
+                      />
+                    </div>
+
                     {/* 11 Etiquettes Cards Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {/* 1. الطهارة */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <Droplets className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            1. الطَّهَارَةُ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          أن يكون الذاكر متوضئاً، نقي الثياب، طيب الرائحة؛ إجلالاً لحضرة المذكور سبحانه ومجالسة الملائكة الكرام.
-                        </p>
-                      </div>
+                      {[
+                        {
+                          num: 1,
+                          title: "1. الطَّهَارَةُ",
+                          Icon: Droplets,
+                          text: "أن يكون الذاكر متوضئاً، نقي الثياب، طيب الرائحة؛ إجلالاً لحضرة المذكور سبحانه ومجالسة الملائكة الكرام.",
+                        },
+                        {
+                          num: 2,
+                          title: "2. التَّوَجُّهُ الصَّادِقُ",
+                          Icon: Compass,
+                          text: "استحضار همة شيخه ليكون رفيقاً له في السير ومرآة يستمد منها نور الصدق والإخلاص في التوجه إلى الله.",
+                        },
+                        {
+                          num: 3,
+                          title: "3. إِقْفَالُ الهَاتِفِ",
+                          Icon: PhoneOff,
+                          danger: true,
+                          text: "إقفال الهاتف أثناء الذكر حفاظاً على حرمة المجلس، وحتى لا يشوش على حلقة الذكر ويشتت أذهان الذاكرين.",
+                        },
+                        {
+                          num: 4,
+                          title: "4. تَغْمِيضُ العَيْنَيْنِ",
+                          Icon: EyeOff,
+                          text: "تغميض العينين للمساعدة على سد منافذ الحواس الظاهرة، والتركيز في معاني الذكر واستحضار عظمة المذكور.",
+                        },
+                        {
+                          num: 5,
+                          title: "5. المُشَارَكَةُ جَهْراً",
+                          Icon: Volume2,
+                          text: "المشاركة جهراً في الذكر الجماعي بخشوع ونشاط وهمة عالية، ومدافعة النوم والفتور والتكاسل.",
+                        },
+                        {
+                          num: 6,
+                          title: "6. الِامْتِنَاعُ عَنْ شُرْبِ المَاءِ",
+                          Icon: GlassWaterOff,
+                          text: "الامتناع عن شرب الماء أثناء الذكر حفاظاً على حرارة الذكر وتركيز الأنفاس وعدم كسر جمعية المجلس.",
+                        },
+                        {
+                          num: 7,
+                          title: "7. هَيْئَةُ الحَلْقَةِ المُحْكَمَةِ",
+                          Icon: Users,
+                          text: "انعقاد المجلس على هيئة حلقة واجتناب وجود ثغرات تفصل بين الذاكرين بحسب الإمكان، لتتصل النفحات.",
+                        },
+                        {
+                          num: 8,
+                          title: "8. الهُدُوءُ وَالسَّكِينَةُ",
+                          Icon: ShieldCheck,
+                          text: "اجتناب كل ما يشوش على حرمة الذكر: الكلام، عدم الالتفات وترك الحركة العابثة، كثرة التثاؤب، والضحك والمزاح.",
+                        },
+                        {
+                          num: 9,
+                          title: "9. الحُضُورُ التَّامُّ",
+                          Icon: Clock,
+                          text: "الحرص على حضور الذكر من البداية حتى النهاية قياساً بالصلاة وعدم الانصراف إلا لضرورة؛ «من قام من المجلس من غير عذر مقبول فقد حُرِم بركة ذلك المجلس».",
+                        },
+                        {
+                          num: 10,
+                          title: "10. لُزُومُ الجَمَاعَةِ",
+                          Icon: Layers,
+                          text: "التوقف عن ذكر الورد الفردي أثناء أداء الوظيفة الراتبة؛ فحق الجماعة مقدم وحرمة الوظيفة أجمع للقلوب.",
+                        },
+                        {
+                          num: 11,
+                          title: "11. أَدَبُ المَذَاكَرَةِ وَالسَّمَاعِ",
+                          Icon: Radio,
+                          text: "الاستماع إلى المذاكرات التربوية والسماع الروحي، والصمت التام عن الكلام في مختلف الأمور الدنيوية وغيرها.",
+                        },
+                      ].map((item) => {
+                        const ItemIcon = item.Icon;
+                        return (
+                          <div
+                            key={item.num}
+                            className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition flex flex-col justify-between space-y-2.5 text-right"
+                          >
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                                    item.danger
+                                      ? "bg-red-500/15 text-red-600 dark:text-red-400"
+                                      : "bg-[#C5A059]/15 text-[#C5A059]"
+                                  }`}
+                                >
+                                  <ItemIcon className="w-4 h-4" />
+                                </div>
+                                <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
+                                  {item.title}
+                                </h6>
+                              </div>
+                              <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
+                                {item.text}
+                              </p>
+                            </div>
 
-                      {/* 2. التوجه */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <Compass className="w-4 h-4" />
+                            <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31]">
+                              <QuranicEvidencePanel
+                                title="الشاهد القرآني"
+                                verses={getAdabItemVerses(item.num)}
+                                topicLabel={item.title}
+                                variant="compact"
+                                defaultCollapsed={true}
+                                showScriptToggle={false}
+                              />
+                            </div>
                           </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            2. التَّوَجُّهُ الصَّادِقُ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          استحضار همة شيخه ليكون رفيقاً له في السير ومرآة يستمد منها نور الصدق والإخلاص في التوجه إلى الله.
-                        </p>
-                      </div>
-
-                      {/* 3. إقفال الهاتف */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-red-500/15 text-red-600 dark:text-red-400 flex items-center justify-center">
-                            <PhoneOff className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            3. إِقْفَالُ الهَاتِفِ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          إقفال الهاتف أثناء الذكر حفاظاً على حرمة المجلس، وحتى لا يشوش على حلقة الذكر ويشتت أذهان الذاكرين.
-                        </p>
-                      </div>
-
-                      {/* 4. تغميض العينين */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <EyeOff className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            4. تَغْمِيضُ العَيْنَيْنِ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          تغميض العينين للمساعدة على سد منافذ الحواس الظاهرة، والتركيز في معاني الذكر واستحضار عظمة المذكور.
-                        </p>
-                      </div>
-
-                      {/* 5. المشاركة جهراً */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <Volume2 className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            5. المُشَارَكَةُ جَهْراً
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          المشاركة جهراً في الذكر الجماعي بخشوع ونشاط وهمة عالية، ومدافعة النوم والفتور والتكاسل.
-                        </p>
-                      </div>
-
-                      {/* 6. الامتناع عن شرب الماء */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <GlassWaterOff className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            6. الِامْتِنَاعُ عَنْ شُرْبِ المَاءِ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          الامتناع عن شرب الماء أثناء الذكر حفاظاً على حرارة الذكر وتركيز الأنفاس وعدم كسر جمعية المجلس.
-                        </p>
-                      </div>
-
-                      {/* 7. هيئة الحلقة */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <Users className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            7. هَيْئَةُ الحَلْقَةِ المُحْكَمَةِ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          انعقاد المجلس على هيئة حلقة واجتناب وجود ثغرات تفصل بين الذاكرين بحسب الإمكان، لتتصل النفحات.
-                        </p>
-                      </div>
-
-                      {/* 8. الهدوء والسكينة */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <ShieldCheck className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            8. الهُدُوءُ وَالسَّكِينَةُ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          اجتناب كل ما يشوش على حرمة الذكر: الكلام، عدم الالتفات وترك الحركة العابثة، كثرة التثاؤب، والضحك والمزاح.
-                        </p>
-                      </div>
-
-                      {/* 9. الحضور من البداية للنهاية */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <Clock className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            9. الحُضُورُ التَّامُّ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          الحرص على حضور الذكر من البداية حتى النهاية قياساً بالصلاة وعدم الانصراف إلا لضرورة؛ «من قام من المجلس من غير عذر مقبول فقد حُرِم بركة ذلك المجلس».
-                        </p>
-                      </div>
-
-                      {/* 10. التوقف عن الورد الفردي */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <Layers className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            10. لُزُومُ الجَمَاعَةِ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          التوقف عن ذكر الورد الفردي أثناء أداء الوظيفة الراتبة؛ فحق الجماعة مقدم وحرمة الوظيفة أجمع للقلوب.
-                        </p>
-                      </div>
-
-                      {/* 11. الاستماع للمذاكرات التربوية */}
-                      <div className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#122820] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition space-y-1.5 text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-[#C5A059]/15 text-[#C5A059] flex items-center justify-center">
-                            <Radio className="w-4 h-4" />
-                          </div>
-                          <h6 className="font-amiri text-base font-bold text-[#143628] dark:text-[#FAF7F2]">
-                            11. أَدَبُ المَذَاكَرَةِ وَالسَّمَاعِ
-                          </h6>
-                        </div>
-                        <p className="text-xs text-[#52796F] dark:text-[#95B8A8] font-ibm leading-relaxed">
-                          الاستماع إلى المذاكرات التربوية والسماع الروحي، والصمت التام عن الكلام في مختلف الأمور الدنيوية وغيرها.
-                        </p>
-                      </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

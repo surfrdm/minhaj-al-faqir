@@ -1,22 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { HelpCircle, Search, Sparkles, BookOpen, Quote } from "lucide-react";
-import { GLOSSARY_ITEMS, GlossaryItem } from "@/lib/curriculum";
+import { HelpCircle, Search, Quote } from "lucide-react";
+import { GLOSSARY_ITEMS } from "@/lib/curriculum";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getGlossaryTermVerses, normalizeArabicForSearch } from "@/lib/quran_thematic";
 
 export function GlossarySection() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const categories = ["all", "ألقاب السالكين", "العبادات والسلوك", "الأخلاق والمعاملات", "المعاني الروحية", "الآداب والمجالس"];
+  const categories = [
+    "all",
+    "ألقاب السالكين",
+    "المرجعية الروحية",
+    "العبادات والسلوك",
+    "الأخلاق والمعاملات",
+    "المعاني الروحية",
+    "الآداب والمجالس",
+  ];
+
+  const normQ = normalizeArabicForSearch(search);
 
   const filteredItems = GLOSSARY_ITEMS.filter((item) => {
     const matchesCat = selectedCategory === "all" || item.category === selectedCategory;
     const matchesSearch =
-      !search.trim() ||
-      item.term.includes(search.trim()) ||
-      item.definition.includes(search.trim()) ||
-      item.category.includes(search.trim());
+      !normQ ||
+      normalizeArabicForSearch(item.term).includes(normQ) ||
+      normalizeArabicForSearch(item.definition).includes(normQ) ||
+      normalizeArabicForSearch(item.category).includes(normQ);
     return matchesCat && matchesSearch;
   });
 
@@ -104,6 +116,17 @@ export function GlossarySection() {
                   <span>«{item.quote}»</span>
                 </div>
               )}
+
+              <div className="mt-3 pt-3 border-t border-[#E7DFD5] dark:border-[#203A2F]">
+                <QuranicEvidencePanel
+                  title="الشاهد القرآني للمصطلح"
+                  verses={getGlossaryTermVerses(item.term)}
+                  topicLabel={item.term}
+                  variant="compact"
+                  defaultCollapsed={true}
+                  showScriptToggle={false}
+                />
+              </div>
             </div>
           ))}
         </div>

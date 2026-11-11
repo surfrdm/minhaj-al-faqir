@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { Suspense, useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   BookOpen,
   Search,
@@ -10,10 +11,6 @@ import {
   Sunset,
   Sparkles,
   Layers,
-  Filter,
-  CheckCircle2,
-  Calendar as CalendarIcon,
-  BookMarked,
   Compass,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
@@ -23,6 +20,7 @@ import {
   HizbIndexItem,
   getTodayAhzabNumbers,
 } from "@/lib/quran";
+import { ALL_THEMATIC_TOPICS, getTotalThematicVersesCount } from "@/lib/quran_thematic";
 import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
 import { QuranThematicExplorer } from "@/components/QuranThematicExplorer";
 import { QiblaCompassModal } from "@/components/QiblaCompassModal";
@@ -30,8 +28,81 @@ import { QiblaCompassModal } from "@/components/QiblaCompassModal";
 // Fixed date for deterministic SSR / SSG prerender
 const INITIAL_DATE = new Date("2026-11-05T12:00:00Z");
 
+const VALID_THEMATIC_TOPICS = new Set(["all", ...ALL_THEMATIC_TOPICS.map((t) => t.id)]);
+
+function QuranUrlSync({
+  onSync,
+}: {
+  onSync: (opts: {
+    view: "ahzab" | "thematic";
+    topicId: string;
+    searchQuery: string;
+    mode?: "thematic" | "mushaf";
+  }) => void;
+}) {
+  const searchParams = useSearchParams();
+  const prevKeyRef = useRef<string>("__INIT__");
+  const rawView = searchParams.get("view") || "";
+  const rawTopic = searchParams.get("topic") || "";
+  const rawQ = (searchParams.get("q") || "").trim();
+  const rawMode = searchParams.get("mode") || "";
+
+  useEffect(() => {
+    const hashIsThematic =
+      typeof window !== "undefined" && window.location.hash === "#thematic";
+    const key = `${rawView}|${rawTopic}|${rawQ}|${rawMode}|${hashIsThematic ? "1" : "0"}`;
+    if (prevKeyRef.current === key) return;
+
+    const isDefault =
+      prevKeyRef.current === "__INIT__" &&
+      !rawView &&
+      !rawTopic &&
+      !rawQ &&
+      !rawMode &&
+      !hashIsThematic;
+    prevKeyRef.current = key;
+    if (isDefault) return;
+
+    const shouldShowThematic =
+      rawView === "thematic" ||
+      hashIsThematic ||
+      Boolean(rawTopic) ||
+      Boolean(rawQ) ||
+      rawMode === "mushaf";
+
+    const safeTopic =
+      rawTopic && VALID_THEMATIC_TOPICS.has(rawTopic) ? rawTopic : "all";
+    const safeMode: "thematic" | "mushaf" | undefined =
+      rawMode === "mushaf" || (rawQ && !rawTopic)
+        ? "mushaf"
+        : rawMode === "thematic" || rawTopic
+          ? "thematic"
+          : undefined;
+
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (!cancelled) {
+        onSync({
+          view: shouldShowThematic ? "thematic" : "ahzab",
+          topicId: safeTopic,
+          searchQuery: rawQ,
+          mode: safeMode,
+        });
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [rawView, rawTopic, rawQ, rawMode, onSync]);
+
+  return null;
+}
+
 export default function QuranIndexPage() {
   const [mainView, setMainView] = useState<"ahzab" | "thematic">("ahzab");
+  const [urlTopicId, setUrlTopicId] = useState<string>("all");
+  const [urlSearchQuery, setUrlSearchQuery] = useState<string>("");
+  const [urlMode, setUrlMode] = useState<"thematic" | "mushaf" | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<
     "all" | "today" | "first_half" | "second_half" | "mufassal"
@@ -41,9 +112,13 @@ export default function QuranIndexPage() {
   const [todayAhzab, setTodayAhzab] = useState(() => getTodayAhzabNumbers(INITIAL_DATE));
   const [showQiblaModal, setShowQiblaModal] = useState(false);
 
+  const totalThematicVerses = useMemo(() => getTotalThematicVersesCount(), []);
+
   // Update client-side on mount
   React.useEffect(() => {
-    setTodayAhzab(getTodayAhzabNumbers(new Date()));
+    queueMicrotask(() => {
+      setTodayAhzab(getTodayAhzabNumbers(new Date()));
+    });
   }, []);
 
   // Filtered Ahzab
@@ -84,11 +159,29 @@ export default function QuranIndexPage() {
     setReaderPeriod(period);
   };
 
+  const handleSyncUrl = React.useCallback(
+    (opts: {
+      view: "ahzab" | "thematic";
+      topicId: string;
+      searchQuery: string;
+      mode?: "thematic" | "mushaf";
+    }) => {
+      setMainView(opts.view);
+      setUrlTopicId(opts.topicId);
+      setUrlSearchQuery(opts.searchQuery);
+      setUrlMode(opts.mode);
+    },
+    []
+  );
+
   return (
     <div
       className="min-h-screen bg-[#FAF7F2] dark:bg-[#07130E] text-[#1D2A24] dark:text-[#E8F0EC] flex flex-col selection:bg-[#C5A059]/25 selection:text-[#1B4332]"
       dir="rtl"
     >
+      <Suspense fallback={null}>
+        <QuranUrlSync onSync={handleSyncUrl} />
+      </Suspense>
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 space-y-8">
@@ -191,9 +284,52 @@ export default function QuranIndexPage() {
         </div>
 
         {mainView === "thematic" ? (
-          <QuranThematicExplorer onOpenHizb={(hNum) => openHizbReader(hNum, "custom")} />
+          <QuranThematicExplorer
+            key={`${urlTopicId}-${urlSearchQuery}-${urlMode || ""}`}
+            onOpenHizb={(hNum) => openHizbReader(hNum, "custom")}
+            initialTopicId={urlTopicId}
+            initialSearchQuery={urlSearchQuery}
+            initialMode={urlMode}
+          />
         ) : (
           <>
+            {/* Quick CTA into Full Mushaf Search & Thematic Proofs */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-l from-[#143628]/8 via-[#C5A059]/10 to-white dark:from-[#143628]/60 dark:via-[#122820] dark:to-[#0E2019] border border-[#C5A059]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#826122] dark:text-[#E5C378]">
+                  <Sparkles className="w-4 h-4 text-[#C5A059]" />
+                  <span>الكَشَّافُ القُرْآنِيُّ وَالبَحْثُ الشَّامِلُ فِي المُصْحَفِ (6,214 آيَةً)</span>
+                </div>
+                <p className="text-xs font-ibm text-[#52796F] dark:text-[#A1B3A9]">
+                  تصفح {totalThematicVerses} شاهداً قرآنياً مؤصلاً في 12 باباً سلوكياً، أو ابحث فوراً عن أي كلمة أو آية في المصحف المحمدي مع التفاسير الأربعة.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUrlMode("thematic");
+                    setMainView("thematic");
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#E5C378] border border-[#C5A059]/45 text-xs font-bold transition cursor-pointer"
+                >
+                  تصفح {totalThematicVerses} شاهداً مؤصلاً
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUrlMode("mushaf");
+                    setUrlSearchQuery("الذكر");
+                    setMainView("thematic");
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-white dark:bg-[#122820] hover:border-[#C5A059] text-[#143628] dark:text-[#E5C378] border border-[#C5A059]/40 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <Search className="w-3.5 h-3.5 text-[#C5A059]" />
+                  <span>البحث في 6,214 آية</span>
+                </button>
+              </div>
+            </div>
+
             {/* Search & Filter Toolbar */}
             <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
               {/* Search Box */}
@@ -210,16 +346,18 @@ export default function QuranIndexPage() {
 
               {/* Filter Chips */}
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none shrink-0">
-                {[
-                  { key: "all", label: "جميع الأحزاب (60)" },
-                  { key: "today", label: "حزبا اليوم الراتب" },
-                  { key: "first_half", label: "النصف الأول (1-30)" },
-                  { key: "second_half", label: "النصف الثاني (31-60)" },
-                  { key: "mufassal", label: "المُفَصَّل (51-60)" },
-                ].map((tab) => (
+                {(
+                  [
+                    { key: "all", label: "جميع الأحزاب (60)" },
+                    { key: "today", label: "حزبا اليوم الراتب" },
+                    { key: "first_half", label: "النصف الأول (1-30)" },
+                    { key: "second_half", label: "النصف الثاني (31-60)" },
+                    { key: "mufassal", label: "المُفَصَّل (51-60)" },
+                  ] as const
+                ).map((tab) => (
                   <button
                     key={tab.key}
-                    onClick={() => setSelectedFilter(tab.key as any)}
+                    onClick={() => setSelectedFilter(tab.key)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                       selectedFilter === tab.key
                         ? "bg-[#143628] text-white dark:bg-[#C5A059] dark:text-[#143628] shadow-xs"

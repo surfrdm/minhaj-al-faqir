@@ -34,6 +34,8 @@ import { Footer } from "@/components/Footer";
 import { getTodayAhzabNumbers, toArabicDigits } from "@/lib/quran";
 import { QuranHizbReaderModal } from "@/components/QuranHizbReaderModal";
 import { DailyQuranAhzabCard } from "@/components/DailyQuranAhzabCard";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getPageVerses } from "@/lib/quran_thematic";
 
 // Types
 interface Habit {
@@ -1247,6 +1249,21 @@ export default function FaqirPortalPage() {
             )}
           </section>
         </div>
+
+        <section className="pt-2">
+          <QuranicEvidencePanel
+            title="زَادُ الفَقِيرِ مِنَ القُرْآنِ الكَرِيمِ (فِي الذِّكْرِ وَالمُحَاسَبَةِ وَالإِنْفَاقِ)"
+            subtitle="آيات قرآنية محققة برواية ورش تعين السالك في متابعة أوراده ومحاسبة نفسه وبذل الصدقة والإنفاق."
+            verses={getPageVerses("faqir")}
+            variant="grid"
+            defaultCollapsed={true}
+            initialVisibleCount={3}
+            onOpenHizb={(h) => {
+              setReaderHizb(h);
+              setReaderPeriod("custom");
+            }}
+          />
+        </section>
       </main>
 
       {/* Quran Hizb Reader Modal */}

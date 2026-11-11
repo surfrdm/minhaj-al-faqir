@@ -20,6 +20,8 @@ import {
   Scroll,
 } from "lucide-react";
 import userEdits from "@/data/user_edits.json";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getPageVerses } from "@/lib/quran_thematic";
 
 export const metadata: Metadata = {
   title: "شيخ الطريقة القادرية البودشيشية | فضيلة الدكتور الشيخ سيدي منير القادري بودشيش",
@@ -507,6 +509,18 @@ export default function ShaykhPage() {
               </div>
             </div>
           </section>
+
+          {/* ======================================================== */}
+          {/* SECTION 6: QURANIC FOUNDATIONS FOR SPIRITAL INHERITANCE  */}
+          {/* ======================================================== */}
+          <QuranicEvidencePanel
+            title="الأصول القرآنية للوراثة النبوية وشيخ التربية"
+            subtitle="شواهد من الذكر الحكيم برواية ورش في وجوب صحبة الصادقين وأهل الذكر والاتباع الراسخ على البصيرة."
+            verses={getPageVerses("shaykh")}
+            variant="grid"
+            defaultCollapsed={false}
+            initialVisibleCount={3}
+          />
 
           {/* Bottom CTA to return to Academy & Curriculum */}
           <div className="text-center pt-4">

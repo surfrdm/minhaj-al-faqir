@@ -33,6 +33,8 @@ import { Footer } from "@/components/Footer";
 import diwaneData from "@/data/diwane_master.json";
 import grandQasaidData from "@/data/grand_qasaid_master.json";
 import { GrandQasaidModal, GrandQasidaItem } from "@/components/GrandQasaidModal";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getPageVerses } from "@/lib/quran_thematic";
 
 interface DiwanPoem {
   id: string;
@@ -408,6 +410,16 @@ export default function DiwanMasterPage() {
             ))}
           </div>
         </section>
+
+        {/* Quranic Foundations for Spiritual Sama & Praise */}
+        <QuranicEvidencePanel
+          title="الشواهد القرآنية للسماع الروحي والمديح والقول الحسن"
+          subtitle="آيات محققة برواية ورش في استماع القول واتباع أحسنه، وتعظيم مقام النبوة، وخشوع القلوب عند تلاوة الذكر."
+          verses={getPageVerses("diwan")}
+          variant="grid"
+          defaultCollapsed={true}
+          initialVisibleCount={3}
+        />
 
         {/* Tab Navigation: 1. السلاسل الصوفية / 2. الفهرس الكامل / 3. شازام السماع */}
         <div className="flex rounded-2xl bg-white dark:bg-[#0E2019] p-1.5 border border-[#E7DFD5] dark:border-[#203D31] shadow-sm max-w-md mx-auto">

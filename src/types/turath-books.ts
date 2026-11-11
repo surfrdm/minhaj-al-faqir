@@ -75,6 +75,11 @@ export interface RijalCategory {
   label: string;
 }
 
+export interface RijalStoryEpisode {
+  heading: string;
+  text: string;
+}
+
 export interface RijalCompanion {
   rank: number;
   id: string;
@@ -84,6 +89,8 @@ export interface RijalCompanion {
   category: Exclude<RijalCategoryId, 'all'>;
   category_label: string;
   bio_summary: string;
+  story_episodes?: RijalStoryEpisode[];
+  famous_quote_or_hadith?: string;
   sufi_lesson: string;
   authentic_anchor: string;
   lookup_query: string;

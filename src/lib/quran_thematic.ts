@@ -1,71 +1,142 @@
 import topicsData from "@/data/quran_thematic_topics.json";
+import menuEvidencesData from "@/data/menu_quran_evidences.json";
+import type { ThematicTopicEntry, VerifiedQuranVerse } from "@/types/quran-evidence";
 
-export interface ThematicVerse {
-  id: string;
-  verse_text: string;
-  surah_name: string;
-  surah_number: number;
-  verse_number: string;
-  hizb_number: number;
-  page_number: number;
-  ishari_benefit: string;
-  keywords: string[];
+export type { ThematicTopicEntry, VerifiedQuranVerse } from "@/types/quran-evidence";
+export type ThematicVerse = VerifiedQuranVerse;
+export type ThematicTopic = ThematicTopicEntry;
+
+export interface MenuQuranEvidences {
+  thawabit: Record<string, VerifiedQuranVerse[]>;
+  adab_foundation: VerifiedQuranVerse[];
+  adab_items: Record<string, VerifiedQuranVerse[]>;
+  evidence: Record<string, VerifiedQuranVerse[]>;
+  wazifa: Record<string, VerifiedQuranVerse[]>;
+  tracks: Record<string, VerifiedQuranVerse[]>;
+  masar: Record<string, VerifiedQuranVerse[]>;
+  glossary: Record<string, VerifiedQuranVerse[]>;
+  pages: Record<string, VerifiedQuranVerse[]>;
 }
 
-export interface ThematicTopic {
-  id: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  icon: string;
-  color: string;
-  thabit_id?: string;
-  verses: ThematicVerse[];
-}
+export const ALL_THEMATIC_TOPICS: ThematicTopicEntry[] =
+  topicsData as ThematicTopicEntry[];
 
-export const ALL_THEMATIC_TOPICS: ThematicTopic[] = topicsData as ThematicTopic[];
+export const MENU_QURAN_EVIDENCES: MenuQuranEvidences =
+  menuEvidencesData as MenuQuranEvidences;
 
 /**
- * Returns all thematic topics
+ * Normalizes Arabic text for accent-insensitive search across Warsh/Hafs/Modern prose
  */
-export function getAllThematicTopics(): ThematicTopic[] {
+export function normalizeArabicForSearch(text: string): string {
+  if (!text) return "";
+  return text
+    .replace(/\u06d2\u0654/g, "ي")
+    .replace(/\u06d2\u0655/g, "ي")
+    .replace(/\u06d2/g, "ي")
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0640\u06DE\u06E9]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ي")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+export function getAllThematicTopics(): ThematicTopicEntry[] {
   return ALL_THEMATIC_TOPICS;
 }
 
-/**
- * Finds a topic by ID
- */
-export function getTopicById(id: string): ThematicTopic | undefined {
+export function getTopicById(id: string): ThematicTopicEntry | undefined {
   return ALL_THEMATIC_TOPICS.find((t) => t.id === id);
 }
 
-/**
- * Total count of indexed verses across all topics
- */
 export function getTotalThematicVersesCount(): number {
   return ALL_THEMATIC_TOPICS.reduce((sum, t) => sum + t.verses.length, 0);
 }
 
-/**
- * Search verses by query (text, surah, ishari explanation, or keywords)
- */
+export function getTotalMenuEvidencesCount(): number {
+  let total = MENU_QURAN_EVIDENCES.adab_foundation.length;
+  const groups = [
+    MENU_QURAN_EVIDENCES.thawabit,
+    MENU_QURAN_EVIDENCES.adab_items,
+    MENU_QURAN_EVIDENCES.evidence,
+    MENU_QURAN_EVIDENCES.wazifa,
+    MENU_QURAN_EVIDENCES.tracks,
+    MENU_QURAN_EVIDENCES.masar,
+    MENU_QURAN_EVIDENCES.glossary,
+    MENU_QURAN_EVIDENCES.pages,
+  ];
+  for (const grp of groups) {
+    for (const list of Object.values(grp)) {
+      total += list.length;
+    }
+  }
+  return total;
+}
+
+export function getTotalVerifiedEvidencesCount(): number {
+  return getTotalThematicVersesCount() + getTotalMenuEvidencesCount();
+}
+
+export function getThawabitVerses(id: string): VerifiedQuranVerse[] {
+  return MENU_QURAN_EVIDENCES.thawabit[id] || [];
+}
+
+export function getAdabFoundationVerses(): VerifiedQuranVerse[] {
+  return MENU_QURAN_EVIDENCES.adab_foundation || [];
+}
+
+export function getAdabItemVerses(num: number): VerifiedQuranVerse[] {
+  return MENU_QURAN_EVIDENCES.adab_items[String(num)] || [];
+}
+
+export function getEvidenceVerses(key: string): VerifiedQuranVerse[] {
+  return MENU_QURAN_EVIDENCES.evidence[key] || [];
+}
+
+export function getWazifaVerses(key: string): VerifiedQuranVerse[] {
+  return MENU_QURAN_EVIDENCES.wazifa[key] || [];
+}
+
+export function getTrackModuleVerses(moduleId: string): VerifiedQuranVerse[] {
+  return MENU_QURAN_EVIDENCES.tracks[moduleId] || [];
+}
+
+export function getMasarStageVerses(stageId: number | string): VerifiedQuranVerse[] {
+  const key = String(stageId).startsWith("stage_") ? String(stageId) : `stage_${stageId}`;
+  return MENU_QURAN_EVIDENCES.masar[key] || [];
+}
+
+export function getGlossaryTermVerses(term: string): VerifiedQuranVerse[] {
+  return MENU_QURAN_EVIDENCES.glossary[term] || [];
+}
+
+export function getPageVerses(pageKey: string): VerifiedQuranVerse[] {
+  return MENU_QURAN_EVIDENCES.pages[pageKey] || [];
+}
+
 export function searchThematicVerses(query: string): Array<{
-  topic: ThematicTopic;
-  verse: ThematicVerse;
+  topic: ThematicTopicEntry;
+  verse: VerifiedQuranVerse;
 }> {
-  const cleanQ = query.trim().toLowerCase();
+  const cleanQ = normalizeArabicForSearch(query);
   if (!cleanQ) return [];
 
-  const results: Array<{ topic: ThematicTopic; verse: ThematicVerse }> = [];
+  const results: Array<{ topic: ThematicTopicEntry; verse: VerifiedQuranVerse }> = [];
 
   for (const topic of ALL_THEMATIC_TOPICS) {
+    const topicTitleNorm = normalizeArabicForSearch(topic.title);
     for (const verse of topic.verses) {
       const match =
-        verse.verse_text.toLowerCase().includes(cleanQ) ||
-        verse.surah_name.toLowerCase().includes(cleanQ) ||
-        verse.ishari_benefit.toLowerCase().includes(cleanQ) ||
-        topic.title.toLowerCase().includes(cleanQ) ||
-        verse.keywords.some((k) => k.toLowerCase().includes(cleanQ));
+        normalizeArabicForSearch(verse.verse_text).includes(cleanQ) ||
+        normalizeArabicForSearch(verse.surah_name).includes(cleanQ) ||
+        normalizeArabicForSearch(verse.tafsir_summary || "").includes(cleanQ) ||
+        normalizeArabicForSearch(verse.ishari_benefit).includes(cleanQ) ||
+        normalizeArabicForSearch(verse.practical_amal || "").includes(cleanQ) ||
+        topicTitleNorm.includes(cleanQ) ||
+        (verse.keywords || []).some((k) => normalizeArabicForSearch(k).includes(cleanQ));
 
       if (match) {
         results.push({ topic, verse });

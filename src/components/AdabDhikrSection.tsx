@@ -18,6 +18,8 @@ import {
   Check,
   Copy,
 } from "lucide-react";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getAdabFoundationVerses, getAdabItemVerses } from "@/lib/quran_thematic";
 
 /**
  * أيقونة الامتناع عن شرب الماء: كأس ماء مشطوب بخط مائل دال على الامتناع والنهي
@@ -198,6 +200,18 @@ export function AdabDhikrSection() {
           </div>
         </div>
 
+        {/* Foundation Quranic Proofs for Adab & Majalis Al-Dhikr */}
+        <div className="mb-8 p-4 sm:p-5 rounded-3xl bg-[#FAF7F2] dark:bg-[#0E2019] border border-[#C5A059]/35">
+          <QuranicEvidencePanel
+            title="التأصيل القرآني لمجالس الذكر وآداب الحضرة"
+            verses={getAdabFoundationVerses()}
+            topicLabel="آداب مجالس الذكر"
+            variant="grid"
+            defaultCollapsed={true}
+            initialVisibleCount={4}
+          />
+        </div>
+
         {/* 11 Etiquettes Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {ADAB_DHIKR_DATA.map((adab) => {
@@ -205,31 +219,44 @@ export function AdabDhikrSection() {
             return (
               <div
                 key={adab.num}
-                className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition-all duration-200 space-y-2 text-right shadow-xs hover:shadow-md group"
+                className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] transition-all duration-200 space-y-3 text-right shadow-xs hover:shadow-md group flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-                        adab.danger
-                          ? "bg-red-500/15 text-red-600 dark:text-red-400"
-                          : "bg-[#143628] dark:bg-[#1B4332] text-[#C5A059]"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                          adab.danger
+                            ? "bg-red-500/15 text-red-600 dark:text-red-400"
+                            : "bg-[#143628] dark:bg-[#1B4332] text-[#C5A059]"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <span className="font-amiri text-base sm:text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
+                        {adab.num}. {adab.title}
+                      </span>
                     </div>
-                    <span className="font-amiri text-base sm:text-lg font-bold text-[#143628] dark:text-[#FAF7F2]">
-                      {adab.num}. {adab.title}
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#826122] dark:text-[#E5C378] font-bold">
+                      أدب {adab.num}
                     </span>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C5A059]/15 text-[#826122] dark:text-[#E5C378] font-bold">
-                    أدب {adab.num}
-                  </span>
+
+                  <p className="text-xs sm:text-sm text-[#406357] dark:text-[#A1B8AD] font-ibm leading-relaxed pt-1">
+                    {adab.description}
+                  </p>
                 </div>
 
-                <p className="text-xs sm:text-sm text-[#406357] dark:text-[#A1B8AD] font-ibm leading-relaxed pt-1">
-                  {adab.description}
-                </p>
+                <div className="pt-2 border-t border-[#E7DFD5] dark:border-[#203D31]">
+                  <QuranicEvidencePanel
+                    title="الشاهد القرآني"
+                    verses={getAdabItemVerses(adab.num)}
+                    topicLabel={adab.title}
+                    variant="compact"
+                    defaultCollapsed={true}
+                    showScriptToggle={false}
+                  />
+                </div>
               </div>
             );
           })}

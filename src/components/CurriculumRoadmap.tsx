@@ -9,13 +9,11 @@ import {
   Sparkles,
   CheckCircle2,
   FileText,
-  ShieldCheck,
   Award,
-  ChevronLeft,
-  ChevronDown,
-  Quote,
 } from "lucide-react";
 import { CURRICULUM_TRACKS, CurriculumTrack } from "@/lib/curriculum";
+import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
+import { getTrackModuleVerses } from "@/lib/quran_thematic";
 
 export function CurriculumRoadmap() {
   const [activeTrackIndex, setActiveTrackIndex] = useState<number>(0);
@@ -180,6 +178,17 @@ export function CurriculumRoadmap() {
                     ))}
                   </div>
                 )}
+
+                <div className="mt-4 pt-4 border-t border-[#E7DFD5] dark:border-[#203A2F]">
+                  <QuranicEvidencePanel
+                    title="الشواهد القرآنية لهذا المحور"
+                    verses={getTrackModuleVerses(mod.id)}
+                    topicLabel={mod.title}
+                    variant="compact"
+                    defaultCollapsed={true}
+                    showScriptToggle={false}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -248,6 +257,18 @@ export function CurriculumRoadmap() {
                       ))}
                     </div>
                   )}
+
+                  <div className="mt-4 pt-4 border-t border-[#E7DFD5] dark:border-[#203A2F]">
+                    <QuranicEvidencePanel
+                      title="الشواهد القرآنية المؤصلة"
+                      verses={getTrackModuleVerses(mod.id)}
+                      topicLabel={mod.title}
+                      variant="compact"
+                      defaultCollapsed={false}
+                      initialVisibleCount={2}
+                      showScriptToggle={false}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -296,6 +317,17 @@ export function CurriculumRoadmap() {
                     ))}
                   </div>
                 )}
+
+                <div className="mt-4 pt-4 border-t border-[#E7DFD5] dark:border-[#203A2F]">
+                  <QuranicEvidencePanel
+                    title="الشواهد القرآنية لهذا المحور"
+                    verses={getTrackModuleVerses(mod.id)}
+                    topicLabel={mod.title}
+                    variant="compact"
+                    defaultCollapsed={true}
+                    showScriptToggle={false}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -362,6 +394,17 @@ export function CurriculumRoadmap() {
                       </div>
                     </div>
                   ))}
+                </div>
+
+                <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#12241D] border border-[#E7DFD5] dark:border-[#203A2F]">
+                  <QuranicEvidencePanel
+                    title={`الشواهد القرآنية لمحور: ${levelMod.title}`}
+                    verses={getTrackModuleVerses(levelMod.id)}
+                    topicLabel={levelMod.title}
+                    variant="grid"
+                    defaultCollapsed={true}
+                    initialVisibleCount={3}
+                  />
                 </div>
               </div>
             ))}
