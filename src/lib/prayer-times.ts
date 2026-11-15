@@ -1,20 +1,50 @@
 export interface MoroccanCity {
   key: string;
   name: string;
+  name_en: string;
   lat: number;
   lng: number;
 }
 
 export const MOROCCAN_CITIES: MoroccanCity[] = [
-  { key: "mohammedia", name: "المحمدية (زاوية المحمدية)", lat: 33.6866, lng: -7.3829 },
-  { key: "casablanca", name: "الدار البيضاء", lat: 33.5731, lng: -7.5898 },
-  { key: "rabat", name: "الرباط والجهوية", lat: 34.0209, lng: -6.8416 },
-  { key: "fes", name: "فاس العريقة", lat: 34.0331, lng: -5.0003 },
-  { key: "marrakech", name: "مراكش الحمراء", lat: 31.6295, lng: -7.9811 },
-  { key: "tangier", name: "طنجة العالية", lat: 35.7595, lng: -5.8340 },
-  { key: "oujda", name: "وجدة والشرق (مداغ)", lat: 34.6814, lng: -1.9086 },
-  { key: "laayoune", name: "العيون والصحراء", lat: 27.1536, lng: -13.2033 },
+  { key: "casablanca", name: "الدار البيضاء", name_en: "Casablanca", lat: 33.5731, lng: -7.5898 },
+  { key: "rabat", name: "الرباط", name_en: "Rabat", lat: 34.0209, lng: -6.8416 },
+  { key: "fes", name: "فاس", name_en: "Fes", lat: 34.0331, lng: -5.0003 },
+  { key: "marrakech", name: "مراكش", name_en: "Marrakech", lat: 31.6295, lng: -7.9811 },
+  { key: "tangier", name: "طنجة", name_en: "Tangier", lat: 35.7595, lng: -5.8340 },
+  { key: "agadir", name: "أكادير", name_en: "Agadir", lat: 30.4278, lng: -9.5981 },
+  { key: "meknes", name: "مكناس", name_en: "Meknes", lat: 33.8938, lng: -5.5516 },
+  { key: "oujda", name: "وجدة", name_en: "Oujda", lat: 34.6814, lng: -1.9086 },
+  { key: "tetouan", name: "تطوان", name_en: "Tetouan", lat: 35.5889, lng: -5.3626 },
+  { key: "laayoune", name: "العيون", name_en: "Laayoune", lat: 27.1536, lng: -13.2033 },
+  { key: "mohammedia", name: "المحمدية", name_en: "Mohammedia", lat: 33.6866, lng: -7.3829 },
+  // International Centers
+  { key: "makkah", name: "مكة المكرمة", name_en: "Makkah", lat: 21.4225, lng: 39.8262 },
+  { key: "madinah", name: "المدينة المنورة", name_en: "Madinah", lat: 24.5247, lng: 39.5692 },
+  { key: "london", name: "لندن", name_en: "London", lat: 51.5074, lng: -0.1278 },
+  { key: "paris", name: "باريس", name_en: "Paris", lat: 48.8566, lng: 2.3522 },
+  { key: "new_york", name: "نيويورك", name_en: "New York", lat: 40.7128, lng: -74.0060 },
+  { key: "dubai", name: "دبي", name_en: "Dubai", lat: 25.2048, lng: 55.2708 },
 ];
+
+const MAKKAH_LAT = 21.4225;
+const MAKKAH_LNG = 39.8262;
+
+/**
+ * Calculates Qibla direction (azimuth in degrees from True North clockwise, 0-360)
+ */
+export function calculateQiblaBearing(lat: number, lng: number): number {
+  const phi1 = (lat * Math.PI) / 180;
+  const phi2 = (MAKKAH_LAT * Math.PI) / 180;
+  const deltaLambda = ((MAKKAH_LNG - lng) * Math.PI) / 180;
+
+  const y = Math.sin(deltaLambda);
+  const x =
+    Math.cos(phi1) * Math.tan(phi2) - Math.sin(phi1) * Math.cos(deltaLambda);
+
+  const qibla = (Math.atan2(y, x) * 180) / Math.PI;
+  return Math.round(((qibla + 360) % 360) * 10) / 10;
+}
 
 export interface PrayerTimesResult {
   fajr: string;
@@ -94,9 +124,9 @@ export function calculateMoroccanPrayerTimes(
   const ishaHA = getHA(-17);
 
   function minToTime(minutes: number) {
-    let m = Math.round(minutes);
-    let hrs = Math.floor(m / 60) % 24;
-    let mins = m % 60;
+    const m = Math.round(minutes);
+    const hrs = Math.floor(m / 60) % 24;
+    const mins = m % 60;
     return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
   }
 
