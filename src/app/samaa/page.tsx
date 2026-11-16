@@ -25,6 +25,7 @@ import {
   ZoomOut,
   Layers,
   Sparkle,
+  Download,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -63,9 +64,9 @@ export default function SamaaHubPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("الكل");
 
   // Recognition references
-  const recognitionRef = useRef<any>(null);
-  const timerRef = useRef<any>(null);
-  const checkIntervalRef = useRef<any>(null);
+  const recognitionRef = useRef<{ stop?: () => void; start?: () => void } | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const activePoemRef = useRef<Poem>(activePoem);
 
   useEffect(() => {
@@ -79,11 +80,50 @@ export default function SamaaHubPage() {
         setListeningSeconds((prev) => prev + 1);
       }, 1000);
     } else {
-      clearInterval(timerRef.current);
-      setListeningSeconds(0);
+      if (timerRef.current) clearInterval(timerRef.current);
+      queueMicrotask(() => {
+        setListeningSeconds(0);
+      });
     }
-    return () => clearInterval(timerRef.current);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [isLiveListening]);
+
+  const performRecognition = async (transcriptText: string) => {
+    if (!transcriptText.trim()) return;
+
+    try {
+      const res = await fetch("/api/samaa-recognize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: transcriptText,
+          previousPoemId: activePoemRef.current?.id,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.poem) {
+          if (data.poem.id !== activePoemRef.current?.id) {
+            // New poem detected!
+            setActivePoem(data.poem);
+            setActiveVerseIndex(data.currentVerseIndex || 0);
+            setRecognitionStatus(`✨ تم رصد انتقال المنشدين إلى قصيدة: «${data.poem.title}»`);
+          } else {
+            // Same poem, update verse if matched
+            if (typeof data.currentVerseIndex === "number") {
+              setActiveVerseIndex(data.currentVerseIndex);
+            }
+            setRecognitionStatus(`متابعة الإنشاد الجاري: ${data.confidence || "مطابقة مستمرة"}`);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Recognition network error", e);
+    }
+  };
 
   // Periodic acoustic checking every 8 seconds during continuous live listening
   useEffect(() => {
@@ -95,9 +135,11 @@ export default function SamaaHubPage() {
         }
       }, 7000);
     } else {
-      clearInterval(checkIntervalRef.current);
+      if (checkIntervalRef.current) clearInterval(checkIntervalRef.current);
     }
-    return () => clearInterval(checkIntervalRef.current);
+    return () => {
+      if (checkIntervalRef.current) clearInterval(checkIntervalRef.current);
+    };
   }, [isLiveListening, liveTranscript]);
 
   // Continuous Web Speech Recognition Handler
@@ -107,8 +149,23 @@ export default function SamaaHubPage() {
     setLiveTranscript("");
 
     // Initialize browser speech recognition if supported
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    interface SpeechRecognitionInstance {
+      lang: string;
+      continuous: boolean;
+      interimResults: boolean;
+      onresult: ((event: { resultIndex: number; results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+      onerror: ((e: unknown) => void) | null;
+      onend: (() => void) | null;
+      start: () => void;
+      stop: () => void;
+    }
+    interface WindowWithSpeech extends Window {
+      SpeechRecognition?: new () => SpeechRecognitionInstance;
+      webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
+    }
+
+    const win = typeof window !== "undefined" ? (window as unknown as WindowWithSpeech) : null;
+    const SpeechRecognition = win?.SpeechRecognition || win?.webkitSpeechRecognition;
 
     if (SpeechRecognition) {
       try {
@@ -117,7 +174,7 @@ export default function SamaaHubPage() {
         reco.continuous = true;
         reco.interimResults = true;
 
-        reco.onresult = (event: any) => {
+        reco.onresult = (event: { resultIndex: number; results: ArrayLike<ArrayLike<{ transcript: string }>> }) => {
           let text = "";
           for (let i = event.resultIndex; i < event.results.length; i++) {
             text += event.results[i][0].transcript + " ";
@@ -126,7 +183,7 @@ export default function SamaaHubPage() {
           performRecognition(text.trim());
         };
 
-        reco.onerror = (e: any) => {
+        reco.onerror = (e: unknown) => {
           console.warn("Speech recognition notice", e);
         };
 
@@ -161,45 +218,10 @@ export default function SamaaHubPage() {
     setRecognitionStatus("تم إيقاف الاستماع الحي مؤقتاً");
     if (recognitionRef.current) {
       try {
-        recognitionRef.current.stop();
+        recognitionRef.current.stop?.();
       } catch (e) {
         // Ignore
       }
-    }
-  };
-
-  const performRecognition = async (transcriptText: string) => {
-    if (!transcriptText.trim()) return;
-
-    try {
-      const res = await fetch("/api/samaa-recognize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: transcriptText,
-          previousPoemId: activePoemRef.current?.id,
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.poem) {
-          if (data.poem.id !== activePoemRef.current.id) {
-            // New poem detected!
-            setActivePoem(data.poem);
-            setActiveVerseIndex(data.currentVerseIndex || 0);
-            setRecognitionStatus(`✨ تم رصد انتقال المنشدين إلى قصيدة: «${data.poem.title}»`);
-          } else {
-            // Same poem, update verse if matched
-            if (typeof data.currentVerseIndex === "number") {
-              setActiveVerseIndex(data.currentVerseIndex);
-            }
-            setRecognitionStatus(`متابعة الإنشاد الجاري: ${data.confidence || "مطابقة مستمرة"}`);
-          }
-        }
-      }
-    } catch (e) {
-      console.error("Recognition network error", e);
     }
   };
 
@@ -257,7 +279,8 @@ export default function SamaaHubPage() {
   ];
 
   // Filtered poems
-  const filteredPoems = samaaList.filter((p: any) => {
+  const poemsList = samaaList as unknown as Poem[];
+  const filteredPoems = poemsList.filter((p: Poem) => {
     const matchesCat =
       selectedCategory === "الكل" || p.category?.includes(selectedCategory);
     const matchesSearch =
@@ -575,6 +598,54 @@ export default function SamaaHubPage() {
         )}
 
         {/* ============================================================== */}
+        {/* SPECIAL BOOK SECTION: كِتَابُ قَصَائِدِ السَّمَاعِ الشَّرِيفَةِ */}
+        {/* ============================================================== */}
+        <section className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#FAF7F2] via-white to-[#F5EFE6] dark:from-[#0E2019] dark:via-[#07130E] dark:to-[#0A1A14] border-2 border-[#C5A059] shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#143628] to-[#1B4332] text-[#E5C378] border-2 border-[#C5A059] flex items-center justify-center shrink-0 shadow-lg">
+              <BookOpen className="w-7 h-7" />
+            </div>
+            <div className="space-y-1.5 text-right">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378] text-[10px] font-bold border border-[#C5A059]/30">
+                  كِتَابٌ رَسْمِيٌّ مُعْتَمَدٌ • 88 صَفْحَةً
+                </span>
+                <span className="text-[11px] text-[#52796F] dark:text-[#A1B3A9] font-mono">
+                  الزاوية الهبرية البلقايدية
+                </span>
+              </div>
+              <h3 className="font-amiri text-xl sm:text-2xl font-bold text-[#143628] dark:text-[#FAF7F2]">
+                كِتَابُ قَصَائِدِ السَّمَاعِ وَالنَّوْبَاتِ الصُّوفِيَّةِ الشَّرِيفَةِ
+              </h3>
+              <p className="text-xs text-[#52796F] dark:text-[#A1B3A9] leading-relaxed max-w-2xl font-ibm">
+                المجموع الكامل المعتمد لقصائد ونوبات السماع الصوفي، يضم أمهات القصائد لكبار العارفين (كعب بن زهير، رابعة العدوية، عمر ابن الفارض، أبو مدين الغوث، البوصيري، الششتري، محمد الحراق، ابن خلوف، والفياشية).
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full md:w-auto shrink-0">
+            <a
+              href="/books/qasaid-samaa.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-[#143628] hover:bg-[#1B4332] text-[#FAF7F2] text-xs font-bold border border-[#C5A059] shadow-md hover:scale-105 active:scale-95 transition text-center flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <BookOpen className="w-4 h-4 text-[#C5A059]" />
+              <span>مُطَالَعَةُ الكِتَابِ رَقْمِيّاً</span>
+            </a>
+
+            <a
+              href="/books/qasaid-samaa.pdf"
+              download="قصائد_السماع_الشريفة.pdf"
+              className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-white dark:bg-[#12241D] hover:bg-[#FAF7F2] text-[#143628] dark:text-[#E5C378] text-xs font-bold border border-[#E7DFD5] dark:border-[#203D31] hover:border-[#C5A059] shadow-sm hover:scale-105 active:scale-95 transition text-center flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Download className="w-4 h-4 text-[#C5A059]" />
+              <span>تَحْمِيلُ PDF (1.6 MB)</span>
+            </a>
+          </div>
+        </section>
+
+        {/* ============================================================== */}
         {/* 3. COMPREHENSIVE DIWAN & POEM LIBRARY (خزانة السماع والدواوين) */}
         {/* ============================================================== */}
         <section className="space-y-6 pt-6">
@@ -620,12 +691,12 @@ export default function SamaaHubPage() {
 
           {/* Poems Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredPoems.map((p: any) => {
+            {filteredPoems.map((p: Poem) => {
               const isSelected = activePoem?.id === p.id;
               return (
                 <div
                   key={p.id}
-                  onClick={() => selectPoem(p as unknown as Poem)}
+                  onClick={() => selectPoem(p)}
                   className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-4 group ${
                     isSelected
                       ? "border-2 border-[#C5A059] bg-[#C5A059]/10 shadow-lg ring-2 ring-[#C5A059]/30"

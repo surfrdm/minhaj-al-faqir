@@ -2506,9 +2506,9 @@ export default function TasmeemStudioPage() {
           </div>
 
           {/* ============================================================== */}
-          {/* COLUMN 2: LIVE PREVIEW & RENDER CANVAS (7 cols)                 */}
+          {/* COLUMN 2: LIVE PREVIEW & RENDER CANVAS (7 cols) - STICKY       */}
           {/* ============================================================== */}
-          <div className="lg:col-span-7 flex flex-col items-center">
+          <div className="lg:col-span-7 flex flex-col items-center lg:sticky lg:top-24 lg:self-start z-10 max-h-[calc(100vh-6.5rem)] overflow-y-auto overflow-x-hidden p-1">
             <div className="w-full flex flex-col items-center space-y-3">
               <div className="w-full flex items-center justify-between text-xs text-[#52796F] dark:text-[#A1B3A9] px-2 max-w-[512px]">
                 <span className="flex items-center gap-1 font-bold">

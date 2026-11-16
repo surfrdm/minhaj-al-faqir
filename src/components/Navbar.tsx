@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { TasbeehModal } from "@/components/TasbeehModal";
 import {
   Moon,
   Sun,
@@ -28,20 +29,23 @@ import {
 export function Navbar() {
   const [isDark, setIsDark] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [tasbeehOpen, setTasbeehOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const isDarkStored =
-      localStorage.getItem("theme") === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-    if (isDarkStored) {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-    }
+    queueMicrotask(() => {
+      const isDarkStored =
+        localStorage.getItem("theme") === "dark" ||
+        (!("theme" in localStorage) &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      if (isDarkStored) {
+        document.documentElement.classList.add("dark");
+        setIsDark(true);
+      } else {
+        document.documentElement.classList.remove("dark");
+        setIsDark(false);
+      }
+    });
 
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -141,13 +145,13 @@ export function Navbar() {
             {/* 2. Épuré : Les raccourcis essentiels */}
             <nav className="hidden md:flex items-center gap-2 xl:gap-3">
               {/* Raccourci 1: زاد اليوم (3) */}
-              <a
+              <Link
                 href="/#daily-trio"
                 className="px-3.5 py-2 rounded-xl text-xs font-bold text-[#143628] dark:text-[#E5C378] bg-[#C5A059]/15 hover:bg-[#C5A059]/25 border border-[#C5A059]/40 transition-all flex items-center gap-1.5 shadow-sm"
               >
                 <Sparkles className="w-4 h-4 text-[#C5A059]" />
                 <span>زاد اليوم (3)</span>
-              </a>
+              </Link>
 
               {/* Raccourci المصحف الشريف */}
               <Link
@@ -196,8 +200,21 @@ export function Navbar() {
               </Link>
             </nav>
 
-            {/* 3. Bouton Tiroir ("☰ باقي الأقسام") & Theme Toggle */}
+            {/* 3. Bouton السبحة والسلكة + Theme Toggle + Tiroir */}
             <div className="flex items-center gap-2">
+              {/* Bouton السبحة والسلكة الإلكترونية */}
+              <button
+                type="button"
+                onClick={() => setTasbeehOpen(true)}
+                title="السلكة والتسبيح • الورد اليومي (صباحاً / مساءً / مطلق)"
+                aria-label="فتح السبحة الإلكترونية والسلكة"
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#143628] via-[#1B4332] to-[#143628] text-[#FAF7F2] border border-[#C5A059] shadow-sm hover:border-[#E5C378] hover:scale-105 active:scale-95 transition cursor-pointer text-xs font-bold"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#C5A059] animate-pulse" />
+                <span className="hidden sm:inline">السلكة والتسبيح</span>
+                <span className="sm:hidden">التسبيح</span>
+              </button>
+
               <button
                 onClick={toggleTheme}
                 aria-label="تبديل الوضع الليلي والنهاري"
@@ -265,6 +282,24 @@ export function Navbar() {
                   <span className="text-[11px] font-bold text-[#C5A059] block uppercase tracking-wider font-ibm">
                     المسار والسلوك اليومي
                   </span>
+
+                  {/* Raccourci rapide dans le Drawer pour la Sebha */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      setTasbeehOpen(true);
+                    }}
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#143628] via-[#1B4332] to-[#143628] text-[#FAF7F2] border border-[#C5A059] text-xs font-bold shadow-sm hover:scale-[1.01] transition cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Sparkles className="w-4 h-4 text-[#C5A059] animate-pulse" />
+                      <span>السَّلْكَةُ وَالسُّبْحَةُ الإِلِكْتُرُونِيَّةُ (وِرد الصباح والمساء)</span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C5A059]/30 text-[#E5C378] font-bold">
+                      بالاهتزاز 📳
+                    </span>
+                  </button>
 
                   <Link
                     href="/#daily-trio"
@@ -539,6 +574,9 @@ export function Navbar() {
           </div>
         </div>
       )}
+
+      {/* MODAL DE LA SEBHA ET DU WIRD QUOTIDIEN (السلكة والتسبيح) */}
+      <TasbeehModal isOpen={tasbeehOpen} onClose={() => setTasbeehOpen(false)} />
     </>
   );
 }

@@ -45,3 +45,6 @@ next-env.d.ts
 
 # Heavy full Quran dump (already split into individual ahzab and backed up on Google Drive)
 src/data/mushaf_mohammadi_officiel_m6.json
+
+# Local heavy reference books
+livre/
