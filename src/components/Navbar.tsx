@@ -48,10 +48,17 @@ export function Navbar() {
       }
     });
 
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -88,7 +95,7 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`sticky top-0 z-40 transition-all duration-300 bg-[#FAF7F2]/95 dark:bg-[#07130E]/95 backdrop-blur-md border-b border-[#E7DFD5]/80 dark:border-[#203A2F] ${
+        className={`sticky top-0 z-40 transition-[box-shadow,border-color,background-color] duration-200 bg-[#FAF7F2]/95 dark:bg-[#07130E]/95 backdrop-blur-md border-b border-[#E7DFD5]/80 dark:border-[#203A2F] ${
           scrolled ? "shadow-md" : "shadow-sm"
         }`}
         dir="rtl"
@@ -250,7 +257,7 @@ export function Navbar() {
           />
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-[#FAF7F2] dark:bg-[#07130E] border-l border-[#C5A059]/40 shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
+            <div className="w-full max-w-md bg-[#FAF7F2] dark:bg-[#07130E] border-l border-[#C5A059]/40 shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
               {/* Drawer Header */}
               <div className="p-5 border-b border-[#E7DFD5] dark:border-[#203D31] flex items-center justify-between bg-gradient-to-l from-[#143628] to-[#1B4332] text-white">
                 <div className="flex items-center gap-3">

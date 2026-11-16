@@ -147,12 +147,12 @@ export function AdabDhikrSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Banner */}
         <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#143628] via-[#1B4332] to-[#143628] border-2 border-[#C5A059]/40 text-white shadow-lg mb-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center md:text-right">
+          <div className="space-y-3 text-center md:text-right">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C5A059]/25 text-[#E5C378] text-xs font-bold border border-[#C5A059]/40">
               <Award className="w-3.5 h-3.5" />
               <span>فِقْهُ الطَّرِيقِ • مَجَالِسُ الصَّفَاءِ</span>
             </div>
-            <h3 className="font-amiri text-2xl sm:text-4xl font-bold text-[#FAF7F2] leading-tight">
+            <h3 className="font-amiri text-2xl sm:text-4xl font-bold text-[#FAF7F2] pt-1 leading-normal sm:leading-relaxed">
               آدَابُ مَجَالِسِ الذِّكْرِ (11 أَدَباً)
             </h3>
             <p className="text-xs sm:text-sm text-[#E8F0EC]/80 font-ibm max-w-2xl leading-relaxed">

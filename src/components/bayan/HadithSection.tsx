@@ -203,6 +203,7 @@ export function HadithSection({ locale }: HadithSectionProps) {
                       title={h.title}
                       lang="ar"
                       size="sm"
+                      preRecordedSrc={h.id === 1 ? "/audio/hadith/hadith-01.mp3" : undefined}
                       ariaLabel={isAr ? "استماع للحديث" : "Listen to Hadith"}
                     />
                     <span className="text-[10px] font-mono text-[#787774] dark:text-[#8E9290]">
@@ -409,6 +410,7 @@ export function HadithSection({ locale }: HadithSectionProps) {
                     title={selectedHadith.title}
                     lang="ar"
                     size="sm"
+                    preRecordedSrc={selectedHadith.id === 1 ? "/audio/hadith/hadith-01.mp3" : undefined}
                     ariaLabel={isAr ? "استماع للحديث الشريف" : "Listen to Hadith"}
                   />
                 </div>

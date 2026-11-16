@@ -72,7 +72,7 @@ export default function RootLayout({
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${amiri.variable} ${ibmArabic.variable} ${cormorant.variable} ${jakarta.variable} ${scheherazadeNew.variable} scroll-smooth`}
+      className={`${amiri.variable} ${ibmArabic.variable} ${cormorant.variable} ${jakarta.variable} ${scheherazadeNew.variable}`}
     >
       <body
         suppressHydrationWarning

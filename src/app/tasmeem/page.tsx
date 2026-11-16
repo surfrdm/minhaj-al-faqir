@@ -215,8 +215,9 @@ const EVENT_TITLE_SUGGESTIONS = [
 export default function TasmeemStudioPage() {
   const [activeTab, setActiveTab] = useState<"layers" | "texts" | "dividers" | "style">("dividers");
 
-  // 1. Format
+  // 1. Format & Preview Zoom
   const [selectedFormat, setSelectedFormat] = useState<PosterFormat>(POSTER_FORMATS[0]);
+  const [previewZoom, setPreviewZoom] = useState<number>(100);
 
   // 2. Background Layer (Official 2026 templates)
   const [bgType, setBgType] = useState<"official" | "custom">("official");
@@ -468,6 +469,7 @@ export default function TasmeemStudioPage() {
   // Quick reset to the exact official template
   const loadOfficialTemplate = () => {
     setSelectedFormat(POSTER_FORMATS[0]); // 4:5
+    setPreviewZoom(100);
     setBgType("official");
     setCustomBgUrl(null);
     setBgOpacity(100);
@@ -587,14 +589,14 @@ export default function TasmeemStudioPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#FAF7F2] dark:bg-[#07130E] text-[#1D2A24] dark:text-[#E8F0EC] font-sans antialiased"
+      className="min-h-screen lg:h-screen lg:overflow-hidden bg-[#FAF7F2] dark:bg-[#07130E] text-[#1D2A24] dark:text-[#E8F0EC] font-sans antialiased flex flex-col"
       dir="rtl"
     >
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-6">
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 pt-20 lg:pt-20 pb-3 flex flex-col lg:overflow-hidden min-h-0">
         {/* Breadcrumb & Header Action */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-2 flex-shrink-0 border-b border-[#E7DFD5]/60 dark:border-[#203D31]/60 mb-2">
           <div className="flex items-center gap-2 text-xs text-[#52796F] dark:text-[#A1B3A9]">
             <Link href="/" className="hover:text-[#C5A059] transition">
               الرئيسية
@@ -608,7 +610,7 @@ export default function TasmeemStudioPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={loadOfficialTemplate}
-              className="px-3.5 py-2 rounded-xl bg-white dark:bg-[#122820] text-[#143628] dark:text-[#E5C378] border border-[#C5A059]/40 hover:border-[#C5A059] text-xs font-bold flex items-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition cursor-pointer"
+              className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#122820] text-[#143628] dark:text-[#E5C378] border border-[#C5A059]/40 hover:border-[#C5A059] text-xs font-bold flex items-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition cursor-pointer"
               title="إعادة ضبط القالب إلى ملصق زاوية المحمدية الأصلي"
             >
               <RotateCcw className="w-3.5 h-3.5 text-[#C5A059]" />
@@ -618,7 +620,7 @@ export default function TasmeemStudioPage() {
             <button
               onClick={handleDownload}
               disabled={isDownloading}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#1B4332] via-[#143628] to-[#0A1E16] text-[#FAF7F2] text-xs font-bold flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition cursor-pointer disabled:opacity-50 border border-[#C5A059]/60"
+              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#1B4332] via-[#143628] to-[#0A1E16] text-[#FAF7F2] text-xs font-bold flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition cursor-pointer disabled:opacity-50 border border-[#C5A059]/60"
             >
               <Download className="w-4 h-4 text-[#C5A059]" />
               <span>
@@ -629,11 +631,12 @@ export default function TasmeemStudioPage() {
         </div>
 
         {/* Studio Workspace: 2 Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:overflow-hidden min-h-0 items-start">
           {/* ============================================================== */}
-          {/* COLUMN 1: CONTROLS & LAYERS PANEL (5 cols)                      */}
+          {/* COLUMN 1: CONTROLS & LAYERS PANEL (5 cols - RIGHT in RTL)      */}
+          {/* Has independent scrollbar so user scrolls settings freely      */}
           {/* ============================================================== */}
-          <div className="lg:col-span-5 space-y-4">
+          <div className="lg:col-span-5 lg:h-full lg:overflow-y-auto pl-2 pr-1 pb-16 studio-scrollbar space-y-4">
             {/* Format Selection Bar */}
             <div className="p-4 rounded-2xl bg-white dark:bg-[#0E2019] border border-[#E7DFD5] dark:border-[#203D31] shadow-sm space-y-2">
               <label className="text-xs font-bold text-[#143628] dark:text-[#E5C378] flex items-center justify-between">
@@ -2506,33 +2509,74 @@ export default function TasmeemStudioPage() {
           </div>
 
           {/* ============================================================== */}
-          {/* COLUMN 2: LIVE PREVIEW & RENDER CANVAS (7 cols) - STICKY       */}
+          {/* COLUMN 2: LIVE PREVIEW & RENDER CANVAS (7 cols - LEFT in RTL)  */}
+          {/* Stays fixed and framed in viewport with independent zoom       */}
           {/* ============================================================== */}
-          <div className="lg:col-span-7 flex flex-col items-center lg:sticky lg:top-24 lg:self-start z-10 max-h-[calc(100vh-6.5rem)] overflow-y-auto overflow-x-hidden p-1">
+          <div className="lg:col-span-7 lg:h-full lg:overflow-y-auto flex flex-col items-center justify-start p-2 studio-scrollbar min-h-0">
             <div className="w-full flex flex-col items-center space-y-3">
-              <div className="w-full flex items-center justify-between text-xs text-[#52796F] dark:text-[#A1B3A9] px-2 max-w-[512px]">
+              <div className="w-full flex items-center justify-between text-xs text-[#52796F] dark:text-[#A1B3A9] px-2 max-w-[540px]">
                 <span className="flex items-center gap-1 font-bold">
                   <Sparkle className="w-3.5 h-3.5 text-[#C5A059]" />
                   معاينة حية للملصق الرسمي ({selectedFormat.ratioName})
                 </span>
-                <span className="text-[#826122] dark:text-[#E5C378] text-[11px]">
-                  جاهز للنشر على فيسبوك وواتساب
-                </span>
+
+                {/* Zoom controls for canvas */}
+                <div className="flex items-center gap-1 bg-white dark:bg-[#122820] border border-[#C5A059]/40 rounded-lg p-0.5 text-[10px] font-mono shadow-sm">
+                  <button
+                    onClick={() => setPreviewZoom((z) => Math.max(50, z - 10))}
+                    className="px-1.5 py-0.5 hover:bg-[#C5A059]/20 rounded text-[#143628] dark:text-[#E5C378] font-bold cursor-pointer"
+                    title="تصغير المعاينة"
+                  >
+                    -
+                  </button>
+                  <span className="px-1 font-bold text-[#826122] dark:text-[#E5C378]">
+                    {previewZoom}%
+                  </span>
+                  <button
+                    onClick={() => setPreviewZoom((z) => Math.min(150, z + 10))}
+                    className="px-1.5 py-0.5 hover:bg-[#C5A059]/20 rounded text-[#143628] dark:text-[#E5C378] font-bold cursor-pointer"
+                    title="تكبير المعاينة"
+                  >
+                    +
+                  </button>
+                  <button
+                    onClick={() => setPreviewZoom(100)}
+                    className="px-1.5 py-0.5 hover:bg-[#C5A059]/20 rounded text-gray-500 font-sans text-[9px] cursor-pointer"
+                    title="إعادة ضبط الحجم الأصلي 100%"
+                  >
+                    100%
+                  </button>
+                  <button
+                    onClick={() => setPreviewZoom(85)}
+                    className="px-1.5 py-0.5 hover:bg-[#C5A059]/20 rounded text-[#C5A059] font-sans text-[9px] font-bold cursor-pointer"
+                    title="ملائمة الشاشة"
+                  >
+                    ملائمة
+                  </button>
+                </div>
               </div>
 
-              {/* THE MASTER RENDERED POSTER CANVAS (HTML-TO-IMAGE TARGET) */}
+              {/* Poster Scaling Frame */}
               <div
-                ref={posterRef}
-                className={`w-full ${selectedFormat.aspectClass} ${selectedFormat.canvasClass} rounded-2xl relative overflow-hidden shadow-2xl flex flex-col justify-between px-6 sm:px-8 select-none transition-all`}
+                className="w-full flex justify-center transition-transform duration-150 origin-top"
                 style={{
-                  direction: "rtl",
-                  backgroundColor: "#F7F3EB",
-                  color: "#143628",
-                  paddingTop: `${topMargin}px`,
-                  paddingBottom: `${bottomPadding}px`,
-                  rowGap: `${sectionSpacing}px`,
+                  transform: previewZoom !== 100 ? `scale(${previewZoom / 100})` : undefined,
+                  marginBottom: previewZoom < 100 ? `-${(100 - previewZoom) * 4}px` : undefined,
                 }}
               >
+                {/* THE MASTER RENDERED POSTER CANVAS (HTML-TO-IMAGE TARGET) */}
+                <div
+                  ref={posterRef}
+                  className={`w-full ${selectedFormat.aspectClass} ${selectedFormat.canvasClass} rounded-2xl relative overflow-hidden shadow-2xl flex flex-col justify-between px-6 sm:px-8 select-none transition-all`}
+                  style={{
+                    direction: "rtl",
+                    backgroundColor: "#F7F3EB",
+                    color: "#143628",
+                    paddingTop: `${topMargin}px`,
+                    paddingBottom: `${bottomPadding}px`,
+                    rowGap: `${sectionSpacing}px`,
+                  }}
+                >
                 {/* 1. BACKGROUND LAYER (Official 2026 Background Template) */}
                 <div
                   className="absolute inset-0 pointer-events-none z-0"
@@ -2866,17 +2910,20 @@ export default function TasmeemStudioPage() {
                   )}
                 </div>
               </div>
+            </div>
 
               {/* Helper Legend */}
-              <p className="text-[11px] text-gray-500 text-center max-w-md font-ibm">
-                💡 تحكم متقدم 100% : إمكانية حذف وإضافة صور الشيخ والشعارات مع المعايير القياسية • تحريك النصوص والفواصل الذهبية يميناً ويساراً وفوق وتحت (X / Y) وتكبيرها بدقة تناسب كل المقاسات.
+              <p className="text-[11px] text-gray-500 text-center max-w-md font-ibm pt-1">
+                💡 استوديو احترافي: اللوحة ثابتة ومباشرة أمامك، والإعدادات قابلة للتمرير المستقل على اليمين مع أزرار التكبير والمقاسات.
               </p>
             </div>
           </div>
         </div>
       </main>
 
-      <Footer />
+      <div className="lg:hidden">
+        <Footer />
+      </div>
     </div>
   );
 }

@@ -221,12 +221,12 @@ export function CircularShowcase3D() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-3 sm:mb-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#9E7B35] dark:text-[#E5C378] text-xs font-semibold mb-2 shadow-sm">
+        <div className="text-center max-w-2xl mx-auto mb-4">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#9E7B35] dark:text-[#E5C378] text-xs font-semibold mb-3.5 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
             <span>معرض اللوحات الشريفة ثلاثي الأبعاد • 3D Circular Stage</span>
           </div>
-          <h2 className="font-amiri text-2xl sm:text-3xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-tight">
+          <h2 className="font-amiri text-2xl sm:text-3xl font-bold text-[#143628] dark:text-[#FAF7F2] pt-1">
             المَعْرِضُ الدَّائِرِيُّ لِلحِكَمِ وَالأَحَادِيثِ الشَّرِيفَةِ
           </h2>
 

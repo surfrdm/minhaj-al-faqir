@@ -39,16 +39,16 @@ export function GrandQasaidHomeSection() {
       {/* SECTION HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b-2 border-[#C5A059]/30 pb-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/35 text-[#826122] dark:text-[#E5C378] text-xs font-bold mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/35 text-[#826122] dark:text-[#E5C378] text-xs font-bold mb-3.5 sm:mb-4">
             <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
             <span>مَـفَاتِيـحُ الفَرَجِ وَأُمَّهَاتُ المَدَائِحِ الكُبْرَى</span>
           </div>
 
-          <h2 className="font-amiri text-2xl sm:text-3xl lg:text-4xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wide">
+          <h2 className="font-amiri text-2xl sm:text-3xl lg:text-4xl font-bold text-[#143628] dark:text-[#FAF7F2] tracking-wide pt-1 leading-normal sm:leading-relaxed">
             أُمَّهَاتُ الأَوْرَادِ وَالقَصَائِدِ الجَامِعَةِ
           </h2>
 
-          <p className="text-xs sm:text-sm text-[#52796F] dark:text-[#9BB0A5] font-ibm mt-1">
+          <p className="text-xs sm:text-sm text-[#52796F] dark:text-[#9BB0A5] font-ibm mt-2 leading-relaxed">
             القصائد الروحية الكبرى وأوراد الاستنصار والختم المعتمدة في التربية والسلوك، مع متونها المشكولة وشروحها التراثية.
           </p>
         </div>

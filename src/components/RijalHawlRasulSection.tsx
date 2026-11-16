@@ -231,12 +231,12 @@ export function RijalHawlRasulSection({
       {/* الترويسة السلوكية والعلمية */}
       <div className="p-5 sm:p-7 rounded-3xl bg-gradient-to-l from-[#143628] via-[#1B4332] to-[#0E271D] text-white border border-[#C5A059]/45 shadow-md space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="space-y-1.5">
+          <div className="space-y-3">
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E5C378] bg-[#C5A059]/20 px-3 py-1 rounded-full border border-[#C5A059]/40">
               <Users className="w-3.5 h-3.5 text-[#C5A059]" />
               <span>60 عَلَماً • 240 موقفاً قصصياً محرراً</span>
             </span>
-            <h2 className="font-amiri text-2xl sm:text-3xl font-bold text-[#FAF7F2] leading-snug">
+            <h2 className="font-amiri text-2xl sm:text-3xl font-bold text-[#FAF7F2] pt-1 leading-snug">
               {dataset.title_ar}
             </h2>
             <p className="text-xs sm:text-sm text-[#D5E2DB] font-ibm leading-relaxed max-w-3xl">

@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
+import { DualAudioReaderBar, InlineSpeakerButton } from "@/components/DualAudioReaderBar";
 import { SamaaEditModal } from "@/components/SamaaEditModal";
 import samaaList from "@/data/samaa_sequence.json";
 
@@ -603,6 +603,7 @@ export default function SamaaHubPage() {
                 .join(" ")}
               lang="ar"
               variant="bar"
+              preRecordedSrc={activePoem.id === "samaa-01" ? "/audio/samaa/samaa-01.mp3" : undefined}
             />
 
             {/* LIVE VOCALIZED VERSES (الأبيات كاملة مشكولة) */}
@@ -627,6 +628,13 @@ export default function SamaaHubPage() {
                         <span className="text-[11px] font-mono text-gray-400 font-bold">
                           بيت {idx + 1}
                         </span>
+                        <InlineSpeakerButton
+                          text={verse.replace(/\.\.\./g, "، ")}
+                          title={`${activePoem.title} - بيت ${idx + 1}`}
+                          lang="ar"
+                          size="sm"
+                          ariaLabel={`استماع للبيت ${idx + 1}`}
+                        />
                         <button
                           onClick={() => handleOpenEditModal(activePoem)}
                           className="opacity-0 group-hover:opacity-100 hover:opacity-100 transition p-1 rounded-md text-gray-400 hover:text-[#C5A059] hover:bg-[#C5A059]/10 text-xs flex items-center gap-1 cursor-pointer"
@@ -843,6 +851,16 @@ export default function SamaaHubPage() {
                       {p.diwan || "التراث البودشيشي"}
                     </span>
                     <div className="flex items-center gap-2">
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <InlineSpeakerButton
+                          text={p.allVerses[0]}
+                          title={p.title}
+                          lang="ar"
+                          size="sm"
+                          preRecordedSrc={p.id === "samaa-01" ? "/audio/samaa/samaa-01.mp3" : undefined}
+                          ariaLabel={`استماع لقصيدة ${p.title}`}
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={(e) => {

@@ -41,13 +41,15 @@ export function SpiritualHeaderBar() {
   const [showQiblaModal, setShowQiblaModal] = useState<boolean>(false);
   const [showCityMenu, setShowCityMenu] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<Date>(INITIAL_DATE);
+  const [mounted, setMounted] = useState<boolean>(false);
   const [readerHizbNumber, setReaderHizbNumber] = useState<number | null>(null);
   const [readerPeriod, setReaderPeriod] = useState<"subh" | "masa" | "custom">("subh");
 
-  // Update clock on mount and every minute
+  // Update clock on mount and every 10 seconds
   useEffect(() => {
+    setMounted(true);
     setCurrentTime(new Date());
-    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    const timer = setInterval(() => setCurrentTime(new Date()), 10000);
     return () => clearInterval(timer);
   }, []);
 
@@ -114,7 +116,10 @@ export function SpiritualHeaderBar() {
             <div className="space-y-0.5">
               {/* Hijri Date */}
               <div className="flex items-center gap-2">
-                <span className="font-amiri text-sm sm:text-base font-bold text-[#143628] dark:text-[#E5C378]">
+                <span
+                  suppressHydrationWarning
+                  className="font-amiri text-sm sm:text-base font-bold text-[#143628] dark:text-[#E5C378]"
+                >
                   {dateInfo.hijri.fullFormatted}
                 </span>
                 <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378]">
@@ -124,11 +129,12 @@ export function SpiritualHeaderBar() {
 
               {/* Gregorian Date */}
               <div className="flex items-center gap-1.5 text-[11px] text-[#52796F] dark:text-[#A1B3A9]">
-                <span>{dateInfo.gregorian.fullFormatted}</span>
+                <span suppressHydrationWarning>{dateInfo.gregorian.fullFormatted}</span>
                 <span className="text-gray-400">•</span>
-                <span className="font-mono text-gray-500">
-                  {String(currentTime.getHours()).padStart(2, "0")}:
-                  {String(currentTime.getMinutes()).padStart(2, "0")}
+                <span className="font-mono text-gray-500" suppressHydrationWarning>
+                  {mounted
+                    ? `${String(currentTime.getHours()).padStart(2, "0")}:${String(currentTime.getMinutes()).padStart(2, "0")}`
+                    : "--:--"}
                 </span>
               </div>
             </div>
@@ -273,9 +279,9 @@ export function SpiritualHeaderBar() {
             {/* Next Prayer Countdown Pill */}
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-[11px] font-bold text-emerald-800 dark:text-emerald-300">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>
+              <span suppressHydrationWarning>
                 الصلاة القادمة: {nextPrayer.name} ({nextPrayer.time}) •{" "}
-                <span className="text-[#826122] dark:text-[#E5C378]">
+                <span className="text-[#826122] dark:text-[#E5C378]" suppressHydrationWarning>
                   {nextPrayer.countdown}
                 </span>
               </span>
@@ -296,7 +302,10 @@ export function SpiritualHeaderBar() {
                 <Sunrise className="w-2.5 h-2.5 text-[#C5A059]" />
                 <span>الفجر</span>
               </div>
-              <div className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]">
+              <div
+                suppressHydrationWarning
+                className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]"
+              >
                 {prayerTimes.fajr}
               </div>
             </div>
@@ -313,7 +322,10 @@ export function SpiritualHeaderBar() {
                 <Sun className="w-2.5 h-2.5 text-amber-500" />
                 <span>الشروق</span>
               </div>
-              <div className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]">
+              <div
+                suppressHydrationWarning
+                className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]"
+              >
                 {prayerTimes.shuruk}
               </div>
             </div>
@@ -330,7 +342,10 @@ export function SpiritualHeaderBar() {
                 <Sun className="w-2.5 h-2.5 text-yellow-500" />
                 <span>الظهر</span>
               </div>
-              <div className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]">
+              <div
+                suppressHydrationWarning
+                className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]"
+              >
                 {prayerTimes.dhuhr}
               </div>
             </div>
@@ -347,7 +362,10 @@ export function SpiritualHeaderBar() {
                 <Sun className="w-2.5 h-2.5 text-orange-400" />
                 <span>العصر</span>
               </div>
-              <div className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]">
+              <div
+                suppressHydrationWarning
+                className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]"
+              >
                 {prayerTimes.asr}
               </div>
             </div>
@@ -364,7 +382,10 @@ export function SpiritualHeaderBar() {
                 <Sunset className="w-2.5 h-2.5 text-rose-500" />
                 <span>المغرب</span>
               </div>
-              <div className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]">
+              <div
+                suppressHydrationWarning
+                className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]"
+              >
                 {prayerTimes.maghrib}
               </div>
             </div>
@@ -381,7 +402,10 @@ export function SpiritualHeaderBar() {
                 <Moon className="w-2.5 h-2.5 text-indigo-400" />
                 <span>العشاء</span>
               </div>
-              <div className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]">
+              <div
+                suppressHydrationWarning
+                className="font-mono font-bold text-xs sm:text-sm text-[#143628] dark:text-[#FAF7F2]"
+              >
                 {prayerTimes.isha}
               </div>
             </div>

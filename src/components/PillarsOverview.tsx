@@ -11,7 +11,7 @@ export function PillarsOverview() {
           <span className="text-xs font-semibold text-[#9E7B35] dark:text-[#E5C378] tracking-wider uppercase">
             أركان المنهاج الدراسي
           </span>
-          <h2 className="font-amiri text-2xl sm:text-3xl font-bold text-[#143628] dark:text-[#FAF7F2] mt-1">
+          <h2 className="font-amiri text-2xl sm:text-3xl font-bold text-[#143628] dark:text-[#FAF7F2] mt-2.5">
             أربعة ركائز علمية وسلوكية تُنير درب السالك
           </h2>
         </div>
@@ -21,7 +21,7 @@ export function PillarsOverview() {
             <div className="w-10 h-10 rounded-xl bg-[#C5A059]/15 flex items-center justify-center text-[#C5A059] mb-3.5">
               <GraduationCap className="w-5 h-5" />
             </div>
-            <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
+            <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1.5 pt-0.5">
               مَدَارِجُ الارْتِقَاءِ الرُّوحِيِّ
             </h3>
             <p className="text-xs text-[#596B62] dark:text-[#9BB0A5] leading-relaxed">
@@ -33,7 +33,7 @@ export function PillarsOverview() {
             <div className="w-10 h-10 rounded-xl bg-[#C5A059]/15 flex items-center justify-center text-[#C5A059] mb-3.5">
               <Scale className="w-5 h-5" />
             </div>
-            <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
+            <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1.5 pt-0.5">
               تأصيل شرعي وعلمي
             </h3>
             <p className="text-xs text-[#596B62] dark:text-[#9BB0A5] leading-relaxed">
@@ -45,7 +45,7 @@ export function PillarsOverview() {
             <div className="w-10 h-10 rounded-xl bg-[#C5A059]/15 flex items-center justify-center text-[#C5A059] mb-3.5">
               <BookOpen className="w-5 h-5" />
             </div>
-            <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
+            <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1.5 pt-0.5">
               الأكاديمية والمتون
             </h3>
             <p className="text-xs text-[#596B62] dark:text-[#9BB0A5] leading-relaxed">
@@ -57,7 +57,7 @@ export function PillarsOverview() {
             <div className="w-10 h-10 rounded-xl bg-[#C5A059]/15 flex items-center justify-center text-[#C5A059] mb-3.5">
               <Clock className="w-5 h-5" />
             </div>
-            <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1">
+            <h3 className="font-amiri text-lg font-bold text-[#143628] dark:text-[#FAF7F2] mb-1.5 pt-0.5">
               الأوراد والوظيفة
             </h3>
             <p className="text-xs text-[#596B62] dark:text-[#9BB0A5] leading-relaxed">

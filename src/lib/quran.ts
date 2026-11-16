@@ -198,6 +198,8 @@ export function cleanQuranWordText(txt: string): string {
  * - Converts dotless KFGQPC Yeh Barree (U+06D2) before Hamza above (U+0654) -> ئ (U+0626)
  * - Converts dotless KFGQPC Yeh Barree (U+06D2) before Hamza below (U+0655) -> ىٕ (U+0649 U+0655)
  * - Converts remaining dotless KFGQPC Yeh Barree (U+06D2) -> standard dotted Yaa ي (U+064A)
+ * - Converts Maghribi Hamzat Wasl (Alef + \u06EC filled starting dot) -> authentic Mashriqi Alef Wasla ٱ (U+0671)
+ * - Eliminates stray \u06EC filled dots so thick solid circles never appear over Alifs
  */
 export function formatQuranTextForMashriqiDots(
   txt: string,
@@ -207,7 +209,9 @@ export function formatQuranTextForMashriqiDots(
   let out = txt
     .replace(/\u06d2\u0654/g, "\u0626")
     .replace(/\u06d2\u0655/g, "\u0649\u0655")
-    .replace(/\u06d2/g, "\u064a");
+    .replace(/\u06d2/g, "\u064a")
+    .replace(/[اٱ][\u064E\u064F\u0650]?\u06ec[\u064E\u064F\u0650]?/g, "\u0671")
+    .replace(/\u06ec/g, "");
   if (options?.stripHabti) {
     out = out.replace(/\u06d6/g, "");
   }

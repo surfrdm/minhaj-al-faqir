@@ -43,6 +43,16 @@
 
 @variant dark (&:where(.dark, .dark *));
 
+html {
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 @layer base {
   :root {
     --bg-paper: #FAF7F2;
@@ -114,6 +124,29 @@ body {
   font-family: var(--font-amiri), serif;
 }
 
+/* Ensure Amiri titles and vocalized Arabic text have safe line-height & vertical breathing room */
+h1.font-amiri,
+h2.font-amiri,
+h3.font-amiri,
+h4.font-amiri {
+  line-height: 1.45;
+  padding-top: 0.08em;
+}
+
+.font-amiri.leading-tight {
+  line-height: 1.4 !important;
+}
+
+.font-amiri.leading-none {
+  line-height: 1.3 !important;
+}
+
+/* Prevent tracking classes from breaking Arabic cursive ligatures & letter connections */
+.font-amiri.tracking-tight,
+.font-amiri.tracking-tighter {
+  letter-spacing: normal;
+}
+
 .font-maghribi-quran {
   font-family: 'KFGQPCWarsh', 'Amiri', serif;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
@@ -165,6 +198,31 @@ body {
   background: #C5A05988;
 }
 
+/* Studio custom scrollbar for independent panels */
+.studio-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #C5A05988 transparent;
+}
+
+.studio-scrollbar::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.studio-scrollbar::-webkit-scrollbar-track {
+  background: rgba(197, 160, 89, 0.06);
+  border-radius: 9999px;
+}
+
+.studio-scrollbar::-webkit-scrollbar-thumb {
+  background: #C5A05966;
+  border-radius: 9999px;
+}
+
+.studio-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #C5A059BB;
+}
+
 /* Gold shimmer border effect */
 .border-gold-gradient {
   border-image: linear-gradient(to bottom, #C5A059 0%, #1B4332 50%, #C5A059 100%) 1;
@@ -203,5 +261,25 @@ body {
       opacity: 0;
       transform: translateY(0);
     }
+  }
+}
+
+/* Moroccan Zakhrafa Footer Pattern: Clean green center, gradual gold extremities */
+.zakhrafa-footer-pattern {
+  background-image: url('/images/zakhrafa.svg');
+  background-position: center bottom;
+  background-repeat: repeat;
+  background-size: 1400px auto;
+  opacity: 0.48;
+  mask-image: radial-gradient(ellipse 82% 68% at 50% 50%, transparent 22%, rgba(0, 0, 0, 0.45) 55%, black 100%);
+  -webkit-mask-image: radial-gradient(ellipse 82% 68% at 50% 50%, transparent 22%, rgba(0, 0, 0, 0.45) 55%, black 100%);
+}
+
+@media (max-width: 768px) {
+  .zakhrafa-footer-pattern {
+    background-size: 800px auto;
+    opacity: 0.35;
+    mask-image: radial-gradient(ellipse 95% 80% at 50% 50%, transparent 25%, rgba(0, 0, 0, 0.4) 65%, black 100%);
+    -webkit-mask-image: radial-gradient(ellipse 95% 80% at 50% 50%, transparent 25%, rgba(0, 0, 0, 0.4) 65%, black 100%);
   }
 }

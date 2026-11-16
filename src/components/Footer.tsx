@@ -4,8 +4,14 @@ import { GraduationCap, Scale, Clock, BookOpen, Sparkles, Layers, HelpCircle } f
 
 export function Footer() {
   return (
-    <footer className="bg-[#143628] text-[#FAF7F2] border-t border-[#C5A059]/30 pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="relative bg-[#143628] text-[#FAF7F2] border-t border-[#C5A059]/30 pt-16 pb-12 overflow-hidden">
+      {/* Background Moroccan Zakhrafa Layer (Gold Vector Motif with Extremity Gradient) */}
+      <div
+        className="absolute inset-0 pointer-events-none select-none z-0 zakhrafa-footer-pattern"
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Calligraphic Quote */}
         <div className="text-center max-w-2xl mx-auto mb-12 p-6 rounded-2xl bg-[#0B1914]/40 border border-[#C5A059]/20 shadow-inner">
           <p className="font-amiri text-2xl font-bold text-[#E5C378] leading-relaxed mb-2">
