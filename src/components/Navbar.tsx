@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { TasbeehModal } from "@/components/TasbeehModal";
+import { MisbahaIcon } from "@/components/MisbahaIcon";
 import {
   Moon,
   Sun,
@@ -200,19 +201,19 @@ export function Navbar() {
               </Link>
             </nav>
 
-            {/* 3. Bouton السبحة والسلكة + Theme Toggle + Tiroir */}
+            {/* 3. Bouton السبحة الإلكترونية + Theme Toggle + Tiroir */}
             <div className="flex items-center gap-2">
-              {/* Bouton السبحة والسلكة الإلكترونية */}
+              {/* Bouton السبحة الإلكترونية */}
               <button
                 type="button"
                 onClick={() => setTasbeehOpen(true)}
-                title="السلكة والتسبيح • الورد اليومي (صباحاً / مساءً / مطلق)"
-                aria-label="فتح السبحة الإلكترونية والسلكة"
+                title="السبحة الإلكترونية • الورد اليومي والتسبيح"
+                aria-label="فتح السبحة الإلكترونية"
                 className="flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#143628] via-[#1B4332] to-[#143628] text-[#FAF7F2] border border-[#C5A059] shadow-sm hover:border-[#E5C378] hover:scale-105 active:scale-95 transition cursor-pointer text-xs font-bold"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#C5A059] animate-pulse" />
-                <span className="hidden sm:inline">السلكة والتسبيح</span>
-                <span className="sm:hidden">التسبيح</span>
+                <MisbahaIcon className="w-4 h-4 text-[#C5A059]" />
+                <span className="hidden sm:inline">السبحة الإلكترونية</span>
+                <span className="sm:hidden">السبحة</span>
               </button>
 
               <button
@@ -336,6 +337,25 @@ export function Navbar() {
                     </div>
                     <ChevronLeft className="w-4 h-4 text-gray-400 group-hover:text-[#C5A059]" />
                   </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      setTasbeehOpen(true);
+                    }}
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#C5A059]/15 via-[#1B4332]/10 to-[#C5A059]/15 border border-[#C5A059]/40 hover:border-[#C5A059] text-xs font-bold text-[#143628] dark:text-[#E8F0EC] transition group shadow-xs cursor-pointer text-right"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <MisbahaIcon className="w-4 h-4 text-[#C5A059]" />
+                      <span className="font-amiri text-sm font-bold text-[#143628] dark:text-[#E5C378]">
+                        السُّبْحَةُ الإِلِكْتُرُونِيَّةُ (وِرْدُ الصَّبَاحِ وَالمَسَاءِ وَالمُطْلَقِ)
+                      </span>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#C5A059]/20 text-[#826122] dark:text-[#E5C378] font-bold">
+                      تسبيح واهتزاز
+                    </span>
+                  </button>
 
                   <Link
                     href="/quran"
