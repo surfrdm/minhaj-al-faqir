@@ -26,13 +26,16 @@ import {
   Layers,
   Sparkle,
   Download,
+  Edit3,
+  Pencil,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
+import { SamaaEditModal } from "@/components/SamaaEditModal";
 import samaaList from "@/data/samaa_sequence.json";
 
-interface Poem {
+export interface Poem {
   id: string;
   title: string;
   poet: string;
@@ -42,16 +45,21 @@ interface Poem {
   keywords?: string[];
   allVerses: string[];
   spiritualExplanation: string;
-  nextSuggestedPoems: { id: string; title: string; poet: string }[];
+  nextSuggestedPoems?: { id: string; title: string; poet: string }[];
 }
 
 export default function SamaaHubPage() {
+  // Poems list state (initialized with authentic samaa sequence, with local override support)
+  const [poemsList, setPoemsList] = useState<Poem[]>(samaaList as unknown as Poem[]);
+  const [activePoem, setActivePoem] = useState<Poem>(samaaList[0] as unknown as Poem);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [editingPoem, setEditingPoem] = useState<Poem | null>(null);
+
   // Continuous listening states
   const [isLiveListening, setIsLiveListening] = useState<boolean>(false);
   const [listeningSeconds, setListeningSeconds] = useState<number>(0);
   const [liveTranscript, setLiveTranscript] = useState<string>("");
   const [recognitionStatus, setRecognitionStatus] = useState<string>("في انتظار بدء الاستماع الحي");
-  const [activePoem, setActivePoem] = useState<Poem>(samaaList[0] as unknown as Poem);
   const [activeVerseIndex, setActiveVerseIndex] = useState<number>(0);
   const [explanationOpen, setExplanationOpen] = useState<boolean>(true);
   const [copied, setCopied] = useState<boolean>(false);
@@ -72,6 +80,95 @@ export default function SamaaHubPage() {
   useEffect(() => {
     activePoemRef.current = activePoem;
   }, [activePoem]);
+
+  // Load any user corrections from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("minhaj_samaa_user_corrections");
+      if (stored) {
+        const parsed = JSON.parse(stored) as Poem[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const merged = (samaaList as unknown as Poem[]).map((p) => {
+            const match = parsed.find((cp) => cp.id === p.id);
+            return match || p;
+          });
+          queueMicrotask(() => {
+            setPoemsList(merged);
+            const activeMatch = merged.find((p) => p.id === activePoem.id);
+            if (activeMatch) {
+              setActivePoem(activeMatch);
+            }
+          });
+        }
+      }
+    } catch (e) {
+      console.warn("Could not load local corrections:", e);
+    }
+  }, []);
+
+  const handleOpenEditModal = (poemToEdit: Poem) => {
+    setEditingPoem(poemToEdit);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSavePoem = async (updatedPoem: Poem) => {
+    setPoemsList((prev) =>
+      prev.map((p) => (p.id === updatedPoem.id ? updatedPoem : p))
+    );
+    if (activePoem?.id === updatedPoem.id) {
+      setActivePoem(updatedPoem);
+    }
+
+    try {
+      const updatedList = poemsList.map((p) =>
+        p.id === updatedPoem.id ? updatedPoem : p
+      );
+      localStorage.setItem(
+        "minhaj_samaa_user_corrections",
+        JSON.stringify(updatedList)
+      );
+    } catch (e) {
+      console.warn("localStorage save error:", e);
+    }
+
+    try {
+      await fetch("/api/samaa/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          poemId: updatedPoem.id,
+          poem: updatedPoem,
+        }),
+      });
+    } catch (err) {
+      console.warn("API save notice:", err);
+    }
+  };
+
+  const handleResetPoem = () => {
+    if (!editingPoem) return;
+    const original = (samaaList as unknown as Poem[]).find((p) => p.id === editingPoem.id);
+    if (!original) return;
+
+    setPoemsList((prev) =>
+      prev.map((p) => (p.id === editingPoem.id ? original : p))
+    );
+    if (activePoem?.id === editingPoem.id) {
+      setActivePoem(original);
+    }
+
+    try {
+      const remaining = poemsList
+        .filter((p) => p.id !== editingPoem.id)
+        .concat(original);
+      localStorage.setItem(
+        "minhaj_samaa_user_corrections",
+        JSON.stringify(remaining)
+      );
+    } catch {
+      // Ignore
+    }
+  };
 
   // Handle continuous timer
   useEffect(() => {
@@ -279,7 +376,6 @@ export default function SamaaHubPage() {
   ];
 
   // Filtered poems
-  const poemsList = samaaList as unknown as Poem[];
   const filteredPoems = poemsList.filter((p: Poem) => {
     const matchesCat =
       selectedCategory === "الكل" || p.category?.includes(selectedCategory);
@@ -443,8 +539,18 @@ export default function SamaaHubPage() {
                 </p>
               </div>
 
-              {/* Utility Tools: Font Sizer, Copy, WhatsApp */}
-              <div className="flex items-center gap-2 self-end md:self-center">
+              {/* Utility Tools: Font Sizer, Edit, Copy, WhatsApp */}
+              <div className="flex flex-wrap items-center gap-2 self-end md:self-center">
+                {/* Correction / Edit Button */}
+                <button
+                  onClick={() => handleOpenEditModal(activePoem)}
+                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#C5A059]/20 via-[#D4AF37]/25 to-[#C5A059]/20 hover:from-[#C5A059]/30 hover:to-[#C5A059]/30 border-2 border-[#C5A059] text-[#826122] dark:text-[#E5C378] text-xs font-bold font-ibm flex items-center gap-1.5 transition cursor-pointer shadow-sm hover:scale-[1.02]"
+                  title="تصحيح كلمات أو شكل أو ترتيب أبيات هذه القصيدة"
+                >
+                  <Edit3 className="w-4 h-4 text-[#C5A059]" />
+                  <span>تصحيح القصيدة</span>
+                </button>
+
                 {/* Font Size Adjusters */}
                 <div className="flex items-center rounded-xl bg-[#FAF7F2] dark:bg-[#07130E] border border-[#E7DFD5] dark:border-[#203D31] p-1">
                   <button
@@ -510,16 +616,26 @@ export default function SamaaHubPage() {
                 return (
                   <div
                     key={idx}
-                    className={`p-4 sm:p-5 rounded-2xl transition-all duration-300 border ${
+                    className={`p-4 sm:p-5 rounded-2xl transition-all duration-300 border group ${
                       isCurrent
                         ? "bg-gradient-to-r from-[#C5A059]/20 via-[#D4AF37]/15 to-[#C5A059]/20 border-[#C5A059] shadow-md scale-[1.01]"
                         : "bg-[#FAF7F2]/60 dark:bg-[#07130E]/60 border-transparent hover:border-[#C5A059]/30"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="text-[11px] font-mono text-gray-400 font-bold">
-                        بيت {idx + 1}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-mono text-gray-400 font-bold">
+                          بيت {idx + 1}
+                        </span>
+                        <button
+                          onClick={() => handleOpenEditModal(activePoem)}
+                          className="opacity-0 group-hover:opacity-100 hover:opacity-100 transition p-1 rounded-md text-gray-400 hover:text-[#C5A059] hover:bg-[#C5A059]/10 text-xs flex items-center gap-1 cursor-pointer"
+                          title="تصحيح أو تعديل هذا البيت"
+                        >
+                          <Pencil className="w-3 h-3 text-[#C5A059]" />
+                          <span className="text-[10px] font-ibm">تصحيح</span>
+                        </button>
+                      </div>
                       {isCurrent && (
                         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#826122] dark:text-[#E5C378] animate-pulse">
                           <Volume2 className="w-3.5 h-3.5" />
@@ -726,10 +842,24 @@ export default function SamaaHubPage() {
                     <span className="text-[11px] text-gray-500 font-ibm">
                       {p.diwan || "التراث البودشيشي"}
                     </span>
-                    <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378] group-hover:underline flex items-center gap-1">
-                      <span>عرض الكلمات للإنشاد</span>
-                      <ChevronLeft className="w-3.5 h-3.5" />
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenEditModal(p);
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-[#C5A059]/15 hover:bg-[#C5A059]/25 text-[#826122] dark:text-[#E5C378] text-[11px] font-bold font-ibm flex items-center gap-1 transition cursor-pointer"
+                        title="تصحيح هذه القصيدة"
+                      >
+                        <Edit3 className="w-3 h-3 text-[#C5A059]" />
+                        <span>تصحيح</span>
+                      </button>
+                      <span className="text-xs font-bold text-[#1B4332] dark:text-[#E5C378] group-hover:underline flex items-center gap-1">
+                        <span>عرض الكلمات للإنشاد</span>
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
@@ -770,6 +900,22 @@ export default function SamaaHubPage() {
             </div>
           </div>
         </section>
+
+        {/* Samaa Poem Correction Modal */}
+        {editingPoem && (
+          <SamaaEditModal
+            key={editingPoem.id}
+            isOpen={isEditModalOpen}
+            onClose={() => {
+              setIsEditModalOpen(false);
+              setEditingPoem(null);
+            }}
+            poem={editingPoem}
+            originalPoem={(samaaList as unknown as Poem[]).find((p) => p.id === editingPoem.id)}
+            onSave={handleSavePoem}
+            onResetToOriginal={handleResetPoem}
+          />
+        )}
       </main>
 
       <Footer />
