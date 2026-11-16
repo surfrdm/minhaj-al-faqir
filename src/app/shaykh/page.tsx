@@ -22,6 +22,7 @@ import {
 import userEdits from "@/data/user_edits.json";
 import { QuranicEvidencePanel } from "@/components/QuranicEvidencePanel";
 import { DualAudioReaderBar } from "@/components/DualAudioReaderBar";
+import { SilsilaTree } from "@/components/SilsilaTree";
 import { getPageVerses } from "@/lib/quran_thematic";
 
 export const metadata: Metadata = {
@@ -147,6 +148,11 @@ export default function ShaykhPage() {
               <p>{sannadP2}</p>
             </div>
           </section>
+
+          {/* ======================================================== */}
+          {/* SECTION 1.5: THE SACRED SILSILA TREE (السلسلة الصوفية الشريفة) */}
+          {/* ======================================================== */}
+          <SilsilaTree />
 
           {/* ======================================================== */}
           {/* SECTION 2: ACADEMIC CURRICULUM (المسار الأكاديمي)        */}
